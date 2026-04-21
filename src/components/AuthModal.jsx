@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+import { useState } from 'react'
 
 /**
  * Authentication modal for user login and registration.
@@ -7,6 +8,8 @@ import { X } from 'lucide-react'
  * @returns {React.ReactElement} The AuthModal component.
  */
 function AuthModal ({ onClose }) {
+  const [isLogin, setIsLogin] = useState(true)
+
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-50' onClick={onClose}>
       <div className='flex flex-col gap-6 bg-surface-light rounded-lg p-6 w-96' onClick={(e) => e.stopPropagation()}>
@@ -16,7 +19,9 @@ function AuthModal ({ onClose }) {
               <X size={20} />
             </button>
           </div>
-          <h2 className='text-xl font-bold text-center'>Log in to Flick</h2>
+          <h2 className='text-xl font-bold text-center'>
+            {isLogin ? 'Log in to Flick' : 'Create an account'}
+          </h2>
         </div>
 
         <div className='flex flex-col gap-6'>
@@ -42,14 +47,16 @@ function AuthModal ({ onClose }) {
             type='button' form='auth-form'
             className='p-2 rounded-full bg-brand hover:bg-red-700 text-white cursor-pointer'
           >
-            Log in
+            {isLogin ? 'Log in' : 'Sign up'}
           </button>
         </div>
 
         <hr className='border-slate-700' />
 
         <p className='text-sm text-slate-400 text-center'>
-          Don't have an account? <button className='text-brand hover:underline'>Sign up</button>
+          {isLogin
+            ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => setIsLogin(false)}>Sign up</button></>
+            : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => setIsLogin(true)}>Log in</button></>}
         </p>
       </div>
     </div>
