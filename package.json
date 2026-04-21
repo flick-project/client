@@ -2,6 +2,9 @@
   "name": "flick-client",
   "private": true,
   "version": "0.1.0",
+  "description": "Frontend for Flick, built with React.",
+  "author": "Hans Nilsson",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
