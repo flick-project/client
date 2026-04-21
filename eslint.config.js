@@ -2,16 +2,20 @@ import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import neostandard from 'neostandard'
+import jsdoc from 'eslint-plugin-jsdoc'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
   globalIgnores(['dist']),
+  ...neostandard(),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
+      jsdoc.configs['flat/recommended-typescript-flavor'],
     ],
     languageOptions: {
       ecmaVersion: 2020,

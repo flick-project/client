@@ -4,17 +4,21 @@ import DiscoveryPage from './pages/DiscoveryPage.jsx'
 import WatchlistPage from './pages/WatchlistPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 
-function App() {
+/**
+ * Root component that renders the app shell with navigation and page routing.
+ * @returns {React.ReactElement} The App component.
+ */
+function App () {
   return (
-    <div className="flex h-screen">
-      <aside className="w-48 md:w-64 bg-surface-light p-4 md:p-6 h-full">
+    <div className='flex h-screen'>
+      <aside className='w-48 md:w-64 bg-surface-light p-4 md:p-6 h-full'>
         <Navigation />
       </aside>
-      <main className="flex-1 flex items-center justify-center p-8 overflow-y-auto">
+      <main className='flex-1 flex items-center justify-center p-8 overflow-y-auto'>
         <Routes>
-          <Route path="/" element={<DiscoveryPage />} />
-          <Route path="/" element={<WatchlistPage />} />
-          <Route path="/" element={<ProfilePage />} />
+          <Route path='/' element={<DiscoveryPage />} />
+          <Route path='/' element={<WatchlistPage />} />
+          <Route path='/' element={<ProfilePage />} />
         </Routes>
       </main>
     </div>
