@@ -9,6 +9,38 @@ import { useState } from 'react'
  */
 function AuthModal ({ onClose }) {
   const [isLogin, setIsLogin] = useState(true)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [message, setMessage] = useState(null)
+  const [error, setError] = useState(null)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setMessage(null)
+    setError(null)
+
+    const endpoint = isLogin ? '/login' : '/register'
+
+    try {
+      const res = await fetch(`http://localhost:3000/api/v1/auth${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.message)
+        return
+      }
+
+      setMessage(data.message)
+    } catch (err) {
+      console.error(err)
+      setError('Something went wrong. Please try again.')
+    }
+  }
 
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-50' onClick={onClose}>
@@ -24,27 +56,29 @@ function AuthModal ({ onClose }) {
           </h2>
         </div>
 
+        {error && <p className='text-red-500 text-sm text-center'>{error}</p>}
+        {message && <p className='text-green-500 text-sm text-center'>{message}</p>}
+
         <div className='flex flex-col gap-6'>
-          <form
-            id='auth-form' className='flex flex-col gap-4' onSubmit={(e) => {
-              // Prevent default page reload.
-              e.preventDefault()
-            }}
-          >
+          <form id='auth-form' className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <input
               type='email'
               placeholder='Email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className='p-2 rounded bg-surface outline-none focus:outline-solid focus:outline-1 focus:outline-slate-700'
             />
             <input
               type='password'
               placeholder='Password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className='p-2 rounded bg-surface outline-none focus:outline-solid focus:outline-1 focus:outline-slate-700'
             />
           </form>
 
           <button
-            type='button' form='auth-form'
+            type='submit' form='auth-form'
             className='p-2 rounded-full bg-brand hover:bg-red-700 text-white cursor-pointer'
           >
             {isLogin ? 'Log in' : 'Sign up'}
