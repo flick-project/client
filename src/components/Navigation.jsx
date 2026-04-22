@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Compass, Bookmark, User } from 'lucide-react'
 import { useState } from 'react'
 import AuthModal from './AuthModal.jsx'
+import Button from './Button.jsx'
 
 /**
  * Main navigation sidebar with page links and authentication button.
@@ -11,8 +12,8 @@ function Navigation () {
   const [isAuthOpen, setIsAuthOpen] = useState(false)
 
   return (
-    <nav>
-      <h1 className='text-2xl font-semibold mb-8'>Flick</h1>
+    <nav className='flex flex-col gap-6'>
+      <h1 className='text-2xl font-semibold'>Flick</h1>
       <ul className='flex flex-col gap-2'>
         <li>
           <Link to='/' className='flex items-center gap-4 py-2 hover:text-brand'>
@@ -33,12 +34,9 @@ function Navigation () {
           </Link>
         </li>
       </ul>
-      <button
-        onClick={() => setIsAuthOpen(true)}
-        className='w-full mt-8 flex items-center justify-center gap-4 p-2 rounded bg-brand hover:bg-red-700 text-white cursor-pointer'
-      >
+      <Button onClick={() => setIsAuthOpen(true)}>
         Log in
-      </button>
+      </Button>
 
       {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
     </nav>
