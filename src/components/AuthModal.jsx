@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { useState } from 'react'
+import { useToast } from '../hooks/useToast'
 
 /**
  * Authentication modal for user login and registration.
@@ -7,17 +8,31 @@ import { useState } from 'react'
  * @param {() => void} props.onClose - Callback to close the modal.
  * @returns {React.ReactElement} The AuthModal component.
  */
-function AuthModal ({ onClose }) {
+export default function AuthModal ({ onClose }) {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState(null)
-  const [error, setError] = useState(null)
+  const [errors, setErrors] = useState({})
+  const { showToast } = useToast()
+  const [isLoading, setIsLoading] = useState(false)
+
+  const switchMode = (toLogin) => {
+    setIsLogin(toLogin)
+    setEmail('')
+    setPassword('')
+    setErrors({})
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setMessage(null)
-    setError(null)
+    setErrors({})
+
+    if (!isLogin && password.length < 10) {
+      setErrors({ password: 'Password must be at least 10 characters' })
+      return
+    }
+
+    setIsLoading(true)
 
     const endpoint = isLogin ? '/login' : '/register'
 
@@ -31,14 +46,19 @@ function AuthModal ({ onClose }) {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.message)
+        setErrors({ general: data.message })
         return
       }
 
-      setMessage(data.message)
+      if (!isLogin) {
+        showToast('Registration successful!', 'success')
+        onClose()
+      }
     } catch (err) {
       console.error(err)
-      setError('Something went wrong. Please try again.')
+      setErrors({ general: 'Something went wrong. Please try again.' })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -52,17 +72,18 @@ function AuthModal ({ onClose }) {
             </button>
           </div>
           <h2 className='text-xl font-bold text-center'>
-            {isLogin ? 'Log in to Flick' : 'Create an account'}
+            {isLogin ? 'Log in to Flick' : 'Sign up for Flick'}
           </h2>
         </div>
 
-        {error && <p className='text-red-500 text-sm text-center'>{error}</p>}
-        {message && <p className='text-green-500 text-sm text-center'>{message}</p>}
+        {errors.general && <p className='text-red-500 text-sm text-center'>{errors.general}</p>}
 
         <div className='flex flex-col gap-6'>
           <form id='auth-form' className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <input
               type='email'
+              required
+              disabled={isLoading}
               placeholder='Email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -70,18 +91,22 @@ function AuthModal ({ onClose }) {
             />
             <input
               type='password'
+              required
+              disabled={isLoading}
               placeholder='Password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className='p-2 rounded bg-surface outline-none focus:outline-solid focus:outline-1 focus:outline-slate-700'
             />
+            {errors.password && <p className='text-red-500 text-sm text-center'>{errors.password}</p>}
           </form>
 
           <button
             type='submit' form='auth-form'
-            className='p-2 rounded-full bg-brand hover:bg-red-700 text-white cursor-pointer'
+            disabled={isLoading}
+            className='p-2 rounded-full bg-brand hover:bg-red-700 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
           >
-            {isLogin ? 'Log in' : 'Sign up'}
+            {isLoading ? 'Processing...' : (isLogin ? 'Log in' : 'Sign up')}
           </button>
         </div>
 
@@ -89,12 +114,10 @@ function AuthModal ({ onClose }) {
 
         <p className='text-sm text-slate-400 text-center'>
           {isLogin
-            ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => setIsLogin(false)}>Sign up</button></>
-            : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => setIsLogin(true)}>Log in</button></>}
+            ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
+            : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
         </p>
       </div>
     </div>
   )
 }
-
-export default AuthModal

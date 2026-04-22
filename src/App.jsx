@@ -3,14 +3,19 @@ import Navigation from './components/Navigation.jsx'
 import DiscoveryPage from './pages/DiscoveryPage.jsx'
 import WatchlistPage from './pages/WatchlistPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
+import Toast from './components/Toast.jsx'
+import { useToast } from './hooks/useToast.js'
 
 /**
  * Root component that renders the app shell with navigation and page routing.
  * @returns {React.ReactElement} The App component.
  */
 function App () {
+  const { toast, setToast } = useToast()
+
   return (
     <div className='flex h-screen'>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <aside className='w-48 md:w-64 bg-surface-light p-4 md:p-6 h-full'>
         <Navigation />
       </aside>
