@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AuthContext } from './AuthContext.jsx'
+import { SquareUser } from 'lucide-react'
 
 /**
  * Provider that makes auth functionality available to all children.
@@ -8,10 +9,19 @@ import { AuthContext } from './AuthContext.jsx'
  * @returns {React.ReactElement} The provider component.
  */
 export function AuthProvider ({ children }) {
-  const [auth, setAuth] = useState(null)
+  const [token, setToken] = useState(null)
+  const [user, setUser] = useState(null)
+
+  const login = (newToken) => {
+    setToken(newToken)
+
+    // Decode base64 to store user info.
+    const payload = JSON.parse(atob(newToken.split('.')[1]))
+    setUser(payload)
+  }
 
   return (
-    <AuthContext value={{ auth, setAuth }}>
+    <AuthContext value={{ token, user, login }}>
       {children}
     </AuthContext>
   )
