@@ -17,11 +17,20 @@ export function AuthProvider ({ children }) {
 
     // Decode base64 to store user info.
     const payload = JSON.parse(atob(newToken.split('.')[1]))
-    setUser(payload)
+    setUser({
+      id: payload.id,
+      email: payload.email,
+      displayName: payload.display_name
+    })
+  }
+
+  const logout = () => {
+    setToken(null)
+    setUser(null)
   }
 
   return (
-    <AuthContext value={{ token, user, login }}>
+    <AuthContext value={{ token, user, login, logout }}>
       {children}
     </AuthContext>
   )

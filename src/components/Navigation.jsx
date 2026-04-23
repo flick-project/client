@@ -1,15 +1,27 @@
 import { Link } from 'react-router-dom'
 import { Compass, Bookmark, User } from 'lucide-react'
 import { useState } from 'react'
+import { useAuth } from '../hooks/useAuth.js'
+import { useNavigate } from 'react-router-dom'
 import AuthModal from './AuthModal.jsx'
 import Button from './Button.jsx'
+import { useToast } from '../hooks/useToast.js'
 
 /**
  * Main navigation sidebar with page links and authentication button.
  * @returns {React.ReactElement} The Navigation component.
  */
 function Navigation () {
+  const { user, logout } = useAuth()
+  const { showToast } = useToast()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    showToast('Logged out successfully!', 'success')
+    navigate('/')
+  }
 
   return (
     <nav className='flex flex-col gap-6'>
@@ -30,13 +42,16 @@ function Navigation () {
         <li>
           <Link to='/profile' className='flex items-center gap-4 py-2 hover:text-brand'>
             <User size={20} />
-            Profile
+            {user
+              ? user.displayName
+              : <span>Profile</span>}
           </Link>
         </li>
       </ul>
-      <Button onClick={() => setIsAuthOpen(true)}>
-        Log in
-      </Button>
+      {/* Show login if user isn't logged in, and logout if they are. */}
+      {user
+        ? <Button onClick={handleLogout}>Log out</Button>
+        : <Button onClick={() => setIsAuthOpen(true)}>Log in</Button>}
 
       {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
     </nav>

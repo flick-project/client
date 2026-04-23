@@ -15,6 +15,7 @@ import Button from '../components/Button.jsx'
 export default function AuthModal ({ onClose }) {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
+  const [displayName, setDisplayName] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
@@ -28,6 +29,7 @@ export default function AuthModal ({ onClose }) {
   const switchMode = (toLogin) => {
     setIsLogin(toLogin)
     setEmail('')
+    setDisplayName('')
     setPassword('')
     setErrors({})
   }
@@ -40,19 +42,29 @@ export default function AuthModal ({ onClose }) {
     e.preventDefault()
     setErrors({})
 
-    // Only validate password length on registration.
-    if (!isLogin && password.length < 10) {
-      setErrors({ password: 'Password must be at least 10 characters' })
-      return
+    // Validation
+    if (!isLogin) {
+      if (displayName.length < 3) {
+        setErrors({ displayName: 'Nickname must be at least 3 characters' })
+      }
+      if (password.length < 10) {
+        setErrors({ password: 'Password must be at least 10 characters' })
+        return
+      }
     }
 
+    // Disable fields during processing.
     setIsLoading(true)
     const endpoint = isLogin ? '/login' : '/register'
 
     try {
+      const body = isLogin
+        ? { email, password }
+        : { email, password, displayName }
+
       const data = await apiRequest(`/auth${endpoint}`, {
         method: 'POST',
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify(body)
       })
 
       if (!isLogin) {
@@ -101,6 +113,15 @@ export default function AuthModal ({ onClose }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {!isLogin &&
+              <Input
+                type='text'
+                required
+                disabled={isLoading}
+                placeholder='Nickname'
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+              />}
             <Input
               type='password'
               required
