@@ -1,6 +1,8 @@
 import { X } from 'lucide-react'
 import { useState } from 'react'
 import { useToast } from '../hooks/useToast'
+import { useAuth } from '../hooks/useAuth.js'
+import { apiRequest } from '../services/api.js'
 import Input from '../components/Input.jsx'
 import Button from '../components/Button.jsx'
 
@@ -17,6 +19,7 @@ export default function AuthModal ({ onClose }) {
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { showToast } = useToast()
+  const { login } = useAuth()
 
   /**
    * Reset form fields and errors when switching between login and register.
@@ -47,25 +50,24 @@ export default function AuthModal ({ onClose }) {
     const endpoint = isLogin ? '/login' : '/register'
 
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/auth${endpoint}`, {
+      const data = await apiRequest(`/auth${endpoint}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       })
-      const data = await res.json()
-
-      if (!res.ok) {
-        setErrors({ general: data.message })
-        return
-      }
 
       if (!isLogin) {
         showToast('Registration successful!', 'success')
         onClose()
       }
+
+      if (isLogin) {
+        login(data.token)
+        showToast('Logged in successfully!', 'success')
+        onClose()
+      }
     } catch (err) {
       console.error(err)
-      setErrors({ general: 'Something went wrong. Please try again.' })
+      setErrors({ general: err.message || 'Something went wrong. Please try again.' })
     } finally {
       setIsLoading(false)
     }
