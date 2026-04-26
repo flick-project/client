@@ -55,6 +55,7 @@ export default function AuthModal ({ onClose }) {
 
     // Disable fields during processing.
     setIsLoading(true)
+
     const endpoint = isLogin ? '/login' : '/register'
 
     try {
@@ -87,7 +88,12 @@ export default function AuthModal ({ onClose }) {
 
   return (
     // Backdrop. Closes modal on click.
-    <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-50' onClick={onClose}>
+    <div
+      className='fixed inset-0 flex items-center justify-center bg-black/50 z-50'
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
       {/* Modal content. Stops click from reaching backdrop. */}
       <div className='flex flex-col gap-6 bg-surface-light rounded-lg p-6 w-96' onClick={(e) => e.stopPropagation()}>
         <div className='flex flex-col gap-2'>
