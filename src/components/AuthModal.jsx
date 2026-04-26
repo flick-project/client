@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useToast } from '../hooks/useToast'
 import { useAuth } from '../hooks/useAuth.js'
 import { apiRequest } from '../services/api.js'
+import Modal from './Modal.jsx'
 import Input from '../components/Input.jsx'
 import Button from '../components/Button.jsx'
 
@@ -22,14 +23,18 @@ export default function AuthModal ({ onClose }) {
   const { showToast } = useToast()
   const { login } = useAuth()
 
+  /**
+   * Validate registration fields and return all errors at once.
+   * @returns {object} Validation errors.
+   */
   const validateRegistration = () => {
     const newErrors = {}
 
     if (displayName.length < 3) {
-      setErrors({ displayName: 'Nickname must be at least 3 characters' })
+      newErrors.displayName = 'Nickname must be at least 3 characters'
     }
     if (password.length < 10) {
-      setErrors({ password: 'Password must be at least 10 characters' })
+      newErrors.password = 'Password must be at least 10 characters'
     }
 
     return newErrors
@@ -57,16 +62,13 @@ export default function AuthModal ({ onClose }) {
 
     // Collect and display all client-side errors at once.
     if (!isLogin) {
-      if (!isLogin) {
-        const validationErrors = validateRegistration()
-        if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors)
-          return
-        }
+      const validationErrors = validateRegistration()
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors)
+        return
       }
     }
 
-    // Disable fields during processing.
     setIsLoading(true)
 
     const endpoint = isLogin ? '/login' : '/register'
@@ -83,14 +85,13 @@ export default function AuthModal ({ onClose }) {
 
       if (!isLogin) {
         showToast('Registration successful!', 'success')
-        onClose()
       }
-
       if (isLogin) {
+        // Store token on login before closing.
         login(data.token)
         showToast('Logged in successfully!', 'success')
-        onClose()
       }
+      onClose()
     } catch (err) {
       console.error(err)
       setErrors({ general: err.message || 'Something went wrong. Please try again.' })
@@ -100,59 +101,50 @@ export default function AuthModal ({ onClose }) {
   }
 
   return (
-    // Backdrop. Closes modal on click.
-    <div
-      className='fixed inset-0 flex items-center justify-center bg-black/50 z-50'
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}
-    >
-      {/* Modal content. Stops click from reaching backdrop. */}
-      <div className='flex flex-col gap-6 bg-surface-light rounded-lg p-6 w-96' onClick={(e) => e.stopPropagation()}>
-        <div className='flex flex-col gap-2'>
-          <div className='flex justify-end'>
-            <button onClick={onClose} className='p-2 bg-surface rounded-full cursor-pointer'>
-              <X size={20} />
-            </button>
-          </div>
-          <h2 className='text-xl font-bold text-center'>
-            {isLogin ? 'Log in to Flick' : 'Sign up for Flick'}
-          </h2>
+    <Modal onClose={onClose}>
+      <div className='flex flex-col gap-2'>
+        <div className='flex justify-end'>
+          <button onClick={onClose} className='p-2 bg-surface rounded-full cursor-pointer'>
+            <X size={20} />
+          </button>
         </div>
-
-        {errors.general && <p className='text-red-500 text-sm text-center'>{errors.general}</p>}
-
-        <div className='flex flex-col gap-6'>
-          <form id='auth-form' className='flex flex-col gap-4' onSubmit={handleSubmit}>
-            <Input
-              type='email' required disabled={isLoading} placeholder='Email' value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {!isLogin &&
-              <Input
-                type='text' required disabled={isLoading} placeholder='Nickname' value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />}
-            <Input
-              type='password' required disabled={isLoading} placeholder='Password' value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {errors.password && <p className='text-red-500 text-sm text-center'>{errors.password}</p>}
-          </form>
-          <Button type='submit' form='auth-form' disabled={isLoading}>
-            {isLoading ? 'Processing...' : (isLogin ? 'Log in' : 'Sign up')}
-          </Button>
-        </div>
-
-        <hr className='border-slate-700' />
-
-        {/* Toggle between login and registration. */}
-        <p className='text-sm text-slate-400 text-center'>
-          {isLogin
-            ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
-            : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
-        </p>
+        <h2 className='text-xl font-bold text-center'>
+          {isLogin ? 'Log in to Flick' : 'Sign up for Flick'}
+        </h2>
       </div>
-    </div>
+
+      {errors.general && <p className='text-red-500 text-sm text-center'>{errors.general}</p>}
+
+      <div className='flex flex-col gap-6'>
+        <form id='auth-form' className='flex flex-col gap-4' onSubmit={handleSubmit}>
+          <Input
+            type='email' required disabled={isLoading} placeholder='Email' value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {!isLogin &&
+            <Input
+              type='text' required disabled={isLoading} placeholder='Nickname' value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />}
+          <Input
+            type='password' required disabled={isLoading} placeholder='Password' value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {errors.password && <p className='text-red-500 text-sm text-center'>{errors.password}</p>}
+        </form>
+        <Button type='submit' form='auth-form' disabled={isLoading}>
+          {isLoading ? 'Processing...' : (isLogin ? 'Log in' : 'Sign up')}
+        </Button>
+      </div>
+
+      <hr className='border-slate-700' />
+
+      {/* Toggle between login and registration. */}
+      <p className='text-sm text-slate-400 text-center'>
+        {isLogin
+          ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
+          : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
+      </p>
+    </Modal>
   )
 }
