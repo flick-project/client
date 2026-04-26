@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Compass, Bookmark, User } from 'lucide-react'
+import { Film, Compass, Bookmark, User } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
 import { useNavigate } from 'react-router-dom'
@@ -24,9 +24,12 @@ function Navigation () {
   }
 
   return (
-    <nav className='flex flex-col gap-6'>
-      <h1 className='text-2xl font-semibold'>Flick</h1>
-      <ul className='flex flex-col gap-2'>
+    <nav className='flex flex-col gap-8'>
+      <div className='flex items-center gap-4'>
+        <Film size={32} className='text-brand' />
+        <h1 className='text-2xl font-semibold'>Flick</h1>
+      </div>
+      <ul className='flex flex-col gap-1'>
         <li>
           <Link to='/' className='flex items-center gap-4 py-2 hover:text-brand'>
             <Compass size={20} />

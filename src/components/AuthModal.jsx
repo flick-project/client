@@ -22,6 +22,19 @@ export default function AuthModal ({ onClose }) {
   const { showToast } = useToast()
   const { login } = useAuth()
 
+  const validateRegistration = () => {
+    const newErrors = {}
+
+    if (displayName.length < 3) {
+      setErrors({ displayName: 'Nickname must be at least 3 characters' })
+    }
+    if (password.length < 10) {
+      setErrors({ password: 'Password must be at least 10 characters' })
+    }
+
+    return newErrors
+  }
+
   /**
    * Reset form fields and errors when switching between login and register.
    * @param {boolean} toLogin - Whether to switch to login mode.
@@ -42,14 +55,14 @@ export default function AuthModal ({ onClose }) {
     e.preventDefault()
     setErrors({})
 
-    // Validation
+    // Collect and display all client-side errors at once.
     if (!isLogin) {
-      if (displayName.length < 3) {
-        setErrors({ displayName: 'Nickname must be at least 3 characters' })
-      }
-      if (password.length < 10) {
-        setErrors({ password: 'Password must be at least 10 characters' })
-        return
+      if (!isLogin) {
+        const validationErrors = validateRegistration()
+        if (Object.keys(validationErrors).length > 0) {
+          setErrors(validationErrors)
+          return
+        }
       }
     }
 
@@ -112,28 +125,16 @@ export default function AuthModal ({ onClose }) {
         <div className='flex flex-col gap-6'>
           <form id='auth-form' className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <Input
-              type='email'
-              required
-              disabled={isLoading}
-              placeholder='Email'
-              value={email}
+              type='email' required disabled={isLoading} placeholder='Email' value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             {!isLogin &&
               <Input
-                type='text'
-                required
-                disabled={isLoading}
-                placeholder='Nickname'
-                value={displayName}
+                type='text' required disabled={isLoading} placeholder='Nickname' value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
               />}
             <Input
-              type='password'
-              required
-              disabled={isLoading}
-              placeholder='Password'
-              value={password}
+              type='password' required disabled={isLoading} placeholder='Password' value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             {errors.password && <p className='text-red-500 text-sm text-center'>{errors.password}</p>}
