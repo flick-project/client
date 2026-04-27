@@ -16,10 +16,10 @@ function App () {
   return (
     <div className='flex h-screen'>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <aside className='w-48 md:w-64 bg-surface-light p-4 md:p-6 h-full'>
+      <aside className='w-64 p-6 h-full'>
         <Navigation />
       </aside>
-      <main className='flex-1 flex items-center justify-center p-8 overflow-y-auto'>
+      <main className='flex-1 flex items-center justify-center p-4 overflow-y-auto'>
         <Routes>
           <Route path='/' element={<DiscoveryPage />} />
           <Route path='/' element={<WatchlistPage />} />
