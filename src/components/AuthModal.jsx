@@ -140,7 +140,7 @@ export default function AuthModal ({ onClose }) {
       <hr className='border-slate-700' />
 
       {/* Toggle between login and registration. */}
-      <p className='text-sm text-slate-400 text-center'>
+      <p className='text-sm text-text-muted text-center'>
         {isLogin
           ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
           : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
