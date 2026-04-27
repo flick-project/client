@@ -1,4 +1,5 @@
 import { Star } from 'lucide-react'
+import { GENRES } from '../utils/genres.js'
 
 /**
  * Wrapper component for the movie card layout.
@@ -38,14 +39,20 @@ export default function MovieCard ({ movie, error }) {
   return (
     <CardWrapper>
       <div className='h-full bg-cover bg-center text-white rounded-[inherit]' style={{ backgroundImage: `url(${posterUrl})` }}>
-        <div className='flex flex-col justify-end gap-2 w-full h-full bg-linear-to-t from-black/90 via-black/50 via-30% to-transparent p-6 text-shadow-md'>
-          <h1 className='text-2xl font-semibold'>{movie.title}</h1>
+        <div className='flex flex-col justify-end gap-3 w-full h-full bg-linear-to-t from-black/90 via-black/50 via-30% to-transparent p-6 text-shadow-md'>
+          <h1 className='text-2xl font-semibold leading-none'>{movie.title}</h1>
           <div className='flex items-center gap-4'>
-            <span className='flex items-center'>
+            <span className='flex items-center gap-1 leading-none'>
               <Star size={20} fill='var(--color-brand)' stroke='var(--color-brand)' />
-              {movie.vote_average.toFixed(1)}<span className='text-white/70'>/10 ({movie.vote_count})</span>
+              {movie.vote_average.toFixed(1)}<span className='text-white/70'>({movie.vote_count})</span>
             </span>
             <span>{new Date(movie.release_date).getFullYear()}</span>
+            <span className='flex gap-2'>{movie.genre_ids.slice(0, 3).map(id => (
+              <span key={id} className='px-2 py-1 text-xs rounded-full bg-white/20 backdrop-blur-xs'>
+                {GENRES[id]}
+              </span>
+            ))}
+            </span>
           </div>
           <p className='line-clamp-3'>{movie.overview}</p>
         </div>

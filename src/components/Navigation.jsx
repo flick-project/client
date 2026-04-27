@@ -33,25 +33,25 @@ function Navigation () {
   return (
     <nav className='flex flex-col gap-8'>
       <div className='flex items-center gap-4'>
-        <Film size={32} className='text-brand' />
+        <Film size={32} className='text-brand rotate-90' />
         <h1 className='text-2xl font-semibold'>Flick</h1>
       </div>
-      <ul className='flex flex-col gap-1'>
+      <ul className='flex flex-col gap-2'>
         <li>
           <Link to='/' className='flex items-center gap-4 py-2 hover:text-brand'>
-            <Compass size={20} />
+            <Compass size={24} />
             Discover
           </Link>
         </li>
         <li>
           <Link to='/watchlist' onClick={requireAuth} className='flex items-center gap-4 py-2 hover:text-brand'>
-            <Bookmark size={20} />
+            <Bookmark size={24} />
             Watchlist
           </Link>
         </li>
         <li>
           <Link to='/profile' onClick={requireAuth} className='flex items-center gap-4 py-2 hover:text-brand'>
-            <User size={20} />
+            <User size={24} />
             {user ? user.displayName : <span>Profile</span>}
           </Link>
         </li>
@@ -62,6 +62,8 @@ function Navigation () {
         : <Button onClick={() => setIsAuthOpen(true)}>Log in</Button>}
 
       {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
+      <hr className='border-white/10' />
+      <small className='w-full text-center text-xs text-white/40'>Movie data provided by TMDB</small>
     </nav>
   )
 }
