@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Film, Compass, Bookmark, User } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
-import { useNavigate } from 'react-router-dom'
 import AuthModal from './AuthModal.jsx'
 import Button from './Button.jsx'
 import { useToast } from '../hooks/useToast.js'
@@ -16,6 +15,14 @@ function Navigation () {
   const { showToast } = useToast()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const navigate = useNavigate()
+
+  // Open the auth modal if the user is not logged in.
+  const requireAuth = (e) => {
+    if (!user) {
+      e.preventDefault()
+      setIsAuthOpen(true)
+    }
+  }
 
   const handleLogout = () => {
     logout()
@@ -37,17 +44,15 @@ function Navigation () {
           </Link>
         </li>
         <li>
-          <Link to='/watchlist' className='flex items-center gap-4 py-2 hover:text-brand'>
+          <Link to='/watchlist' onClick={requireAuth} className='flex items-center gap-4 py-2 hover:text-brand'>
             <Bookmark size={20} />
             Watchlist
           </Link>
         </li>
         <li>
-          <Link to='/profile' className='flex items-center gap-4 py-2 hover:text-brand'>
+          <Link to='/profile' onClick={requireAuth} className='flex items-center gap-4 py-2 hover:text-brand'>
             <User size={20} />
-            {user
-              ? user.displayName
-              : <span>Profile</span>}
+            {user ? user.displayName : <span>Profile</span>}
           </Link>
         </li>
       </ul>
