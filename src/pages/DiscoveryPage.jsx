@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import MovieCard from '../components/MovieCard.jsx'
-import { apiRequest } from '../services/api.js'
+import { useApi } from '../hooks/useApi.jsx'
 import DiscoveryControls from '../components/DiscoveryControls.jsx'
 
 /**
@@ -12,12 +12,13 @@ export default function DiscoveryPage () {
   const [movies, setMovies] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [error, setError] = useState(null)
+  const api = useApi()
 
   // Mount and fetch movie suggestions.
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const result = await apiRequest(`/movies/discover?page=${page}`)
+        const result = await api(`/movies/discover?page=${page}`)
         setMovies(result.movies)
       } catch (err) {
         console.error(err)
@@ -25,16 +26,13 @@ export default function DiscoveryPage () {
       }
     }
     fetchMovies()
-  }, [page])
+  }, [api, page])
 
   const handleInteraction = async (type) => {
     try {
       const body = { movieId: movies[currentIndex].id, interaction: type }
 
-      await apiRequest('/movies/interact', {
-        method: 'POST',
-        body: JSON.stringify(body)
-      })
+      await api('/movies/interact', { method: 'POST', body: JSON.stringify(body) })
 
       setCurrentIndex(currentIndex + 1)
     } catch (err) {

@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react'
-import { apiRequest } from '../services/api.js'
 import IconButton from './IconButton.jsx'
 import { X, Bookmark } from 'lucide-react'
 
 /**
- *
- 
- * @param root0
- * @param root0.interaction
+ * Navigation controls for the discovery flow (skip, save).
+ * @param {object} props - Component props.
+ * @param {function(string): Promise<void>} props.interaction - Handler for movie interactions.
+ * @returns {React.ReactElement} The DiscoveryControls component.
  */
 export default function DiscoveryControls ({ interaction }) {
   return (
