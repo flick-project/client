@@ -21,7 +21,7 @@ export default function DiscoveryPage () {
         setMovies(result.movies)
       } catch (err) {
         console.error(err)
-        setError({ general: err.message || 'Something went wrong. Please try again.' })
+        setError(err.message || 'Something went wrong. Please try again.')
       }
     }
     fetchMovies()
@@ -39,7 +39,7 @@ export default function DiscoveryPage () {
       setCurrentIndex(currentIndex + 1)
     } catch (err) {
       console.error(err)
-      setError({ general: err.message || 'Something went wrong. Please try again.' })
+      setError(err.message || 'Something went wrong. Please try again.')
     }
   }
 
