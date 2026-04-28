@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import MovieCard from '../components/MovieCard.jsx'
 import { apiRequest } from '../services/api.js'
+import DiscoveryControls from '../components/DiscoveryControls.jsx'
 
 /**
  * Discovery page where users swipe through movie suggestions.
  * @returns {React.ReactElement} The DiscoveryPage component.
  */
-function DiscoveryPage () {
+export default function DiscoveryPage () {
   const [page, setPage] = useState(1)
   const [movies, setMovies] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -26,9 +27,26 @@ function DiscoveryPage () {
     fetchMovies()
   }, [page])
 
+  const handleInteraction = async (type) => {
+    try {
+      const body = { movieId: movies[currentIndex].id, interaction: type }
+
+      await apiRequest('/movies/interact', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      })
+
+      setCurrentIndex(currentIndex + 1)
+    } catch (err) {
+      console.error(err)
+      setError({ general: err.message || 'Something went wrong. Please try again.' })
+    }
+  }
+
   return (
-    <MovieCard movie={movies[currentIndex]} error={error} />
+    <div className='flex flex-col items-center gap-4'>
+      <MovieCard movie={movies[currentIndex]} error={error} />
+      <DiscoveryControls interaction={handleInteraction} />
+    </div>
   )
 }
-
-export default DiscoveryPage
