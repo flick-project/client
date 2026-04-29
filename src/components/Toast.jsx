@@ -32,11 +32,11 @@ export default function Toast ({ message, type, onClose }) {
   const isSuccess = type === 'success'
 
   return (
-    <div className={`fixed top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 p-4 rounded-lg border shadow-lg/20 overflow-hidden transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'} ${isSuccess ? 'bg-green-900 border-green-500 text-green-500' : 'bg-red-950 border-red-500 text-red-500'}`}>
+    <div className={`fixed top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 p-4 px-6 rounded-lg border shadow-lg overflow-hidden transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'} ${isSuccess ? 'bg-green-900 border-green-500 text-green-500' : 'bg-red-950 border-red-500 text-red-500'}`}>
       {isSuccess ? <CircleCheck size={20} color='currentColor' /> : <CircleX size={20} color='currentColor' />}
       <p className='text-sm text-center'>{message}</p>
 
-      <div className={`absolute bottom-0 left-0 h-1 ${isSuccess ? 'bg-green-500' : 'bg-red-500'} bg-green-300 transition-all ${isVisible ? 'w-full' : 'w-0'}`} style={{ transitionDuration: `${timer}ms`, width: barActive ? '0%' : '100%' }} />
+      <div className={`absolute bottom-0 left-0 h-1 ${isSuccess ? 'bg-green-500/50' : 'bg-red-500/50'} bg-green-300 transition-all ${isVisible ? 'w-full' : 'w-0'}`} style={{ transitionDuration: `${timer}ms`, width: barActive ? '0%' : '100%' }} />
     </div>
   )
 }

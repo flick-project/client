@@ -44,7 +44,7 @@ export default function MovieCard ({ movie, error }) {
           <div className='flex items-center gap-4'>
             <span className='flex items-center gap-1 leading-none'>
               <Star size={20} fill='var(--color-brand)' stroke='var(--color-brand)' />
-              {movie.vote_average.toFixed(1)}<span className='text-white/70'>({movie.vote_count})</span>
+              {Number(movie.vote_average).toFixed(1)}<span className='text-white/70'>({movie.vote_count})</span>
             </span>
             <span>{new Date(movie.release_date).getFullYear()}</span>
             <span className='flex gap-2'>{movie.genre_ids.slice(0, 3).map(id => (
