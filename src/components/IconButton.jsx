@@ -7,11 +7,12 @@ import { useState } from 'react'
  * @param {string} [props.backgroundColor] - Tailwind background color class.
  * @param {string} [props.borderColor] - Tailwind border color class.
  * @param {string} [props.textColor] - Tailwind text color class.
+ * @param props.animation
  * @param {boolean} [props.disabled] - Whether the button is disabled.
  * @param {() => void} [props.onClick] - Click handler.
  * @returns {React.ReactElement} The IconButton component.
  */
-export default function IconButton ({ icon, backgroundColor, borderColor, textColor, disabled, onClick }) {
+export default function IconButton ({ icon, backgroundColor, borderColor, textColor, animation, disabled, onClick }) {
   const [clicked, setClicked] = useState(false)
 
   const handleClick = () => {
@@ -31,7 +32,7 @@ export default function IconButton ({ icon, backgroundColor, borderColor, textCo
       disabled={disabled}
       onClick={handleClick}
     >
-      <Icon size={32} strokeWidth='1.5' fill='currentColor' fillOpacity={clicked ? 1 : 0} className='transition-all duration-150' />
+      <Icon size={32} strokeWidth='1.5' fill='currentColor' fillOpacity={animation === 'fill' && clicked ? 1 : 0} className='transition-all duration-150' />
     </button>
   )
 }

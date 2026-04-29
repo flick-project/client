@@ -13,6 +13,7 @@ export default function DiscoveryPage () {
   const [movies, setMovies] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [error, setError] = useState(null)
+  const [canGoBack, setCanGoBack] = useState(false)
   const { showToast } = useToast()
   const api = useApi()
 
@@ -37,16 +38,24 @@ export default function DiscoveryPage () {
       await api('/movies/interact', { method: 'POST', body: JSON.stringify(body) })
 
       setCurrentIndex(currentIndex + 1)
+      setCanGoBack(true)
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
     }
   }
 
+  const handleBack = () => {
+    if (canGoBack && currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1)
+      setCanGoBack(false)
+    }
+  }
+
   return (
     <div className='flex flex-col items-center gap-4'>
       <MovieCard movie={movies[currentIndex]} error={error} />
-      <DiscoveryControls interaction={handleInteraction} />
+      <DiscoveryControls interaction={handleInteraction} handleBack={handleBack} canGoBack={canGoBack} />
     </div>
   )
 }
