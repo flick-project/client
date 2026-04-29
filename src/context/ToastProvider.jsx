@@ -11,7 +11,8 @@ export function ToastProvider ({ children }) {
   const [toast, setToast] = useState(null)
 
   const showToast = (message, type = 'success') => {
-    setToast({ message, type })
+    setToast(null)
+    requestAnimationFrame(() => setToast({ message, type }))
   }
 
   return (

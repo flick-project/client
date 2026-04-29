@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import MovieCard from '../components/MovieCard.jsx'
 import { useApi } from '../hooks/useApi.jsx'
 import DiscoveryControls from '../components/DiscoveryControls.jsx'
+import { useToast } from '../hooks/useToast'
 
 /**
  * Discovery page where users swipe through movie suggestions.
@@ -12,6 +13,7 @@ export default function DiscoveryPage () {
   const [movies, setMovies] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [error, setError] = useState(null)
+  const { showToast } = useToast()
   const api = useApi()
 
   // Mount and fetch movie suggestions.
@@ -37,7 +39,7 @@ export default function DiscoveryPage () {
       setCurrentIndex(currentIndex + 1)
     } catch (err) {
       console.error(err)
-      setError(err.message || 'Something went wrong. Please try again.')
+      showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
     }
   }
 
