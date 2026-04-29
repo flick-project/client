@@ -7,7 +7,7 @@ import { useState } from 'react'
  * @param {string} [props.backgroundColor] - Tailwind background color class.
  * @param {string} [props.borderColor] - Tailwind border color class.
  * @param {string} [props.textColor] - Tailwind text color class.
- * @param props.animation
+ * @param {string} [props.animation] - Animation type on click (e.g. 'fill').
  * @param {boolean} [props.disabled] - Whether the button is disabled.
  * @param {() => void} [props.onClick] - Click handler.
  * @returns {React.ReactElement} The IconButton component.

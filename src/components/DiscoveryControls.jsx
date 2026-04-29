@@ -2,11 +2,11 @@ import IconButton from './IconButton.jsx'
 import { RotateCcw, X, Bookmark } from 'lucide-react'
 
 /**
- * Navigation controls for the discovery flow (skip, save).
+ * Navigation controls for the discovery flow (back, skip, save).
  * @param {object} props - Component props.
  * @param {function(string): Promise<void>} props.interaction - Handler for movie interactions.
- * @param props.handleBack
- * @param props.canGoBack
+ * @param {function(): void} props.handleBack - Handler to return to the previous movie.
+ * @param {boolean} props.canGoBack - Whether the back button is enabled.
  * @returns {React.ReactElement} The DiscoveryControls component.
  */
 export default function DiscoveryControls ({ interaction, handleBack, canGoBack }) {

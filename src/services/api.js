@@ -6,6 +6,12 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1'
 
+let authToken = null
+
+export const setAuthToken = (token) => {
+  authToken = token
+}
+
 /**
  * Send a request to the API.
  * @param {string} endpoint - The API endpoint.
@@ -17,17 +23,15 @@ export const apiRequest = async (endpoint, options = {}) => {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...(authToken && { Authorization: `Bearer ${authToken}` }),
       ...options.headers
     }
   })
-
   const data = await res.json()
-
   if (!res.ok) {
     const error = new Error(data.message || 'Request failed.')
     error.status = res.status
     throw error
   }
-
   return data
 }

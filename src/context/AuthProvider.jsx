@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AuthContext } from './AuthContext.jsx'
+import { setAuthToken } from '../services/api.js'
 import { SquareUser } from 'lucide-react'
 
 /**
@@ -14,6 +15,7 @@ export function AuthProvider ({ children }) {
 
   const login = (newToken) => {
     setToken(newToken)
+    setAuthToken(newToken)
 
     // Decode base64 to store user info.
     const payload = JSON.parse(atob(newToken.split('.')[1]))
@@ -27,6 +29,7 @@ export function AuthProvider ({ children }) {
   const logout = () => {
     setToken(null)
     setUser(null)
+    setAuthToken(null)
   }
 
   return (
