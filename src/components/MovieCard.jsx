@@ -2,20 +2,6 @@ import { Star } from 'lucide-react'
 import { GENRES } from '../utils/genres.js'
 
 /**
- * Wrapper component for the movie card layout.
- * @param {object} props - The component props.
- * @param {React.ReactNode} props.children - The content to render inside the card.
- * @returns {React.ReactElement} The CardWrapper component.
- */
-function CardWrapper ({ children }) {
-  return (
-    <div className='w-full max-w-xl aspect-2/3 bg-surface-light rounded-xl outline-1 outline-solid outline-white/10 overflow-hidden'>
-      {children}
-    </div>
-  )
-}
-
-/**
  * Displays a movie card with poster, title, score, and overview.
  * Shows an error or loading state when movie data is unavailable.
  * @param {object} props - The component props.
@@ -26,37 +12,45 @@ function CardWrapper ({ children }) {
 export default function MovieCard ({ movie, error }) {
   if (error || !movie) {
     return (
-      <CardWrapper>
-        <div className='flex items-center justify-center h-full'>
-          <h1 className='text-2xl font-semibold'>{error || 'Loading...'}</h1>
-        </div>
-      </CardWrapper>
+      <div className='flex items-center justify-center w-full max-h-full aspect-2/3 rounded-xl bg-surface-light'>
+        <h1 className='text-2xl font-semibold'>{error || 'Loading...'}</h1>
+      </div>
     )
   }
 
-  const posterUrl = `https://image.tmdb.org/t/p/w780${movie.poster_path}`
+  const posterSrc = `https://image.tmdb.org/t/p/w780${movie.poster_path}`
 
   return (
-    <CardWrapper>
-      <div className='h-full bg-cover bg-center text-white rounded-[inherit]' style={{ backgroundImage: `url(${posterUrl})` }}>
-        <div className='flex flex-col justify-end gap-3 w-full h-full bg-linear-to-t from-black/90 via-black/50 via-30% to-transparent p-6 text-shadow-md'>
+    <div className='max-h-full min-h-0 relative aspect-2/3 rounded-xl overflow-hidden'>
+      <div className='relative h-full'>
+        <img
+          src={posterSrc}
+          alt={movie.title}
+          className='absolute inset-0 w-full h-full object-cover'
+          style={{ maskImage: 'linear-gradient(to bottom, white 60%, rgba(255,255,255,0.3) 85%, rgba(255,255,255,0.15) 100%)' }}
+        />
+        <div className='absolute inset-0 bg-black -z-10' />
+        <div className='relative flex flex-col justify-end gap-3 w-full h-full p-6 text-white text-shadow-md'>
           <h1 className='text-2xl font-semibold leading-none'>{movie.title}</h1>
           <div className='flex items-center gap-4'>
             <span className='flex items-center gap-1 leading-none'>
               <Star size={20} fill='var(--color-brand)' stroke='var(--color-brand)' />
-              {Number(movie.vote_average).toFixed(1)}<span className='text-white/70'>({movie.vote_count})</span>
+              {Number(movie.vote_average).toFixed(1)}
+              <span className='text-white/70'>({movie.vote_count})</span>
             </span>
             <span>{new Date(movie.release_date).getFullYear()}</span>
-            <span className='flex gap-2'>{movie.genre_ids.slice(0, 3).map(id => (
-              <span key={id} className='px-2 py-1 text-xs rounded-full bg-white/20 backdrop-blur-xs'>
-                {GENRES[id]}
-              </span>
-            ))}
+            <span className='flex gap-2'>
+              {movie.genre_ids.slice(0, 3).map(id => (
+                <span key={id} className='px-2 py-1 text-xs rounded-full bg-white/20 backdrop-blur-xs'>
+                  {GENRES[id]}
+                </span>
+              ))}
             </span>
           </div>
           <p className='line-clamp-3'>{movie.overview}</p>
         </div>
       </div>
-    </CardWrapper>
+      <div className='absolute inset-0 rounded-xl border border-white/10 pointer-events-none z-10' />
+    </div>
   )
 }

@@ -12,9 +12,9 @@ import { RotateCcw, X, Bookmark } from 'lucide-react'
 export default function DiscoveryControls ({ interaction, handleBack, canGoBack }) {
   return (
     <div className='flex gap-8'>
-      <IconButton onClick={handleBack} disabled={!canGoBack} icon={RotateCcw} backgroundColor='bg-neutral-400/10' borderColor='border-neutral-400/25' textColor='text-neutral-400' />
-      <IconButton onClick={() => interaction('skipped')} icon={X} backgroundColor='bg-red-500/10' borderColor='border-red-500/25' textColor='text-red-500' />
-      <IconButton onClick={() => interaction('saved')} icon={Bookmark} backgroundColor='bg-yellow-500/10' borderColor='border-yellow-500/25' textColor='text-yellow-500' animation='fill' />
+      <IconButton onClick={handleBack} disabled={!canGoBack} icon={RotateCcw} backgroundColor='bg-neutral-500/15' borderColor='border-neutral-500/40' textColor='text-neutral-400' />
+      <IconButton onClick={() => interaction('skipped')} icon={X} backgroundColor='bg-red-500/15' borderColor='border-red-400/30' textColor='text-red-400' />
+      <IconButton onClick={() => interaction('saved')} icon={Bookmark} backgroundColor='bg-yellow-500/15' borderColor='border-yellow-400/30' textColor='text-yellow-400' animation='fill' />
     </div>
   )
 }
