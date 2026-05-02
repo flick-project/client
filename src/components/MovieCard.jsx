@@ -21,7 +21,7 @@ export default function MovieCard ({ movie, error }) {
   const posterSrc = `https://image.tmdb.org/t/p/w780${movie.poster_path}`
 
   return (
-    <div className='max-h-full min-h-0 relative aspect-2/3 rounded-xl overflow-hidden'>
+    <div className='max-h-full relative aspect-2/3 rounded-xl overflow-hidden'>
       <div className='relative h-full'>
         <img
           src={posterSrc}
