@@ -18,10 +18,10 @@ function App () {
   return (
     <div className='flex h-screen'>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <aside className='w-64 p-4 lg:p-6 lg:py-8 h-full'>
+      <aside>
         <Navigation />
       </aside>
-      <main className='flex-1 flex items-center justify-center p-4 lg:p-8 overflow-y-auto'>
+      <main className='flex-1 flex items-center justify-center p-4 xl:p-8 overflow-y-auto'>
         <Routes>
           <Route path='/' element={<DiscoveryPage key={token} />} />
           <Route path='/' element={<WatchlistPage />} />

@@ -66,7 +66,7 @@ export default function DiscoveryPage () {
   console.log('page:', page, 'currentIndex:', currentIndex, 'movies.length:', movies.length)
 
   return (
-    <div className='flex flex-col items-center justify-center gap-4 lg:gap-6 h-full'>
+    <div className='flex flex-col items-center justify-center gap-4 xl:gap-6 h-full'>
       <MovieCard movie={movies[currentIndex]} error={error} />
       <DiscoveryControls interaction={handleInteraction} handleBack={handleBack} canGoBack={canGoBack} />
     </div>

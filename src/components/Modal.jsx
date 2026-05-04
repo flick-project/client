@@ -15,7 +15,7 @@ export default function Modal ({ onClose, children }) {
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div className='flex flex-col gap-6 bg-surface-light rounded-lg p-6 w-96'>
+      <div className='flex flex-col gap-6 bg-surface-light rounded-lg border border-white/10 p-6 w-96'>
         {children}
       </div>
     </div>

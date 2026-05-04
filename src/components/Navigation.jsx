@@ -31,26 +31,26 @@ function Navigation () {
   }
 
   return (
-    <nav className='flex flex-col gap-8'>
-      <div className='flex items-center gap-4'>
-        <Film size={32} className='text-brand rotate-90' />
-        <h1 className='text-2xl font-semibold'>Flick</h1>
+    <nav className='w-60 h-full flex flex-col gap-8 p-6'>
+      <div className='flex items-center gap-2'>
+        <Film size={28} className='text-brand rotate-90' />
+        <h1 className='text-xl font-semibold'>Flick</h1>
       </div>
-      <ul className='flex flex-col gap-2'>
+      <ul className='flex flex-col gap-2 text-sm font-medium'>
         <li>
-          <Link to='/' className='flex items-center gap-4 py-2 hover:text-brand'>
+          <Link to='/' className='flex items-center gap-3 py-2 hover:text-brand'>
             <Compass size={24} />
             Discover
           </Link>
         </li>
         <li>
-          <Link to='/watchlist' onClick={requireAuth} className='flex items-center gap-4 py-2 hover:text-brand'>
+          <Link to='/watchlist' onClick={requireAuth} className='flex items-center gap-3 py-2 hover:text-brand'>
             <Bookmark size={24} />
             Watchlist
           </Link>
         </li>
         <li>
-          <Link to='/profile' onClick={requireAuth} className='flex items-center gap-4 py-2 hover:text-brand'>
+          <Link to='/profile' onClick={requireAuth} className='flex items-center gap-3 py-2 hover:text-brand'>
             <User size={24} />
             {user ? user.displayName : <span>Profile</span>}
           </Link>
@@ -58,12 +58,12 @@ function Navigation () {
       </ul>
       {/* Show login if user isn't logged in, and logout if they are. */}
       {user
-        ? <Button onClick={handleLogout}>Log out</Button>
-        : <Button onClick={() => setIsAuthOpen(true)}>Log in</Button>}
+        ? <Button className='w-fill' onClick={handleLogout}>Log out</Button>
+        : <Button className='w-fill' onClick={() => setIsAuthOpen(true)}>Log in</Button>}
 
       {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
       <hr className='border-white/10' />
-      <small className='w-full text-center text-xs text-white/40'>Movie data provided by TMDB</small>
+      <small className='w-full text-xs text-white/40'>Movie data provided by TMDB</small>
     </nav>
   )
 }
