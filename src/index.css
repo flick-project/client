@@ -3,10 +3,10 @@
 @theme {
   --font-sans: 'Inter', sans-serif;
   --color-brand: var(--color-red-500);
-  --color-surface: var(--color-slate-950);
-  --color-surface-light: var(--color-slate-900);
-  --color-text: var(--color-slate-50);
-  --color-text-muted: var(--color-slate-400)
+  --color-surface: var(--color-gray-950);
+  --color-surface-light: var(--color-gray-900);
+  --color-text: var(--color-white);
+  --color-text-muted: var(--color-gray-400)
 }
 
 @layer base {
@@ -29,4 +29,9 @@
   font-weight: 100 900;
   font-display: swap;
   src: url("./assets/fonts/InterVariable-Italic.woff2") format("woff2");
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.15) transparent;
 }

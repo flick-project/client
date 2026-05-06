@@ -21,11 +21,11 @@ function App () {
       <aside>
         <Navigation />
       </aside>
-      <main className='flex-1 flex items-center justify-center p-4 xl:p-8 overflow-y-auto'>
+      <main className='flex flex-1 justify-center overflow-y-auto'>
         <Routes>
           <Route path='/' element={<DiscoveryPage key={token} />} />
-          <Route path='/' element={<WatchlistPage />} />
-          <Route path='/' element={<ProfilePage />} />
+          <Route path='/watchlist' element={<WatchlistPage />} />
+          <Route path='/profile' element={<ProfilePage />} />
         </Routes>
       </main>
     </div>
