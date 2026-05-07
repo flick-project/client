@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { apiRequest } from '../services/api.js'
-import WatchlistCard from '../components/WatchlistCard.jsx'
+import { useToast } from '../hooks/useToast'
 import { ChevronDown } from 'lucide-react'
+import WatchlistCard from '../components/WatchlistCard.jsx'
 
 /**
  * Watchlist page where users manage their saved movies.
  * @returns {React.ReactElement} The WatchlistPage component.
  */
 export default function WatchlistPage () {
+  const { showToast } = useToast()
   const [page, setPage] = useState(1)
   const [movies, setMovies] = useState([])
   const [hasMore, setHasMore] = useState(true)
@@ -49,8 +51,19 @@ export default function WatchlistPage () {
     return () => observer.disconnect()
   }, [hasMore, movies.length])
 
+  const handleToggleSave = async (movieId, isSaved) => {
+    try {
+      isSaved
+        ? await apiRequest(`/watchlist/${movieId}`, { method: 'DELETE' })
+        : await apiRequest('/movies/interact', { method: 'POST', body: JSON.stringify({ movieId, interaction: 'saved' }) })
+    } catch (err) {
+      console.error(err)
+      showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
+    }
+  }
+
   return (
-    <div className='flex flex-col gap-6 py-6 px-4 max-w-7xl size-full'>
+    <div className='flex flex-col gap-8 py-6 px-4 max-w-7xl size-full'>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-medium text-gray-400'>{`${movies.length} movies`}</span>
         <div className='relative'>
@@ -63,9 +76,9 @@ export default function WatchlistPage () {
       {movies.length === 0 && hasMore && <p className='flex items-center justify-center'>Loading...</p>}
       {movies.length === 0 && !hasMore && <p className='flex items-center justify-center'>No saved movies yet.</p>}
       {movies.length > 0 && (
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
-          {movies.map(movie => (<WatchlistCard key={movie.tmdb_id} movie={movie} />))}
-          <div className='mb-4' ref={bottomRef} />
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4'>
+          {movies.map(movie => (<WatchlistCard key={movie.tmdb_id} movie={movie} onToggle={(isSaved) => handleToggleSave(movie.tmdb_id, isSaved)} />))}
+          <div ref={bottomRef} />
         </div>
       )}
     </div>
