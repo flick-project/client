@@ -21,7 +21,7 @@ export default function MovieCard ({ movie, error }) {
   const posterSrc = `https://image.tmdb.org/t/p/w780${movie.poster_path}`
 
   return (
-    <div className='max-h-full relative aspect-2/3 rounded-xl overflow-hidden'>
+    <div className='max-h-full relative aspect-2/3 rounded-2xl overflow-hidden'>
       <div className='relative h-full'>
         <img
           src={posterSrc}
@@ -50,7 +50,7 @@ export default function MovieCard ({ movie, error }) {
           <p className='line-clamp-3'>{movie.overview}</p>
         </div>
       </div>
-      <div className='absolute inset-0 rounded-xl border border-white/10 pointer-events-none z-10' />
+      <div className='absolute inset-0 rounded-2xl border border-white/10 pointer-events-none z-10' />
     </div>
   )
 }
