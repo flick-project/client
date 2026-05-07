@@ -3,11 +3,7 @@
 !public/
 !index.html
 !package.json
-<<<<<<< HEAD
-!package-lock.
-=======
 !package-lock.json
 !vite.config.js
 !postcss.config.js
 !tailwind.config.js
->>>>>>> d7ada9d (fix: correct dockerignore)
