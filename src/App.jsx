@@ -6,6 +6,7 @@ import ProfilePage from './pages/ProfilePage.jsx'
 import Toast from './components/Toast.jsx'
 import { useToast } from './hooks/useToast.js'
 import { useAuth } from './hooks/useAuth.js'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 /**
  * Root component that renders the app shell with navigation and page routing.
@@ -24,8 +25,8 @@ function App () {
       <main className='flex flex-1 justify-center overflow-y-auto'>
         <Routes>
           <Route path='/' element={<DiscoveryPage key={token} />} />
-          <Route path='/watchlist' element={<WatchlistPage />} />
-          <Route path='/profile' element={<ProfilePage />} />
+          <Route path='/watchlist' element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} />
+          <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         </Routes>
       </main>
     </div>
