@@ -73,8 +73,8 @@ export default function WatchlistPage () {
           <ChevronDown size={16} className='absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400' />
         </div>
       </div>
-      {movies.length === 0 && hasMore && <p className='flex items-center justify-center'>Loading...</p>}
-      {movies.length === 0 && !hasMore && <p className='flex items-center justify-center'>No saved movies yet.</p>}
+      {movies.length === 0 && hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>Loading...</p>}
+      {movies.length === 0 && !hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>No saved movies yet.</p>}
       {movies.length > 0 && (
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4'>
           {movies.map(movie => (<WatchlistCard key={movie.tmdb_id} movie={movie} onToggle={(isSaved) => handleToggleSave(movie.tmdb_id, isSaved)} />))}

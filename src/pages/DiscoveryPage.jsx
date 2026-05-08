@@ -63,8 +63,6 @@ export default function DiscoveryPage () {
     }
   }
 
-  console.log('page:', page, 'currentIndex:', currentIndex, 'movies.length:', movies.length)
-
   return (
     <div className='flex flex-col items-center justify-center gap-4 xl:gap-6 h-full p-4 xl:p-8'>
       <MovieCard movie={movies[currentIndex]} error={error} />

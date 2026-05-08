@@ -126,6 +126,7 @@ export default function AuthModal ({ onClose }) {
               type='text' required disabled={isLoading} placeholder='Nickname' value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />}
+          {errors.displayName && <p className='text-red-500 text-sm text-center'>{errors.displayName}</p>}
           <Input
             type='password' required disabled={isLoading} placeholder='Password' value={password}
             onChange={(e) => setPassword(e.target.value)}

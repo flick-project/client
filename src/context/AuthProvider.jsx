@@ -1,8 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AuthContext } from './AuthContext.jsx'
-import { setAuthToken } from '../services/api.js'
-import { SquareUser } from 'lucide-react'
-
+import { apiRequest, setAuthToken } from '../services/api.js'
 /**
  * Provider that makes auth functionality available to all children.
  * @param {object} props - Component props.
@@ -12,6 +10,7 @@ import { SquareUser } from 'lucide-react'
 export function AuthProvider ({ children }) {
   const [token, setToken] = useState(null)
   const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   const login = (newToken) => {
     setToken(newToken)
@@ -32,8 +31,22 @@ export function AuthProvider ({ children }) {
     setAuthToken(null)
   }
 
+  useEffect(() => {
+    const refreshToken = async () => {
+      try {
+        const result = await apiRequest('/auth/refresh', { method: 'POST' })
+        login(result.access_token)
+      } catch {
+        // No valid refresh token, user stays logged out.
+      } finally {
+        setLoading(false)
+      }
+    }
+    refreshToken()
+  }, [])
+
   return (
-    <AuthContext value={{ token, user, login, logout }}>
+    <AuthContext value={{ token, user, login, logout, loading }}>
       {children}
     </AuthContext>
   )
