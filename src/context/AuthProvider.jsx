@@ -25,7 +25,12 @@ export function AuthProvider ({ children }) {
     })
   }
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await apiRequest('/auth/logout', { method: 'POST' })
+    } catch {
+    // Logout failed, clear local state anyway.
+    }
     setToken(null)
     setUser(null)
     setAuthToken(null)
