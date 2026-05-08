@@ -83,14 +83,8 @@ export default function AuthModal ({ onClose }) {
         body: JSON.stringify(body)
       })
 
-      if (!isLogin) {
-        showToast('Registration successful!', 'success')
-      }
-      if (isLogin) {
-        // Store token on login before closing.
-        login(data.token)
-        showToast('Logged in successfully!', 'success')
-      }
+      login(data.access_token)
+      showToast(isLogin ? 'Logged in successfully!' : 'Registration successful!', 'success')
       onClose()
     } catch (err) {
       console.error(err)
