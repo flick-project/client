@@ -69,8 +69,8 @@ export default function DiscoveryPage () {
   }
 
   return (
-    <div className='flex flex-col items-center justify-center gap-4 xl:gap-6 h-full p-4 xl:p-8'>
-      <div className='relative max-h-full min-h-0'>
+    <div className='size-full flex flex-col items-center justify-center gap-4 xl:gap-6 p-4 xl:p-8 overflow-hidden'>
+      <div className='relative flex-1 min-h-0'>
         {movies[currentIndex] &&
           <img
             src={`https://image.tmdb.org/t/p/w154${movies[currentIndex].poster_path}`}
