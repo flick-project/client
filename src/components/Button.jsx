@@ -7,14 +7,14 @@
  * @param {'submit' | 'button'} [props.type] - Button type.
  * @param {string} [props.form] - Form ID to associate with.
  * @param {() => void} [props.onClick] - Click handler.
- * @param props.className
+ * @param {string} [props.className] - Additional CSS classes.
  * @returns {React.ReactElement} The Button component.
  */
 export default function Button ({ children, variant = 'primary', disabled, type = 'button', form, onClick, className = '' }) {
   const base = 'w-full py-2.5 px-4 rounded-md cursor-pointer text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
   const variants = {
-    primary: 'bg-brand hover:bg-red-700 text-white',
-    secondary: 'bg-surface hover:bg-surface-light text-text'
+    primary: 'border border-transparent bg-brand hover:bg-red-700 text-white',
+    secondary: 'border border-gray-500 text-gray-400'
   }
 
   return (

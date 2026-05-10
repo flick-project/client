@@ -2,9 +2,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Film, Compass, Bookmark, User } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
-import AuthModal from './AuthModal.jsx'
-import Button from './Button.jsx'
 import { useToast } from '../hooks/useToast.js'
+import Button from './Button.jsx'
+import AuthFlow from './AuthFlow.jsx'
 
 /**
  * Main navigation sidebar with page links and authentication button.
@@ -61,7 +61,7 @@ function Navigation () {
         ? <Button className='w-fill' onClick={handleLogout}>Log out</Button>
         : <Button className='w-fill' onClick={() => setIsAuthOpen(true)}>Log in</Button>}
 
-      {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
+      {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
       <hr className='border-white/10' />
       <small className='w-full text-xs text-white/40'>Movie data provided by TMDB</small>
     </nav>

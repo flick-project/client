@@ -18,15 +18,15 @@ export default function MovieCard ({ movie, error }) {
     )
   }
 
-  const posterSrc = `https://image.tmdb.org/t/p/w780${movie.poster_path}`
+  const posterSrc = `https://image.tmdb.org/t/p/w500${movie.poster_path}`
 
   return (
     <div className='max-h-full relative aspect-2/3 rounded-2xl overflow-hidden'>
-      <div className='relative h-full'>
+      <div className='relative size-full'>
         <img
           src={posterSrc}
           alt={movie.title}
-          className='absolute inset-0 w-full h-full object-cover'
+          className='absolute inset-0 size-full object-cover'
           style={{ maskImage: 'linear-gradient(to bottom, white 60%, rgba(255,255,255,0.3) 85%, rgba(255,255,255,0.15) 100%)' }}
         />
         <div className='absolute inset-0 bg-black -z-10' />
