@@ -70,7 +70,16 @@ export default function DiscoveryPage () {
 
   return (
     <div className='flex flex-col items-center justify-center gap-4 xl:gap-6 h-full p-4 xl:p-8'>
-      <MovieCard movie={movies[currentIndex]} error={error} />
+      <div className='relative max-h-full min-h-0'>
+        {movies[currentIndex] &&
+          <img
+            src={`https://image.tmdb.org/t/p/w154${movies[currentIndex].poster_path}`}
+            alt=''
+            className='absolute inset-0 size-full object-cover opacity-15 scale-150 mix-blend-screen -z-10 pointer-events-none'
+            style={{ filter: 'blur(80px) saturate(1.5)' }}
+          />}
+        <MovieCard movie={movies[currentIndex]} error={error} />
+      </div>
       <DiscoveryControls interaction={handleInteraction} handleBack={handleBack} canGoBack={canGoBack} />
     </div>
   )

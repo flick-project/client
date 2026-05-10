@@ -23,7 +23,7 @@ export default function IconButton ({ icon, backgroundColor, borderColor, textCo
     }, 150)
   }
 
-  const base = 'flex items-center justify-center aspect-1/1 p-4 rounded-full border-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+  const base = 'flex items-center justify-center aspect-1/1 p-4 rounded-full border-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
   const Icon = icon
 
   return (
