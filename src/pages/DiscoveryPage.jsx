@@ -14,6 +14,7 @@ export default function DiscoveryPage () {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [error, setError] = useState(null)
   const [canGoBack, setCanGoBack] = useState(false)
+  const [isInteracting, setIsInteracting] = useState(false)
   const { showToast } = useToast()
 
   // Mount and fetch movie suggestions.
@@ -37,6 +38,8 @@ export default function DiscoveryPage () {
 
   // Record save/skip interaction and advance to the next movie.
   const handleInteraction = async (type) => {
+    if (isInteracting) return
+    setIsInteracting(true)
     try {
       const body = { movieId: movies[currentIndex].id, interaction: type }
 
@@ -52,6 +55,8 @@ export default function DiscoveryPage () {
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
+    } finally {
+      setIsInteracting(false)
     }
   }
 

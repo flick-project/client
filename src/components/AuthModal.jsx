@@ -1,6 +1,4 @@
-import { X } from 'lucide-react'
 import { useState } from 'react'
-import { useToast } from '../hooks/useToast'
 import { useAuth } from '../hooks/useAuth.js'
 import { apiRequest } from '../services/api.js'
 import Modal from './Modal.jsx'
@@ -10,17 +8,17 @@ import Button from '../components/Button.jsx'
 /**
  * Authentication modal for user login and registration.
  * @param {object} props - Component props.
- * @param {() => void} props.onClose - Callback to close the modal.
+ * @param {() => void} props.onLoginSuccess - Callback to handle.
+ * @param {() => void} props.onRegisterSuccess - Callback to handle.
  * @returns {React.ReactElement} The AuthModal component.
  */
-export default function AuthModal ({ onClose }) {
+export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
-  const { showToast } = useToast()
   const { login } = useAuth()
 
   /**
@@ -84,8 +82,7 @@ export default function AuthModal ({ onClose }) {
       })
 
       login(data.access_token)
-      showToast(isLogin ? 'Logged in successfully!' : 'Registration successful!', 'success')
-      onClose()
+      isLogin ? onLoginSuccess(`Welcome back ${data.displayName}`) : onRegisterSuccess()
     } catch (err) {
       console.error(err)
       setErrors({ general: err.message || 'Something went wrong. Please try again.' })
@@ -95,21 +92,14 @@ export default function AuthModal ({ onClose }) {
   }
 
   return (
-    <Modal onClose={onClose}>
-      <div className='flex flex-col gap-2'>
-        <div className='flex justify-end'>
-          <button onClick={onClose} className='p-2 bg-surface rounded-full cursor-pointer'>
-            <X size={20} />
-          </button>
-        </div>
-        <h2 className='text-xl font-bold text-center'>
-          {isLogin ? 'Log in to Flick' : 'Sign up for Flick'}
-        </h2>
-      </div>
+    <div className='flex flex-col gap-6'>
+      <h2 className='text-xl font-bold text-center'>
+        {isLogin ? 'Log in to Flick' : 'Sign up for Flick'}
+      </h2>
 
       {errors.general && <p className='text-red-500 text-sm text-center'>{errors.general}</p>}
 
-      <div className='flex flex-col gap-6'>
+      <div className='flex flex-col gap-4'>
         <form id='auth-form' className='flex flex-col gap-4' onSubmit={handleSubmit}>
           <Input
             type='email' required disabled={isLoading} placeholder='Email' value={email}
@@ -132,14 +122,16 @@ export default function AuthModal ({ onClose }) {
         </Button>
       </div>
 
-      <hr className='border-slate-700' />
+      <div className='flex flex-col gap-6'>
+        <hr className='border-white/10' />
 
-      {/* Toggle between login and registration. */}
-      <p className='text-sm text-text-muted text-center'>
-        {isLogin
-          ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
-          : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
-      </p>
-    </Modal>
+        {/* Toggle between login and registration. */}
+        <p className='text-sm text-text-muted text-center'>
+          {isLogin
+            ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
+            : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
+        </p>
+      </div>
+    </div>
   )
 }

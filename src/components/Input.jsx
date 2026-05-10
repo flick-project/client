@@ -18,7 +18,7 @@ export default function Input ({ type, placeholder, value, onChange, required, d
       onChange={onChange}
       required={required}
       disabled={disabled}
-      className='p-2 rounded-md bg-surface outline-none focus:outline-solid focus:outline-1 focus:outline-white/10 disabled:opacity-50'
+      className='text-base p-2 px-3 rounded-lg bg-surface outline-1 outline-white/10 placeholder-gray-400 focus:outline-solid focus:outline-2 focus:outline-white/10 disabled:opacity-50'
     />
   )
 }
