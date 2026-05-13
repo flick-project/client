@@ -63,7 +63,7 @@ function Navigation () {
 
       {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
       <hr className='border-white/10' />
-      <small className='w-full text-xs text-white/40'>Movie data provided by TMDB</small>
+      <small className='w-full text-xs text-white/40 leading-none'>Movie data provided by TMDB</small>
     </nav>
   )
 }
