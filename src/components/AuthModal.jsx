@@ -82,7 +82,12 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
       })
 
       login(data.access_token)
-      isLogin ? onLoginSuccess(`Welcome back ${data.displayName}`) : onRegisterSuccess()
+      if (isLogin) {
+        const payload = JSON.parse(atob(data.access_token.split('.')[1]))
+        onLoginSuccess(`Welcome back ${payload.display_name}`)
+      } else {
+        onRegisterSuccess()
+      }
     } catch (err) {
       console.error(err)
       setErrors({ general: err.message || 'Something went wrong. Please try again.' })
