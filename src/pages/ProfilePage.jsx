@@ -8,14 +8,19 @@ import { CircleUser } from 'lucide-react'
  */
 export default function ProfilePage () {
   const [profile, setProfile] = useState(null)
+  const [stats, setStats] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const fetchProfile = async () => {
       setIsLoading(true)
       try {
-        const result = await apiRequest('/user/profile')
-        setProfile(result)
+        const [profileData, statsData] = await Promise.all([
+          apiRequest('/user/profile'),
+          apiRequest('/user/stats')
+        ])
+        setProfile(profileData)
+        setStats(statsData)
       } catch (err) {
         console.error(err)
       } finally {
@@ -37,6 +42,11 @@ export default function ProfilePage () {
         <div className='flex flex-col justify-center gap-4'>
           <p className='text-xl font-semibold leading-none'>{profile.displayName}</p>
           <p className='text-sm font-medium leading-none text-gray-400'>Member since {formatDate(profile.createdAt)}</p>
+          <p className='text-sm leading-none text-gray-400'>
+            <span className='text-white font-medium'>{stats.totalSwipes}</span> swipes
+            <span className='px-2 text-gray-600'>|</span>
+            <span className='text-white font-medium'>{stats.totalSaves}</span> saves
+          </p>
         </div>
       </div>
       <hr className='border-white/10' />
