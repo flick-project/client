@@ -1,6 +1,8 @@
 import { apiRequest } from '../services/api.js'
-import { useState, useEffect } from 'react'
-import { CircleUser } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { useToast } from '../hooks/useToast'
+import { CircleUser, CirclePlus, X } from 'lucide-react'
+import FavoriteSearchModal from '../components/FavoriteSearchModal.jsx'
 
 /**
  * Profile page displaying user information and activity.
@@ -9,18 +11,24 @@ import { CircleUser } from 'lucide-react'
 export default function ProfilePage () {
   const [profile, setProfile] = useState(null)
   const [stats, setStats] = useState(null)
+  const [favorites, setFavorites] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const { showToast } = useToast()
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const excludeIds = useMemo(() => favorites.map(f => f.id), [favorites])
 
   useEffect(() => {
     const fetchProfile = async () => {
       setIsLoading(true)
       try {
-        const [profileData, statsData] = await Promise.all([
+        const [profileData, statsData, favoritesData] = await Promise.all([
           apiRequest('/user/profile'),
-          apiRequest('/user/stats')
+          apiRequest('/user/stats'),
+          apiRequest('/user/favorites')
         ])
         setProfile(profileData)
         setStats(statsData)
+        setFavorites(favoritesData)
       } catch (err) {
         console.error(err)
       } finally {
@@ -30,11 +38,41 @@ export default function ProfilePage () {
     fetchProfile()
   }, [])
 
+  const handleAdd = async (movie) => {
+    try {
+      await apiRequest('/user/favorite', {
+        method: 'POST',
+        body: JSON.stringify({ movie })
+      })
+      setFavorites(prev => [...prev, movie])
+      setIsSearchOpen(false)
+    } catch (err) {
+      console.error(err)
+      if (err.status === 403) {
+        showToast('Maximum 5 favorites reached.', 'error')
+      } else if (err.status === 409) {
+        showToast('Movie already in favorites.', 'error')
+      } else {
+        showToast('Something went wrong. Please try again.', 'error')
+      }
+    }
+  }
+
+  const handleRemove = async (movie) => {
+    try {
+      await apiRequest(`/user/favorites/${movie.id}`, { method: 'DELETE' })
+      setFavorites(prev => prev.filter(f => f.id !== movie.id))
+    } catch (err) {
+      console.error(err)
+      showToast('Something went wrong. Please try again.', 'error')
+    }
+  }
+
   const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 
   if (isLoading || !profile) return <p>Loading</p>
   return (
-    <div className='flex flex-col gap-6 p-6 max-w-5xl w-full'>
+    <div className='flex flex-col gap-6 p-6 max-w-6xl w-full'>
       <div className='flex gap-4 w-full'>
         {profile.gravatar
           ? <img src={profile.gravatar} alt='Avatar' className='rounded-full w-32 h-32' />
@@ -50,6 +88,32 @@ export default function ProfilePage () {
         </div>
       </div>
       <hr className='border-white/10' />
+
+      <h2 className='text-base font-medium'>Favorite movies</h2>
+      <div className='grid grid-cols-5 gap-4 w-full'>
+        {favorites.map((fav) => (
+          <div key={fav.id} className='relative group'>
+            <div className='w-full aspect-2/3 rounded-lg overflow-hidden border border-solid border-white/10'>
+              <img src={`https://image.tmdb.org/t/p/w154${fav.poster_path}`} alt={fav.title} className='w-full h-full object-cover' />
+              <div className='absolute inset-0 opacity-0 hover:opacity-100'>
+                <button onClick={() => handleRemove(fav)} className='absolute top-2 right-2 bg-black/60 rounded-full p-1 cursor-pointer'>
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+            <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:delay-1000 absolute z-99 p-2 bottom-full mb-2 left-1/2 -translate-x-1/2 border border-white/10 bg-surface-light rounded-md pointer-events-none'>
+              <p className='text-sm font-medium leading-none text-center whitespace-nowrap text-gray-300 text-shadow-md'>{fav.title} ({new Date(fav.release_date).getFullYear()})</p>
+              <div className='absolute left-1/2 -translate-x-1/2 -bottom-1 w-2 h-2 bg-surface-light rotate-45 border-r border-b border-white/10' />
+            </div>
+          </div>
+        ))}
+        {favorites.length < 5 && (
+          <button onClick={() => setIsSearchOpen(true)} className='flex items-center justify-center w-full aspect-2/3 rounded-lg border border-dashed border-white/20 text-gray-400 cursor-pointer'>
+            <CirclePlus size={32} strokeWidth={1} />
+          </button>
+        )}
+      </div>
+      {isSearchOpen && <FavoriteSearchModal onSelect={handleAdd} onClose={() => setIsSearchOpen(false)} excludeIds={excludeIds} />}
     </div>
   )
 }

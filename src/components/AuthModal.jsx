@@ -4,6 +4,7 @@ import { apiRequest } from '../services/api.js'
 import Modal from './Modal.jsx'
 import Input from '../components/Input.jsx'
 import Button from '../components/Button.jsx'
+import { EyeOff, Eye } from 'lucide-react'
 
 /**
  * Authentication modal for user login and registration.
@@ -17,6 +18,8 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
   const [email, setEmail] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { login } = useAuth()
@@ -33,6 +36,11 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
     }
     if (password.length < 10) {
       newErrors.password = 'Password must be at least 10 characters'
+    }
+    if (password.length < 10) {
+      newErrors.password = 'Password must be at least 10 characters'
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match'
     }
 
     return newErrors
@@ -117,10 +125,28 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
             />}
           {errors.displayName && <p className='text-red-500 text-sm text-center'>{errors.displayName}</p>}
           <Input
-            type='password' required disabled={isLoading} placeholder='Password' value={password}
+            type={showPassword ? 'text' : 'password'}
+            placeholder='Password'
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
+            icon={
+              <button type='button' onClick={() => setShowPassword(!showPassword)} className='cursor-pointer p-2 -m-2'>
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            }
           />
           {errors.password && <p className='text-red-500 text-sm text-center'>{errors.password}</p>}
+          {!isLogin && (
+            <Input
+              type={showPassword ? 'text' : 'password'}
+              required
+              disabled={isLoading}
+              placeholder='Confirm password'
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          )}
+          {errors.confirmPassword && <p className='text-red-500 text-sm text-center'>{errors.confirmPassword}</p>}
         </form>
         <Button type='submit' form='auth-form' disabled={isLoading}>
           {isLoading ? 'Processing...' : (isLogin ? 'Log in' : 'Sign up')}

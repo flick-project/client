@@ -12,6 +12,7 @@ export default function WatchlistPage () {
   const { showToast } = useToast()
   const [page, setPage] = useState(1)
   const [movies, setMovies] = useState([])
+  const [total, setTotal] = useState(null)
   const [hasMore, setHasMore] = useState(true)
   const loadingRef = useRef(false)
   const bottomRef = useRef(null)
@@ -30,6 +31,7 @@ export default function WatchlistPage () {
         })
 
         setHasMore(result.movies.length >= 20)
+        setTotal(result.total)
       } catch (err) {
         console.error(err)
         setHasMore(false)
@@ -65,7 +67,7 @@ export default function WatchlistPage () {
   return (
     <div className='flex flex-col gap-8 py-6 px-4 max-w-7xl size-full'>
       <div className='flex items-center justify-between'>
-        <span className='text-sm font-medium text-gray-400'>{`${movies.length} movies`}</span>
+        <span className='text-sm font-medium text-gray-400'>{`${total} movies`}</span>
         <div className='relative'>
           <select className='appearance-none pr-6 rounded-sm text-sm font-medium text-gray-400'>
             <option value='date'>Sort by: Date added</option>
