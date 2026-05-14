@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import { apiRequest } from '../services/api.js'
+import { useMovieSearch } from '../hooks/useMovieSearch.js'
 import Input from '../components/Input.jsx'
 import { Search } from 'lucide-react'
 
@@ -11,34 +10,10 @@ import { Search } from 'lucide-react'
  * @returns {React.ReactElement} The MovieSearch component.
  */
 export default function MovieSearch ({ onSelect, disabled }) {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState([])
-
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (!query.trim()) {
-        setResults([])
-        return
-      }
-      try {
-        const result = await apiRequest(`/movies/search?query=${query}`)
-        setResults(result.results)
-      } catch (err) {
-        console.error(err)
-      }
-    }, 300)
-
-    return () => clearTimeout(timer)
-  }, [query])
-
-  const handleSelect = (movie) => {
-    onSelect(movie)
-    setResults([])
-    setQuery('')
-  }
+  const { query, setQuery, results, handleSelect, clearResults } = useMovieSearch(onSelect)
 
   return (
-    <div className='relative' tabIndex={-1} onBlur={() => setResults([])}>
+    <div className='relative' tabIndex={-1} onBlur={clearResults}>
       <div className='relative flex flex-col align-center'>
         <Input type='text' placeholder='Search movie' value={query} onChange={(e) => setQuery(e.target.value)} disabled={disabled} />
         <Search className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400' size={24} />

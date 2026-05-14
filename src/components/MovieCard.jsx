@@ -12,8 +12,8 @@ import { GENRES } from '../utils/genres.js'
 export default function MovieCard ({ movie, error }) {
   if (error || !movie) {
     return (
-      <div className='flex items-center justify-center h-full aspect-2/3 rounded-xl bg-surface-light'>
-        <p className='text-base font-normal text-gray-400'>{error || 'Loading...'}</p>
+      <div className='flex items-center justify-center h-full aspect-2/3 rounded-xl bg-surface-light p-4'>
+        <p className='text-base font-normal text-gray-400 text-center'>{error || 'Loading...'}</p>
       </div>
     )
   }

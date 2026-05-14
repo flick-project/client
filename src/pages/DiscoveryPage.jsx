@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import MovieCard from '../components/MovieCard.jsx'
 import { apiRequest } from '../services/api.js'
 import DiscoveryControls from '../components/DiscoveryControls.jsx'
+import { useAuth } from '../hooks/useAuth.js'
 import { useToast } from '../hooks/useToast'
 
 /**
@@ -15,6 +16,8 @@ export default function DiscoveryPage () {
   const [error, setError] = useState(null)
   const [canGoBack, setCanGoBack] = useState(false)
   const [isInteracting, setIsInteracting] = useState(false)
+  const [isAuthOpen, setIsAuthOpen] = useState(false)
+  const { user } = useAuth()
   const { showToast } = useToast()
 
   // Mount and fetch movie suggestions.
@@ -38,6 +41,10 @@ export default function DiscoveryPage () {
 
   // Record save/skip interaction and advance to the next movie.
   const handleInteraction = async (type) => {
+    if (!user && !isAuthOpen) {
+      setIsAuthOpen(true)
+      return
+    }
     if (isInteracting) return
     setIsInteracting(true)
     try {
@@ -75,7 +82,7 @@ export default function DiscoveryPage () {
           <img
             src={`https://image.tmdb.org/t/p/w154${movies[currentIndex].poster_path}`}
             alt=''
-            className='absolute inset-0 size-full object-cover opacity-15 scale-150 mix-blend-screen -z-10 pointer-events-none'
+            className='absolute inset-0 size-full object-cover opacity-15 scale-110 xl:scale-125 2xl:scale-150 -top-1/4 mix-blend-screen -z-10 pointer-events-none'
             style={{ filter: 'blur(80px) saturate(1.5)' }}
           />}
         <MovieCard movie={movies[currentIndex]} error={error} />
