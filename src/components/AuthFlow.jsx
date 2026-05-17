@@ -5,7 +5,7 @@ import AuthModal from './AuthModal.jsx'
 import OnboardingModal from './OnboardingModal.jsx'
 
 /**
- * Modal for the
+ * Handles the auth and onboarding flow.
  * @param {object} props - Component props.
  * @param {() => void} props.onClose - Callback to close the modal.
  * @returns {React.ReactElement} The AuthModal component.
