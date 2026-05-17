@@ -1,0 +1,16 @@
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: https://flick-api.lingon.cloud/api/v1
+    container_name: flick-client
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    name: proxy
+    external: true
