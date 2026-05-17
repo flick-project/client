@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import MovieCard from '../components/MovieCard.jsx'
 import { apiRequest } from '../services/api.js'
-import DiscoveryControls from '../components/DiscoveryControls.jsx'
 import { useAuth } from '../hooks/useAuth.js'
 import { useToast } from '../hooks/useToast'
+import MovieCard from '../components/MovieCard.jsx'
+import DiscoveryControls from '../components/DiscoveryControls.jsx'
+import AuthFlow from '../components/AuthFlow.jsx'
 
 /**
  * Discovery page where users swipe through movie suggestions.
@@ -41,7 +42,7 @@ export default function DiscoveryPage () {
 
   // Record save/skip interaction and advance to the next movie.
   const handleInteraction = async (type) => {
-    if (!user && !isAuthOpen) {
+    if (!user) {
       setIsAuthOpen(true)
       return
     }
@@ -88,6 +89,7 @@ export default function DiscoveryPage () {
         <MovieCard movie={movies[currentIndex]} error={error} />
       </div>
       <DiscoveryControls interaction={handleInteraction} handleBack={handleBack} canGoBack={canGoBack} />
+      {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
     </div>
   )
 }
