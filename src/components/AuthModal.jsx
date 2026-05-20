@@ -55,6 +55,7 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
     setEmail('')
     setDisplayName('')
     setPassword('')
+    setShowPassword(false)
     setErrors({})
   }
 
