@@ -73,7 +73,7 @@ export default function ProfilePage () {
   if (isLoading || !profile) return <p>Loading</p>
   return (
     <div className='flex flex-col gap-6 p-6 max-w-6xl w-full'>
-      <div className='flex gap-4 w-full'>
+      <div className='flex gap-6 w-full'>
         {profile.gravatar
           ? <img src={profile.gravatar} alt='Avatar' className='rounded-full w-32 h-32' />
           : <CircleUser size={128} strokeWidth={1.25} />}
@@ -81,9 +81,11 @@ export default function ProfilePage () {
           <p className='text-xl font-semibold leading-none'>{profile.displayName}</p>
           <p className='text-sm font-medium leading-none text-gray-400'>Member since {formatDate(profile.createdAt)}</p>
           <p className='text-sm leading-none text-gray-400'>
-            <span className='text-white font-medium'>{stats.totalSwipes}</span> swipes
+            <span className='text-white font-medium'>{stats.totalInteractions}</span> swipes
             <span className='px-2 text-gray-600'>|</span>
             <span className='text-white font-medium'>{stats.totalSaves}</span> saves
+            <span className='px-2 text-gray-600'>|</span>
+            <span className='text-white font-medium'>{stats.totalSkips}</span> skips
           </p>
         </div>
       </div>
