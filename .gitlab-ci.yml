@@ -41,7 +41,7 @@ test:
   stage: test
   image: node:24-alpine
   script:
-    - echo "Running linting..."
+    - echo "Linting..."
     - npm ci
     - npm run lint
   # Cache node modules and update if package-lock hash changes.

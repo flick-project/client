@@ -4,6 +4,8 @@ import { useToast } from '../hooks/useToast'
 import { ChevronDown } from 'lucide-react'
 import WatchlistCard from '../components/WatchlistCard.jsx'
 
+const WATCHLIST_PAGE_LIMIT = 20
+
 /**
  * Watchlist page where users manage their saved movies.
  * @returns {React.ReactElement} The WatchlistPage component.
@@ -23,14 +25,14 @@ export default function WatchlistPage () {
       loadingRef.current = true
 
       try {
-        const result = await apiRequest(`/watchlist?page=${page}`)
+        const result = await apiRequest(`/watchlist?page=${page}&limit=${WATCHLIST_PAGE_LIMIT}`)
         setMovies(prev => {
           const existingIds = new Set(prev.map(m => m.tmdb_id))
           const newMovies = result.movies.filter(m => !existingIds.has(m.tmdb_id))
           return [...prev, ...newMovies]
         })
 
-        setHasMore(result.movies.length >= 20)
+        setHasMore(result.movies.length >= WATCHLIST_PAGE_LIMIT)
         setTotal(result.total)
       } catch (err) {
         console.error(err)
