@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { apiRequest } from '../services/api.js'
+import { usePageTitle } from '../hooks/usePageTitle.js'
 import { useToast } from '../hooks/useToast'
 import { ChevronDown } from 'lucide-react'
 import WatchlistCard from '../components/WatchlistCard.jsx'
@@ -18,6 +19,8 @@ export default function WatchlistPage () {
   const [hasMore, setHasMore] = useState(true)
   const loadingRef = useRef(false)
   const bottomRef = useRef(null)
+
+  usePageTitle('Watchlist')
 
   // Fetch the next page of saved movies when page changes.
   useEffect(() => {

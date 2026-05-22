@@ -1,3 +1,4 @@
+import { usePageTitle } from '../hooks/usePageTitle.js'
 import { apiRequest } from '../services/api.js'
 import { useState, useEffect, useMemo } from 'react'
 import { useToast } from '../hooks/useToast'
@@ -70,6 +71,7 @@ export default function ProfilePage () {
 
   const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 
+  usePageTitle(isLoading ? 'Profile' : profile?.displayName)
   if (isLoading || !profile) return <p>Loading</p>
   return (
     <div className='flex flex-col gap-6 p-6 max-w-6xl w-full'>
