@@ -29,7 +29,7 @@ export default function MovieCard ({ movie, error }) {
           className='absolute inset-0 size-full object-cover'
           style={{ maskImage: 'linear-gradient(to bottom, white 60%, rgba(255,255,255,0.3) 85%, rgba(255,255,255,0.15) 100%)' }}
         />
-        <div className='absolute inset-0 bg-black -z-10' />
+        <div className='absolute inset-0 bg-black -z-1' />
         <div className='relative flex flex-col justify-end gap-3 w-full h-full p-6 text-white text-shadow-md'>
           <h1 className='text-2xl font-semibold leading-none'>{movie.title}</h1>
           <div className='flex items-center gap-4'>
@@ -50,7 +50,7 @@ export default function MovieCard ({ movie, error }) {
           <p className='line-clamp-3'>{movie.overview}</p>
         </div>
       </div>
-      <div className='absolute inset-0 rounded-2xl border border-white/10 pointer-events-none z-10' />
+      <div className='absolute inset-0 rounded-2xl border border-white/10 pointer-events-none' />
     </div>
   )
 }
