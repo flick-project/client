@@ -1,3 +1,4 @@
+import { usePageTitle } from '../hooks/usePageTitle.js'
 import { useState, useEffect } from 'react'
 import { apiRequest } from '../services/api.js'
 import { useAuth } from '../hooks/useAuth.js'
@@ -5,6 +6,8 @@ import { useToast } from '../hooks/useToast'
 import MovieCard from '../components/MovieCard.jsx'
 import DiscoveryControls from '../components/DiscoveryControls.jsx'
 import AuthFlow from '../components/AuthFlow.jsx'
+import RatingPanel from '../components/RatingPanel.jsx'
+import Modal from '../components/Modal.jsx'
 
 /**
  * Discovery page where users swipe through movie suggestions.
@@ -17,9 +20,12 @@ export default function DiscoveryPage () {
   const [error, setError] = useState(null)
   const [canGoBack, setCanGoBack] = useState(false)
   const [isInteracting, setIsInteracting] = useState(false)
+  const [showRating, setShowRating] = useState(false)
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const { user } = useAuth()
   const { showToast } = useToast()
+
+  usePageTitle('Discovery')
 
   // Mount and fetch movie suggestions.
   useEffect(() => {
@@ -42,24 +48,18 @@ export default function DiscoveryPage () {
 
   // Record save/skip interaction and advance to the next movie.
   const handleInteraction = async (type) => {
-    if (!user) {
-      setIsAuthOpen(true)
+    if (!requireAuth()) return
+    if (type === 'rate') {
+      setShowRating(true)
       return
     }
     if (isInteracting) return
     setIsInteracting(true)
     try {
       const body = { movieId: movies[currentIndex].id, interaction: type }
-
       await apiRequest('/movies/interact', { method: 'POST', body: JSON.stringify(body) })
 
-      setCurrentIndex(currentIndex + 1)
-      setCanGoBack(true)
-
-      // Pre-fetch next page before running out of movies.
-      if (currentIndex + 5 >= movies.length) {
-        setPage(page + 1)
-      }
+      advanceQueue()
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
@@ -68,12 +68,47 @@ export default function DiscoveryPage () {
     }
   }
 
+  // Record rating and advance to the next movie.
+  const handleRate = async (rating) => {
+    if (!requireAuth()) return
+    setShowRating(false)
+    try {
+      const body = { movieId: movies[currentIndex].id, rating }
+      await apiRequest('/ratings', { method: 'POST', body: JSON.stringify(body) })
+
+      advanceQueue()
+    } catch (err) {
+      console.error(err)
+      showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
+    }
+  }
+
   // Go back one movie. Only allowed once per forward move.
   const handleBack = () => {
+    if (!requireAuth()) return
     if (canGoBack && currentIndex > 0) {
       setCurrentIndex(currentIndex - 1)
       setCanGoBack(false)
     }
+  }
+
+  // Go forth one movie.
+  const advanceQueue = () => {
+    setCurrentIndex(currentIndex + 1)
+    setCanGoBack(true)
+
+    // Pre-fetch next page before running out of movies.
+    if (currentIndex + 5 >= movies.length) {
+      setPage(page + 1)
+    }
+  }
+
+  const requireAuth = () => {
+    if (!user) {
+      setIsAuthOpen(true)
+      return false
+    }
+    return true
   }
 
   return (
@@ -88,7 +123,12 @@ export default function DiscoveryPage () {
           />}
         <MovieCard movie={movies[currentIndex]} error={error} />
       </div>
-      <DiscoveryControls interaction={handleInteraction} handleBack={handleBack} canGoBack={canGoBack} />
+      <DiscoveryControls interaction={handleInteraction} handleBack={handleBack} canGoBack={canGoBack} onRate={handleRate} requireAuth={requireAuth} />
+      {showRating && (
+        <Modal onClose={() => setShowRating(false)}>
+          <RatingPanel currentRating={null} onRate={handleRate} title={movies[currentIndex]?.title} />
+        </Modal>
+      )}
       {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
     </div>
   )

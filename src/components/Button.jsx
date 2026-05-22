@@ -13,7 +13,7 @@
 export default function Button ({ children, variant = 'primary', disabled, type = 'button', form, onClick, className = '' }) {
   const base = 'w-full py-3 px-4 rounded-md cursor-pointer text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed leading-none'
   const variants = {
-    primary: 'border border-transparent bg-brand hover:bg-red-700 text-white',
+    primary: 'border border-transparent bg-brand hover:enabled:bg-red-700 text-white',
     secondary: 'border border-gray-500 text-gray-400'
   }
 
