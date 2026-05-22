@@ -3,8 +3,8 @@ import { apiRequest } from '../services/api.js'
 
 /**
  * Hook for debounced movie search via TMDB.
- * @param {Array} excludeIds - Movies to exclude from results.
  * @param {(movie: object) => void} onSelect - Callback when a movie is selected.
+ * @param {Array} excludeIds - Movies to exclude from results.
  * @returns {object} Search state and handlers.
  */
 export function useMovieSearch (onSelect, excludeIds) {
