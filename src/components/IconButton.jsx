@@ -30,14 +30,14 @@ export default function IconButton ({ icon, backgroundColor = 'bg-white/5', text
     onClick?.()
   }
 
-  const base = 'flex items-center justify-center aspect-1/1 rounded-full cursor-pointer disabled:opacity-40 ring-1 ring-inset ring-white/10 hover:brightness-110'
+  const base = 'flex items-center justify-center aspect-1/1 rounded-full disabled:opacity-40 ring-1 ring-inset ring-white/10 hover:brightness-110'
   const padding = size === 'big' ? 'p-4' : 'p-3'
   const Icon = icon
   const iconSize = size === 'big' ? 32 : 24
 
   return (
     <button
-      className={`${base} ${padding} ${backgroundColor} ${textColor} ${!disabled && (animations[animation] || '')} transition-all duration-150`}
+      className={`${base} ${padding} ${backgroundColor} ${textColor} ${disabled ? 'cursor-not-allowed' : `cursor-pointer ${animations[animation] || ''}`} transition-all duration-150`}
       disabled={disabled}
       onClick={handleClick}
     >

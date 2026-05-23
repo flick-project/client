@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { apiRequest } from '../services/api.js'
 import { useAuth } from '../hooks/useAuth.js'
 import { useToast } from '../hooks/useToast'
-import MovieCard from '../components/MovieCard.jsx'
+import DiscoveryCard from '../components/DiscoveryCard.jsx'
 import DiscoveryControls from '../components/DiscoveryControls.jsx'
 import AuthFlow from '../components/AuthFlow.jsx'
 import RatingPanel from '../components/RatingPanel.jsx'
@@ -121,7 +121,7 @@ export default function DiscoveryPage () {
             className='absolute inset-0 size-full object-cover opacity-15 scale-110 xl:scale-125 2xl:scale-150 -top-1/4 mix-blend-screen -z-10 pointer-events-none'
             style={{ filter: 'blur(80px) saturate(1.5)' }}
           />}
-        <MovieCard movie={movies[currentIndex]} error={error} />
+        <DiscoveryCard movie={movies[currentIndex]} error={error} />
       </div>
       <DiscoveryControls interaction={handleInteraction} handleBack={handleBack} canGoBack={canGoBack} onRate={handleRate} requireAuth={requireAuth} />
       {showRating && (

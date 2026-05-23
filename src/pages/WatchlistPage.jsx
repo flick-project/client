@@ -4,6 +4,8 @@ import { usePageTitle } from '../hooks/usePageTitle.js'
 import { useToast } from '../hooks/useToast'
 import { ChevronDown } from 'lucide-react'
 import WatchlistCard from '../components/WatchlistCard.jsx'
+import Modal from '../components/Modal.jsx'
+import RatingPanel from '../components/RatingPanel.jsx'
 
 const WATCHLIST_PAGE_LIMIT = 20
 
@@ -17,6 +19,7 @@ export default function WatchlistPage () {
   const [movies, setMovies] = useState([])
   const [total, setTotal] = useState(null)
   const [hasMore, setHasMore] = useState(true)
+  const [ratingMovie, setRatingMovie] = useState(null)
   const loadingRef = useRef(false)
   const bottomRef = useRef(null)
 
@@ -58,11 +61,23 @@ export default function WatchlistPage () {
     return () => observer.disconnect()
   }, [hasMore, movies.length])
 
-  const handleToggleSave = async (movieId, isSaved) => {
+  const handleToggleSave = async (movieId, wasSaved) => {
     try {
-      isSaved
+      wasSaved
         ? await apiRequest(`/watchlist/${movieId}`, { method: 'DELETE' })
         : await apiRequest('/movies/interact', { method: 'POST', body: JSON.stringify({ movieId, interaction: 'saved' }) })
+    } catch (err) {
+      console.error(err)
+      showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
+    }
+  }
+
+  const handleRate = async (rating) => {
+    try {
+      const body = { movieId: ratingMovie.tmdb_id, rating }
+      await apiRequest('/ratings', { method: 'POST', body: JSON.stringify(body) })
+      setMovies(prev => prev.map(m => m.tmdb_id === ratingMovie.tmdb_id ? { ...m, rating } : m))
+      setRatingMovie(null)
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
@@ -72,7 +87,7 @@ export default function WatchlistPage () {
   return (
     <div className='flex flex-col gap-8 py-6 px-4 max-w-7xl size-full'>
       <div className='flex items-center justify-between'>
-        <span className='text-sm font-medium text-gray-400'>{`${total} movies`}</span>
+        <span className='text-sm font-medium text-gray-400'>{`${total ?? '0'} movies`}</span>
         <div className='relative'>
           <select className='appearance-none pr-6 rounded-sm text-sm font-medium text-gray-400'>
             <option value='date'>Sort by: Date added</option>
@@ -84,9 +99,20 @@ export default function WatchlistPage () {
       {movies.length === 0 && !hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>No saved movies yet.</p>}
       {movies.length > 0 && (
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4'>
-          {movies.map(movie => (<WatchlistCard key={movie.tmdb_id} movie={movie} onToggle={(isSaved) => handleToggleSave(movie.tmdb_id, isSaved)} />))}
+          {movies.map(movie => (
+            <WatchlistCard
+              key={movie.tmdb_id} movie={movie}
+              onSave={(wasSaved) => handleToggleSave(movie.tmdb_id, wasSaved)}
+              onRate={() => setRatingMovie(movie)}
+            />
+          ))}
           <div ref={bottomRef} />
         </div>
+      )}
+      {ratingMovie && (
+        <Modal onClose={() => setRatingMovie(null)}>
+          <RatingPanel currentRating={ratingMovie.rating} onRate={handleRate} title={ratingMovie.title} />
+        </Modal>
       )}
     </div>
   )

@@ -46,7 +46,7 @@ export default function RatingPanel ({ currentRating, onRate, title }) {
           </label>
         ))}
       </fieldset>
-      <Button onClick={() => onRate(selected)} disabled={!selected}>
+      <Button onClick={() => onRate(selected)} disabled={!selected || selected === currentRating}>
         Rate
       </Button>
     </div>
