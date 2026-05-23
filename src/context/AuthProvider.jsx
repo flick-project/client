@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from './AuthContext.jsx'
-import { apiRequest, setAuthToken } from '../services/api.js'
+import { apiRequest, setAuthToken, setSessionExpiredCallback } from '../services/api.js'
 /**
  * Provider that makes auth functionality available to all children.
  * @param {object} props - Component props.
@@ -48,6 +48,14 @@ export function AuthProvider ({ children }) {
       }
     }
     refreshToken()
+  }, [])
+
+  useEffect(() => {
+    setSessionExpiredCallback(() => {
+      setToken(null)
+      setUser(null)
+      setAuthToken(null)
+    })
   }, [])
 
   return (

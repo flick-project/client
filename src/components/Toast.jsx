@@ -36,7 +36,7 @@ export default function Toast ({ message, type, onClose }) {
       {isSuccess ? <CircleCheck size={20} color='currentColor' /> : <CircleX size={20} color='currentColor' />}
       <p className='text-sm text-center'>{message}</p>
 
-      <div className={`absolute bottom-0 left-0 h-1 ${isSuccess ? 'bg-green-400/50' : 'bg-red-400/50'} bg-green-300 transition-all ${isVisible ? 'w-full' : 'w-0'}`} style={{ transitionDuration: `${timer}ms`, width: barActive ? '0%' : '100%' }} />
+      <div className={`absolute bottom-0 left-0 h-1 mt-0.5 ${isSuccess ? 'bg-green-400/50' : 'bg-red-400/50'} bg-green-300 transition-all ${isVisible ? 'w-full' : 'w-0'}`} style={{ transitionDuration: `${timer}ms`, width: barActive ? '0%' : '100%' }} />
     </div>
   )
 }

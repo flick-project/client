@@ -12,6 +12,12 @@ export const setAuthToken = (token) => {
   authToken = token
 }
 
+let onSessionExpired = null
+
+export const setSessionExpiredCallback = (callback) => {
+  onSessionExpired = callback
+}
+
 // Shared promise to prevent concurrent refresh attempts.
 let refreshPromise = null
 
@@ -55,6 +61,8 @@ export const apiRequest = async (endpoint, options = {}) => {
           setAuthToken(data.access_token)
         } else {
           authToken = null
+          onSessionExpired?.()
+          return null
         }
       })()
     }
