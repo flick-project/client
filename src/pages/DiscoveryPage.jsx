@@ -14,7 +14,7 @@ import Modal from '../components/Modal.jsx'
  * @returns {React.ReactElement} The DiscoveryPage component.
  */
 export default function DiscoveryPage () {
-  const [page, setPage] = useState(1)
+  const [fetchTrigger, setFetchTrigger] = useState(0)
   const [movies, setMovies] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [error, setError] = useState(null)
@@ -27,12 +27,10 @@ export default function DiscoveryPage () {
 
   usePageTitle('Discovery')
 
-  // Mount and fetch movie suggestions.
   useEffect(() => {
-    const fetchMovies = async () => {
+    const loadMovies = async () => {
       try {
-        const result = await apiRequest(`/movies/discover?page=${page}`)
-        // Set for O(1) lookups. Filters duplicates since Strict Mode makes effects run twice.
+        const result = await apiRequest('/movies/discover')
         setMovies(prev => {
           const existingIds = new Set(prev.map(m => m.id))
           const newMovies = result.movies.filter(m => !existingIds.has(m.id))
@@ -43,8 +41,16 @@ export default function DiscoveryPage () {
         setError(err.message || 'Something went wrong. Please try again.')
       }
     }
-    fetchMovies()
-  }, [page])
+    loadMovies()
+  }, [fetchTrigger])
+
+  const advanceQueue = () => {
+    setCurrentIndex(currentIndex + 1)
+    setCanGoBack(true)
+    if (currentIndex + 5 >= movies.length) {
+      setFetchTrigger(prev => prev + 1)
+    }
+  }
 
   // Record save/skip interaction and advance to the next movie.
   const handleInteraction = async (type) => {
@@ -89,17 +95,6 @@ export default function DiscoveryPage () {
     if (canGoBack && currentIndex > 0) {
       setCurrentIndex(currentIndex - 1)
       setCanGoBack(false)
-    }
-  }
-
-  // Go forth one movie.
-  const advanceQueue = () => {
-    setCurrentIndex(currentIndex + 1)
-    setCanGoBack(true)
-
-    // Pre-fetch next page before running out of movies.
-    if (currentIndex + 5 >= movies.length) {
-      setPage(page + 1)
     }
   }
 
