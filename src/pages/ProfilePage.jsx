@@ -1,8 +1,9 @@
 import { usePageTitle } from '../hooks/usePageTitle.js'
 import { apiRequest } from '../services/api.js'
 import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useToast } from '../hooks/useToast'
-import { CircleUser, CirclePlus, X } from 'lucide-react'
+import { CircleUser, CirclePlus, X, Settings } from 'lucide-react'
 import FavoriteSearchModal from '../components/FavoriteSearchModal.jsx'
 
 /**
@@ -75,20 +76,27 @@ export default function ProfilePage () {
   if (isLoading || !profile) return <p>Loading</p>
   return (
     <div className='flex flex-col gap-6 p-6 max-w-6xl w-full'>
-      <div className='flex gap-6 w-full'>
-        {profile.gravatar
-          ? <img src={profile.gravatar} alt='Avatar' className='rounded-full w-32 h-32' />
-          : <CircleUser size={128} strokeWidth={1.25} />}
-        <div className='flex flex-col justify-center gap-4'>
-          <p className='text-xl font-semibold leading-none'>{profile.displayName}</p>
-          <p className='text-sm font-medium leading-none text-gray-400'>Member since {formatDate(profile.createdAt)}</p>
-          <p className='text-sm leading-none text-gray-400'>
-            <span className='text-white font-medium'>{stats.totalInteractions}</span> swipes
-            <span className='px-2 text-gray-600'>|</span>
-            <span className='text-white font-medium'>{stats.totalSaves}</span> saves
-            <span className='px-2 text-gray-600'>|</span>
-            <span className='text-white font-medium'>{stats.totalSkips}</span> skips
-          </p>
+      <div className='flex gap-6 w-full justify-between'>
+        <div className='flex gap-6'>
+          {profile.gravatar
+            ? <img src={profile.gravatar} alt='Avatar' className='rounded-full w-32 h-32' />
+            : <CircleUser size={128} strokeWidth={1.25} />}
+          <div className='flex flex-col items-start justify-center gap-4'>
+            <div className='flex flex-col gap-2'>
+              <p className='text-xl font-semibold leading-none'>{profile.displayName}</p>
+              <p className='text-sm font-medium leading-none text-gray-400'>Member since {formatDate(profile.createdAt)}</p>
+            </div>
+            <p className='text-sm leading-none text-gray-400'>
+              <span className='text-white font-medium'>{stats.totalInteractions}</span> swipes
+              <span className='px-2 text-gray-600'>|</span>
+              <span className='text-white font-medium'>{stats.totalSaves}</span> saves
+              <span className='px-2 text-gray-600'>|</span>
+              <span className='text-white font-medium'>{stats.totalSkips}</span> skips
+            </p>
+            <Link to='/settings' className='bg-white/5 border border-white/10 p-2 rounded-full hover:bg-white/10 text-gray-300 hover:text-gray-100'>
+              <Settings size={20} />
+            </Link>
+          </div>
         </div>
       </div>
       <hr className='border-white/10' />

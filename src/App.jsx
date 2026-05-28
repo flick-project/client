@@ -3,6 +3,7 @@ import Navigation from './components/Navigation.jsx'
 import DiscoveryPage from './pages/DiscoveryPage.jsx'
 import WatchlistPage from './pages/WatchlistPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
+import SettingsPage from './pages/SettingsPage.jsx'
 import PrivacyPage from './pages/PrivacyPage.jsx'
 import Toast from './components/Toast.jsx'
 import { useToast } from './hooks/useToast.js'
@@ -28,6 +29,7 @@ function App () {
           <Route path='/' element={<DiscoveryPage key={token} />} />
           <Route path='/watchlist' element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} />
           <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path='/settings' element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
           <Route path='/privacy' element={<PrivacyPage />} />
         </Routes>
       </main>
