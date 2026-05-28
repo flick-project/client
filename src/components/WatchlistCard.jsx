@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Bookmark, Star } from 'lucide-react'
+import { posterUrl } from '../utils/imageUtils'
 
 /**
  * Displays a watchlist movie card with poster, save toggle, and rate button.
@@ -11,14 +12,20 @@ import { Bookmark, Star } from 'lucide-react'
  */
 export default function WatchlistCard ({ movie, onSave, onRate }) {
   const [saved, setSaved] = useState(true)
-  const posterSrc = `https://image.tmdb.org/t/p/w342${movie.poster_path}`
 
   return (
     <div className='relative aspect-2/3 flex items-center justify-center group'>
       <img
-        src={posterSrc}
+        src={posterUrl(movie.poster_path, 185)}
+        srcSet={`
+          ${posterUrl(movie.poster_path, 185)} 185w,
+          ${posterUrl(movie.poster_path, 300)} 300w,
+          ${posterUrl(movie.poster_path, 500)} 500w
+        `}
+        sizes='(max-width: 640px) 45vw, 200px'
         alt={movie.title}
         className='size-full object-cover rounded-lg pointer-events-none'
+        loading='lazy'
       />
       <div className='absolute inset-0 rounded-lg border border-white/10 pointer-events-none' />
       <div className='absolute opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto flex gap-2 transition-opacity duration-150 delay'>
