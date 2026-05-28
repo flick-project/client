@@ -8,6 +8,7 @@ import DiscoveryControls from '../components/DiscoveryControls.jsx'
 import AuthFlow from '../components/AuthFlow.jsx'
 import RatingPanel from '../components/RatingPanel.jsx'
 import Modal from '../components/Modal.jsx'
+import { posterUrl } from '../utils/imageUtils.js'
 
 /**
  * Discovery page where users swipe through movie suggestions.
@@ -111,10 +112,17 @@ export default function DiscoveryPage () {
       <div className='relative flex-1 min-h-0'>
         {movies[currentIndex] &&
           <img
-            src={`https://image.tmdb.org/t/p/w154${movies[currentIndex].poster_path}`}
+            src={posterUrl(movies[currentIndex].poster_path, 500)}
+            srcSet={`
+              ${posterUrl(movies[currentIndex].poster_path, 300)} 300w,
+              ${posterUrl(movies[currentIndex].poster_path, 500)} 500w,
+              ${posterUrl(movies[currentIndex].poster_path, 780)} 780w
+            `}
+            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px'
             alt=''
             className='absolute inset-0 size-full object-cover opacity-15 scale-110 xl:scale-125 2xl:scale-150 -top-1/4 mix-blend-screen -z-10 pointer-events-none'
             style={{ filter: 'blur(80px) saturate(1.5)' }}
+            loading='eager'
           />}
         <DiscoveryCard movie={movies[currentIndex]} error={error} />
       </div>
