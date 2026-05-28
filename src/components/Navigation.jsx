@@ -65,7 +65,10 @@ function Navigation () {
       </div>
       {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
       <hr className='border-white/10' />
-      <small className='w-full text-xs text-white/40 leading-none'>Movie data provided by TMDB</small>
+      <div className='flex flex-wrap gap-4 w-full text-xs font-medium leading-none'>
+        <Link to='/privacy' className='font-semibold text-gray-400'>Privacy Policy</Link>
+        <p className='text-gray-500'>Movie data provided by TMDB</p>
+      </div>
     </nav>
   )
 }
