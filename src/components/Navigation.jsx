@@ -7,17 +7,17 @@ import Button from './Button.jsx'
 import AuthFlow from './AuthFlow.jsx'
 
 /**
- * Main navigation sidebar with page links and authentication button.
+ * Desktop sidebar navigation with page links, auth controls, and footer.
+ * Hidden on mobile where BottomNav is used instead.
  * @returns {React.ReactElement} The Navigation component.
  */
-function Navigation () {
+export default function Navigation () {
   const { user, logout } = useAuth()
   const { showToast } = useToast()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
-  // Open the auth modal if the user is not logged in.
   const requireAuth = (e) => {
     if (!user) {
       e.preventDefault()
@@ -32,12 +32,15 @@ function Navigation () {
   }
 
   return (
-    <nav className='w-60 h-full flex flex-col gap-6 p-6'>
+    <nav className='hidden md:flex flex-col h-full w-60 gap-6 p-6'>
       <div className='flex flex-col gap-10'>
+        {/* Logo */}
         <div className='flex items-center gap-3'>
           <Film size={28} className='text-brand rotate-90' />
           <h1 className='text-xl font-semibold'>Flick</h1>
         </div>
+
+        {/* Page links */}
         <ul className='flex flex-col gap-5 text-sm font-medium'>
           <li>
             <Link to='/' className={`flex items-center gap-4 p-2 -m-2 rounded-lg hover:bg-white/10 ${pathname === '/' ? 'text-brand' : ''}`}>
@@ -54,23 +57,24 @@ function Navigation () {
           <li>
             <Link to='/profile' onClick={requireAuth} className={`flex items-center gap-4 p-2 -m-2 rounded-lg hover:bg-white/10 ${pathname === '/profile' ? 'text-brand' : ''}`}>
               <User size={24} />
-              {user ? user.displayName : <span>Profile</span>}
+              {user ? user.displayName : 'Profile'}
             </Link>
           </li>
         </ul>
-        {/* Show login if user isn't logged in, and logout if they are. */}
+
         {user
-          ? <Button className='w-fill' onClick={handleLogout}>Log out</Button>
-          : <Button className='w-fill' onClick={() => setIsAuthOpen(true)}>Log in</Button>}
+          ? <Button className='w-full' onClick={handleLogout}>Log out</Button>
+          : <Button className='w-full' onClick={() => setIsAuthOpen(true)}>Log in</Button>}
       </div>
+
       {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
+
+      {/* Footer */}
       <hr className='border-white/10' />
       <div className='flex flex-wrap gap-4 w-full text-xs font-medium leading-none'>
         <Link to='/privacy' className='font-semibold text-gray-400'>Privacy Policy</Link>
-        <p className='text-gray-500'>Movie data provided by TMDB</p>
+        <p className='text-gray-500'>Powered by TMDB</p>
       </div>
     </nav>
   )
 }
-
-export default Navigation

@@ -85,7 +85,7 @@ export default function WatchlistPage () {
   }
 
   return (
-    <div className='flex flex-col gap-8 py-6 px-4 max-w-7xl size-full'>
+    <div className='flex flex-col gap-6 md:gap-8 py-6 px-4 max-w-7xl size-full'>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-medium text-gray-400'>{`${total ?? '0'} movies`}</span>
         <div className='relative'>
@@ -98,7 +98,7 @@ export default function WatchlistPage () {
       {movies.length === 0 && hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>Loading...</p>}
       {movies.length === 0 && !hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>No saved movies yet.</p>}
       {movies.length > 0 && (
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4'>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:pb-6'>
           {movies.map(movie => (
             <WatchlistCard
               key={movie.tmdb_id} movie={movie}

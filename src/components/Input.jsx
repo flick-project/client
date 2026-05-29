@@ -7,7 +7,7 @@
  * @param {(e: Event) => void} props.onChange - Change handler.
  * @param {boolean} [props.required] - Whether the field is required.
  * @param {boolean} [props.disabled] - Whether the field is disabled.
- * @param props.icon
+ * @param {React.ComponentType} props.icon - Lucide icon component.
  * @returns {React.ReactElement} The Input component.
  */
 export default function Input ({ type, placeholder, value, onChange, required, disabled, icon }) {
