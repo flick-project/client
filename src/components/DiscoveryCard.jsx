@@ -1,5 +1,6 @@
 import { Star } from 'lucide-react'
 import { GENRES } from '../utils/genres.js'
+import { posterUrl } from '../utils/imageUtils.js'
 
 /**
  * Displays a movie card with poster, title, score, and overview.
@@ -18,16 +19,21 @@ export default function MovieCard ({ movie, error }) {
     )
   }
 
-  const posterSrc = `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-
   return (
-    <div className='h-full relative aspect-2/3 rounded-2xl overflow-hidden shadow-lg'>
+    <div className='relative size-full rounded-2xl overflow-hidden shadow-lg'>
       <div className='relative size-full'>
         <img
-          src={posterSrc}
+          src={posterUrl(movie.poster_path, 300)}
+          srcSet={`
+            ${posterUrl(movie.poster_path, 300)} 300w,
+            ${posterUrl(movie.poster_path, 500)} 500w,
+            ${posterUrl(movie.poster_path, 780)} 780w
+          `}
+          sizes='(max-width: 640px) 45vw, 200px'
           alt={movie.title}
           className='absolute inset-0 size-full object-cover'
           style={{ maskImage: 'linear-gradient(to bottom, white 60%, rgba(255,255,255,0.3) 85%, rgba(255,255,255,0.15) 100%)' }}
+          loading='eager'
         />
         <div className='absolute inset-0 bg-black -z-1' />
         <div className='relative flex flex-col justify-end gap-3 w-full h-full p-6 text-white text-shadow-md'>
@@ -39,9 +45,9 @@ export default function MovieCard ({ movie, error }) {
               <span className='text-white/70'>({movie.vote_count})</span>
             </span>
             <span>{new Date(movie.release_date).getFullYear()}</span>
-            <span className='flex gap-2'>
+            <span className='flex gap-2 overflow-auto'>
               {movie.genre_ids.slice(0, 3).map(id => (
-                <span key={id} className='px-2 py-1 text-xs rounded-full bg-white/20 backdrop-blur-xs'>
+                <span key={id} className='px-2 py-1 text-xs rounded-full whitespace-nowrap bg-white/20 backdrop-blur-xs'>
                   {GENRES[id]}
                 </span>
               ))}
