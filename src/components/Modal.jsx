@@ -11,7 +11,7 @@ import { X } from 'lucide-react'
 export default function Modal ({ onClose, wide, children }) {
   return (
     <div
-      className='fixed inset-0 flex items-center justify-center bg-black/50 z-50'
+      className='fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-2'
       // Close on backdrop click. Uses onMouseDown with target check
       // to prevent closing when dragging on text inside the modal.
       onMouseDown={(e) => {

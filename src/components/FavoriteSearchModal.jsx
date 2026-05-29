@@ -5,7 +5,7 @@ import { Search } from 'lucide-react'
 /**
  * Searchable movie list that queries TMDB and displays results.
  * @param {object} props - Component props.
- * @param props.excludeIds
+ * @param {number[]} props.excludeIds - Movie IDs to hide from results (e.g. existing favorites).
  * @param {(movie: object) => void} props.onSelect - Callback when a movie is selected.
  * @param {() => void} props.onClose - Callback to close the modal.
  * @returns {React.ReactElement} The MovieSearch component.

@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Navigation from './components/Navigation.jsx'
+import BottomNav from './components/BottomNav.jsx'
 import DiscoveryPage from './pages/DiscoveryPage.jsx'
 import WatchlistPage from './pages/WatchlistPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
@@ -19,7 +20,7 @@ function App () {
   const { token } = useAuth()
 
   return (
-    <div className='flex h-screen'>
+    <div className='flex flex-col md:flex-row h-screen'>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <aside>
         <Navigation />
@@ -33,6 +34,7 @@ function App () {
           <Route path='/privacy' element={<PrivacyPage />} />
         </Routes>
       </main>
+      <BottomNav />
     </div>
   )
 }
