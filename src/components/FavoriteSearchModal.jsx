@@ -19,7 +19,7 @@ export default function SearchModal ({ onSelect, onClose, excludeIds }) {
 
   return (
     <div
-      className='fixed inset-0 flex items-start justify-center pt-40 bg-black/50 z-50'
+      className='fixed inset-0 flex items-start justify-center pt-[10%] bg-black/50 z-50'
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}

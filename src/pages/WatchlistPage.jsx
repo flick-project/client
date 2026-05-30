@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { apiRequest } from '../services/api.js'
-import { usePageTitle } from '../hooks/usePageTitle.js'
+import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { useToast } from '../hooks/useToast'
 import { ChevronDown } from 'lucide-react'
 import WatchlistCard from '../components/WatchlistCard.jsx'
@@ -23,7 +23,7 @@ export default function WatchlistPage () {
   const loadingRef = useRef(false)
   const bottomRef = useRef(null)
 
-  usePageTitle('Watchlist')
+  usePageMetadata('Watchlist')
 
   // Fetch the next page of saved movies when page changes.
   useEffect(() => {
@@ -85,11 +85,14 @@ export default function WatchlistPage () {
   }
 
   return (
-    <div className='flex flex-col gap-6 md:gap-8 py-6 px-4 max-w-7xl size-full'>
+    <div className='flex flex-col gap-6 py-6 max-lg:px-4 lg:pr-6 max-w-6xl size-full'>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-medium text-gray-400'>{`${total ?? '0'} movies`}</span>
         <div className='relative'>
-          <select className='appearance-none pr-6 rounded-sm text-sm font-medium text-gray-400'>
+          <select
+            className='appearance-none pr-6 rounded-sm text-sm font-medium text-gray-400'
+            aria-label='Sort watchlist by'
+          >
             <option value='date'>Sort by: Date added</option>
           </select>
           <ChevronDown size={16} className='absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400' />
@@ -98,7 +101,7 @@ export default function WatchlistPage () {
       {movies.length === 0 && hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>Loading...</p>}
       {movies.length === 0 && !hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>No saved movies yet.</p>}
       {movies.length > 0 && (
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:pb-6'>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:pb-6 max-lg:pb-16'>
           {movies.map(movie => (
             <WatchlistCard
               key={movie.tmdb_id} movie={movie}

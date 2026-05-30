@@ -20,7 +20,7 @@ export default function Input ({ type, placeholder, value, onChange, required, d
         onChange={onChange}
         required={required}
         disabled={disabled}
-        className={`size-full text-base p-2 px-3 ${icon ? 'pr-10' : ''} rounded-lg bg-surface outline-1 outline-white/10 placeholder-gray-400 focus:outline-solid focus:outline-2 focus:outline-white/10 disabled:opacity-50`}
+        className={`size-full text-base p-3 ${icon ? 'pr-10' : ''} rounded-lg bg-surface outline-1 outline-white/10 placeholder-gray-400 focus:outline-solid focus:outline-2 focus:outline-white/10 disabled:opacity-50`}
       />
       {icon && <div className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-gray-400'>{icon}</div>}
     </div>

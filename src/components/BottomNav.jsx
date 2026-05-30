@@ -23,7 +23,7 @@ export default function BottomNav () {
   }
 
   return (
-    <nav className='flex md:hidden items-center justify-around border-t border-white/10 bg-surface h-14'>
+    <nav className='fixed w-full bottom-0 flex md:hidden items-center justify-around border-t border-white/10 bg-surface h-14 z-99'>
       <Link to='/' className={pathname === '/' ? 'text-brand' : 'text-gray-400'}>
         <Compass size={24} />
       </Link>

@@ -15,25 +15,25 @@ export default function DiscoveryControls ({ interaction, handleBack, canGoBack 
       <IconButton
         onClick={handleBack} disabled={!canGoBack} icon={RotateCcw}
         backgroundColor='bg-yellow-500/10' textColor='text-yellow-400'
-        strokeWidth={2} size='small' animation='scale'
+        strokeWidth={2} size='small' animation='scale' ariaLabel='Go back' title='Go back'
       />
 
       <IconButton
         onClick={() => interaction('skipped')} icon={X}
         backgroundColor='bg-red-500/10' textColor='text-red-400'
-        strokeWidth={2} animation='scale'
+        strokeWidth={2} animation='scale' ariaLabel='Skip' title='Skip'
       />
 
       <IconButton
         onClick={() => interaction('saved')} icon={Bookmark}
         backgroundColor='bg-emerald-500/10' textColor='text-emerald-400'
-        filled animation='scale'
+        filled animation='scale' ariaLabel='Save' title='Save'
       />
 
       <IconButton
         onClick={() => interaction('rate')} icon={Star}
         backgroundColor='bg-blue-500/10' textColor='text-blue-400'
-        filled size='small' animation='scale'
+        filled size='small' animation='scale' ariaLabel='Rate' title='Rate'
       />
     </div>
   )

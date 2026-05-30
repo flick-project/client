@@ -1,8 +1,9 @@
-import { usePageTitle } from '../hooks/usePageTitle.js'
+import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { apiRequest } from '../services/api.js'
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useToast } from '../hooks/useToast'
+import { posterUrl } from '../utils/imageUtils.js'
 import { CircleUser, CirclePlus, X, Settings } from 'lucide-react'
 import PageHeader from '../components/PageHeader.jsx'
 import FavoriteSearchModal from '../components/FavoriteSearchModal.jsx'
@@ -73,7 +74,7 @@ export default function ProfilePage () {
 
   const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 
-  usePageTitle(isLoading ? 'Profile' : profile?.displayName)
+  usePageMetadata(isLoading ? 'Profile' : profile?.displayName)
   if (isLoading || !profile) return <p>Loading</p>
   return (
     <div className='w-full flex flex-col max-w-6xl md:p-8'>
@@ -86,7 +87,7 @@ export default function ProfilePage () {
       />
 
       {/* Profile info and stats mobile */}
-      <div className='flex flex-col gap-6 pb-4'>
+      <div className='flex flex-col gap-6 pb-18'>
         <div className='flex md:hidden flex-col gap-4 items-center px-6'>
           <div className='flex gap-4'>
             {profile.gravatar
@@ -131,22 +132,32 @@ export default function ProfilePage () {
                 <span className='px-2 text-gray-600'>|</span>
                 <span className='text-white font-medium'>{stats.totalSkips}</span> skips
               </p>
-              <Link to='/settings' className='bg-white/5 border border-white/10 p-2 rounded-full hover:bg-white/10 text-gray-300 hover:text-gray-100'>
-                <Settings size={20} />
-              </Link>
             </div>
           </div>
         </div>
         <hr className='border-white/10' />
 
         <h2 className='text-base font-medium px-4'>Favorite movies</h2>
-        <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full px-4 md:px-0'>
+        <div className='grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full px-4 lg:px-0'>
           {favorites.map((fav) => (
             <div key={fav.id} className='relative group'>
               <div className='w-full aspect-2/3 rounded-lg overflow-hidden border border-solid border-white/10'>
-                <img src={`https://image.tmdb.org/t/p/w154${fav.poster_path}`} alt={fav.title} className='w-full h-full object-cover' />
-                <div className='absolute inset-0 opacity-0 hover:opacity-100'>
-                  <button onClick={() => handleRemove(fav)} className='absolute top-2 right-2 bg-black/60 rounded-full p-1 cursor-pointer'>
+                <img
+                  src={posterUrl(fav.poster_path, 92)}
+                  srcSet={`
+                      ${posterUrl(fav.poster_path, 92)} 92w,
+                      ${posterUrl(fav.poster_path, 185)} 185w
+                    `}
+                  alt={fav.title}
+                  className='w-full h-full object-cover'
+                  loading='eager'
+                />
+                <div className='absolute inset-0'>
+                  <button
+                    onClick={() => handleRemove(fav)}
+                    className='absolute top-2 right-2 bg-black/60 rounded-full p-1 cursor-pointer'
+                    aria-label='Remove from watchlist'
+                  >
                     <X size={20} />
                   </button>
                 </div>
@@ -158,7 +169,11 @@ export default function ProfilePage () {
             </div>
           ))}
           {favorites.length < 5 && (
-            <button onClick={() => setIsSearchOpen(true)} className='flex items-center justify-center w-full aspect-2/3 rounded-lg border border-dashed border-white/20 text-gray-400 cursor-pointer'>
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className='flex items-center justify-center w-full aspect-2/3 rounded-lg border border-dashed border-white/20 text-gray-400 cursor-pointer'
+              aria-label='Add favorite movie'
+            >
               <CirclePlus size={32} strokeWidth={1} />
             </button>
           )}

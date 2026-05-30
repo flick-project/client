@@ -12,17 +12,21 @@ export function AuthProvider ({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const login = (newToken) => {
-    setToken(newToken)
-    setAuthToken(newToken)
+  const login = (response) => {
+    const { access_token: accessToken, gravatar } = response
+    setToken(accessToken)
+    setAuthToken(accessToken)
 
     // Decode base64 to store user info.
-    const payload = JSON.parse(atob(newToken.split('.')[1]))
-    setUser({
+    const payload = JSON.parse(atob(accessToken.split('.')[1]))
+    const userData = {
       id: payload.id,
       email: payload.email,
-      displayName: payload.display_name
-    })
+      displayName: payload.display_name,
+      gravatar
+    }
+    setUser(userData)
+    return userData
   }
 
   const logout = async () => {
@@ -40,7 +44,7 @@ export function AuthProvider ({ children }) {
     const refreshToken = async () => {
       try {
         const result = await apiRequest('/auth/refresh', { method: 'POST' })
-        login(result.access_token)
+        login(result)
       } catch {
         // No valid refresh token, user stays logged out.
       } finally {
