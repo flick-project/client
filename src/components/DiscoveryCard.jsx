@@ -33,6 +33,7 @@ export default function MovieCard ({ movie, error }) {
           alt={movie.title}
           className='absolute inset-0 size-full object-cover'
           style={{ maskImage: 'linear-gradient(to bottom, white 60%, rgba(255,255,255,0.3) 85%, rgba(255,255,255,0.15) 100%)' }}
+          fetchpriority='high'
           loading='eager'
         />
         <div className='absolute inset-0 bg-black -z-2' />

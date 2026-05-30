@@ -36,6 +36,7 @@ export default function WatchlistCard ({ movie, onSave, onRate }) {
         sizes='(max-width: 768px) 100px, 150px'
         alt={movie.title}
         className='size-full object-cover rounded-lg pointer-events-none'
+        fetchpriority='high'
         loading='lazy'
       />
       <div className='absolute inset-0 rounded-lg border border-white/10 pointer-events-none' />
