@@ -1,4 +1,4 @@
-import { usePageTitle } from '../hooks/usePageTitle.js'
+import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { useState, useEffect } from 'react'
 import { apiRequest } from '../services/api.js'
 import { useAuth } from '../hooks/useAuth.js'
@@ -27,7 +27,10 @@ export default function DiscoveryPage () {
   const { user } = useAuth()
   const { showToast } = useToast()
 
-  usePageTitle('Discovery')
+  usePageMetadata(
+    'Discover Movies | Flick',
+    'Find your next movie tonight. Personalized recommendations. Swipe to discover.'
+  )
 
   useEffect(() => {
     const loadMovies = async () => {
@@ -110,54 +113,48 @@ export default function DiscoveryPage () {
 
   return (
     <div className='size-full flex flex-col'>
-      {/* MOBILE LAYOUT */}
-      <div className='md:hidden h-dvh overflow-hidden flex flex-col'>
-        {/* Topbar */}
-        <div className='shrink-0 flex items-center gap-2 px-4 py-3'>
-          <Film size={28} className='text-brand rotate-90' />
-          <h1 className='text-xl font-semibold'>Flick</h1>
-        </div>
+      {/* Mobile */}
+      <div className='lg:hidden flex items-center gap-2 p-4'>
+        <Film size={28} className='text-brand rotate-90' />
+        <h1 className='text-xl font-semibold'>Flick</h1>
+      </div>
+      <div className='lg:hidden flex flex-col flex-1 min-h-0 justify-center'>
 
-        {/* Center content */}
-        <div className='flex-1 min-h-0 flex flex-col items-center justify-center gap-3 px-3 pb-3 overflow-hidden'>
-
-          {/* Card */}
+        <div className='flex flex-col items-center justify-center gap-4 px-2 overflow-hidden'>
           <div
             className='relative shrink min-h-0 aspect-2/3'
             style={{
-              width: 'min(90vw, calc((100dvh) * 2 / 3))',
+              width: 'min(95vw, calc((100dvh) * 2 / 3))',
               maxHeight: 'calc(100dvh - 150px)'
             }}
           >
             {movies[currentIndex] && (
-              <DiscoveryCard
-                movie={movies[currentIndex]}
-                error={error}
-              />
+              <DiscoveryCard movie={movies[currentIndex]} error={error} />
             )}
           </div>
+        </div>
 
-          {/* Controls */}
-          <div className='shrink-0'>
-            <DiscoveryControls
-              interaction={handleInteraction}
-              handleBack={handleBack}
-              canGoBack={canGoBack}
-              onRate={handleRate}
-              requireAuth={requireAuth}
-            />
-          </div>
+        <div className='shrink-0 p-4'>
+          <DiscoveryControls
+            interaction={handleInteraction}
+            handleBack={handleBack}
+            canGoBack={canGoBack}
+            onRate={handleRate}
+            requireAuth={requireAuth}
+          />
         </div>
       </div>
 
-      <div className='size-full hidden md:flex flex-col items-center justify-center gap-2 p-4 md:gap-6 md:p-8 overflow-hidden'>
-        <div className='relative flex-1 min-h-0 aspect-2/3'>
+      {/* Desktop */}
+      <div className='h-full lg:size-full hidden lg:flex flex-col items-center justify-center gap-2 p-4 md:gap-6 md:p-8'>
+        <div className='full-size relative flex-1 min-h-0 aspect-2/3'>
           {movies[currentIndex] &&
             <img
               src={posterUrl(movies[currentIndex].poster_path, 300)}
-              className='absolute inset-0 size-full object-cover opacity-20 scale-100 xl:scale-125 2xl:scale-150 -top-1/4 mix-blend-screen -z-10 pointer-events-none'
+              className='absolute inset-0 size-full object-cover opacity-20 scale-100 xl:scale-125 -top-1/4 mix-blend-screen -z-10 pointer-events-none'
               style={{ filter: 'blur(80px) saturate(1.5)' }}
               loading='eager'
+              aria-hidden='true'
             />}
           <DiscoveryCard movie={movies[currentIndex]} error={error} />
         </div>

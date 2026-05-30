@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Bookmark, Star } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Bookmark, Star, Ellipsis, X } from 'lucide-react'
 import { posterUrl } from '../utils/imageUtils'
 
 /**
@@ -12,29 +12,70 @@ import { posterUrl } from '../utils/imageUtils'
  */
 export default function WatchlistCard ({ movie, onSave, onRate }) {
   const [saved, setSaved] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef(null)
+
+  // Close menu on outside click.
+  useEffect(() => {
+    if (!menuOpen) return
+    const handleClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false)
+    }
+    document.addEventListener('pointerdown', handleClick)
+    return () => document.removeEventListener('pointerdown', handleClick)
+  }, [menuOpen])
 
   return (
-    <div className='relative aspect-2/3 flex items-center justify-center group'>
+    <div className='relative aspect-2/3 group'>
       <img
-        src={posterUrl(movie.poster_path, 185)}
+        src={posterUrl(movie.poster_path, 92)}
         srcSet={`
-          ${posterUrl(movie.poster_path, 185)} 185w,
-          ${posterUrl(movie.poster_path, 300)} 300w,
-          ${posterUrl(movie.poster_path, 500)} 500w
-        `}
-        sizes='(max-width: 640px) 45vw, 200px'
+      ${posterUrl(movie.poster_path, 92)} 92w,
+      ${posterUrl(movie.poster_path, 185)} 185w
+    `}
+        sizes='(max-width: 768px) 100px, 150px'
         alt={movie.title}
         className='size-full object-cover rounded-lg pointer-events-none'
         loading='lazy'
       />
       <div className='absolute inset-0 rounded-lg border border-white/10 pointer-events-none' />
-      <div className='absolute opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto flex gap-2 transition-opacity duration-150 delay'>
-        <button onClick={() => { setSaved(!saved); onSave(saved) }} className='rounded-full p-2 bg-black/70 cursor-pointer'>
-          <Bookmark size={32} strokeWidth={1} className={saved ? 'fill-yellow-400 text-yellow-400' : 'fill-white'} />
+
+      {/* Ellipsis */}
+      <div ref={menuRef}>
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className='absolute top-1 right-1 z-20 p-1 rounded-full bg-black/60 text-white cursor-pointer md:opacity-0 md:group-hover:opacity-100 transition-opacity'
+          aria-label={menuOpen ? 'Close menu' : 'Card actions'}
+        >
+          {menuOpen ? <X size={24} /> : <Ellipsis size={24} />}
         </button>
-        <button onClick={() => { onRate() }} className='rounded-full p-2 bg-black/70 cursor-pointer'>
-          <Star size={32} strokeWidth={1.5} className={movie.rating ? 'fill-blue-400 text-blue-400' : 'fill-white'} />
-        </button>
+
+        {/* Overlay */}
+        {menuOpen && (
+          <div className='absolute inset-0 z-10 bg-black/80 backdrop-blur-xs rounded-lg flex flex-col items-center justify-center gap-2 p-2'>
+            {/* Title */}
+            <p className='text-base text-white text-center p-2'>
+              {movie.title}
+            </p>
+            {/* Buttons */}
+            <div className='flex flex-wrap justify-center gap-1.5'>
+              <button
+                onClick={() => { setSaved(!saved); onSave(saved); setMenuOpen(false) }}
+                className='w-full flex items-center justify-center gap-2 py-3 px-3 rounded-full bg-white/15 hover:bg-white/25 text-sm font-medium text-white'
+              >
+                <Bookmark size={20} className={saved ? 'fill-yellow-400 text-yellow-400' : ''} />
+                <span>{saved ? 'Remove' : 'Save'}</span>
+              </button>
+              <button
+                onClick={() => { onRate(); setMenuOpen(false) }}
+                className='w-full flex items-center justify-center gap-2 py-3 px-3 rounded-full bg-white/15 hover:bg-white/25 text-sm font-medium text-white'
+              >
+                <Star size={20} className={movie.rating ? 'fill-blue-400 text-blue-400' : ''} />
+                <span className='text-center'>{movie.rating ? 'Rate' : 'Rate'}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
