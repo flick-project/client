@@ -16,10 +16,12 @@ const animations = {
  * @param {string} [props.animation] - Animation preset (scale, lift).
  * @param {string} [props.size] - Button size (big, small).
  * @param {boolean} [props.disabled] - Whether the button is disabled.
+ * @param {string} [props.ariaLabel] - Aria label.
+ * @param {string} [props.title] - Title.
  * @param {() => void} [props.onClick] - Click handler.
  * @returns {React.ReactElement} The IconButton component.
  */
-export default function IconButton ({ icon, backgroundColor = 'bg-white/5', textColor = 'text-white', strokeWidth = 1.5, filled = false, animation, size = 'big', disabled, onClick }) {
+export default function IconButton ({ icon, backgroundColor = 'bg-white/5', textColor = 'text-white', strokeWidth = 1.5, filled = false, animation, size = 'big', disabled, ariaLabel, title, onClick }) {
   const [clicked, setClicked] = useState(false)
 
   const handleClick = () => {
@@ -39,6 +41,8 @@ export default function IconButton ({ icon, backgroundColor = 'bg-white/5', text
     <button
       className={`${base} ${padding} ${backgroundColor} ${textColor} ${disabled ? 'cursor-not-allowed' : `cursor-pointer ${animations[animation] || ''}`} transition-all duration-150`}
       disabled={disabled}
+      aria-label={ariaLabel}
+      title={title}
       onClick={handleClick}
     >
       <Icon

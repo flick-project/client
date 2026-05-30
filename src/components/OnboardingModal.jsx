@@ -71,16 +71,16 @@ export default function OnboardingModal ({ onComplete }) {
       <div className='flex flex-col gap-6'>
         <hr className='border-white/10' />
 
-        <div className='flex items-center justify-between'>
-          <button onClick={() => onComplete('Welcome to Flick!')} className='text-sm font-medium p-2 -m-2 text-gray-400 hover:underline cursor-pointer' disabled={isLoading}>
+        <div className='grid grid-cols-3 items-center justify-between'>
+          <button onClick={() => onComplete('Welcome to Flick!')} className='justify-self-start text-sm font-medium p-2 -m-2 text-gray-400 hover:underline cursor-pointer' disabled={isLoading}>
             Skip
           </button>
-          <div className='flex gap-2'>
+          <div className='justify-self-center flex gap-2'>
             {[0, 1, 2].map(i => (
               <div key={i} className={`w-2 h-2 rounded-full ${i < 1 ? 'bg-brand' : 'bg-surface'}`} />
             ))}
           </div>
-          <button onClick={handleConfirm} className='text-sm font-medium p-2 -m-2 text-brand hover:underline cursor-pointer' disabled={isLoading || favorites.length === 0}>
+          <button onClick={handleConfirm} className='justify-self-end text-sm font-medium p-2 -m-2 text-brand hover:underline cursor-pointer' disabled={isLoading || favorites.length === 0}>
             {isLoading ? 'Saving...' : 'Next'}
           </button>
         </div>
