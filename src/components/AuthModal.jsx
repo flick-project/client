@@ -130,10 +130,11 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             icon={
-              <button type='button' onClick={() => setShowPassword(!showPassword)} full className='cursor-pointer p-2 -m-2'>
+              <button type='button' onClick={() => setShowPassword(!showPassword)} className='cursor-pointer p-2 -m-2'>
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             }
+            className='[&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden'
           />
           {errors.password && <p className='text-red-500 text-sm text-center'>{errors.password}</p>}
           {!isLogin && (
@@ -148,8 +149,8 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
           )}
           {errors.confirmPassword && <p className='text-red-500 text-sm text-center'>{errors.confirmPassword}</p>}
         </form>
-        <Button type='submit' form='auth-form' disabled={isLoading} full>
-          {isLoading ? 'Processing...' : (isLogin ? 'Log in' : 'Sign up')}
+        <Button type='submit' form='auth-form' loading={isLoading}>
+          {isLogin ? 'Log in' : 'Sign up'}
         </Button>
       </div>
 
@@ -159,8 +160,8 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
         {/* Toggle between login and registration. */}
         <p className='text-sm text-text-muted text-center'>
           {isLogin
-            ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)} full>Sign up</button></>
-            : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)} full>Log in</button></>}
+            ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
+            : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
         </p>
       </div>
     </div>

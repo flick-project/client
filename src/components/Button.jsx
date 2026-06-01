@@ -2,31 +2,55 @@
  * Reusable button component.
  * @param {object} props - Component props.
  * @param {React.ReactElement} props.children - Button content.
- * @param {'primary' | 'secondary'} [props.variant] - Button style variant.
+ * @param {'primary' | 'secondary' | 'danger' | 'ghost'} [props.variant] - Button style variant.
+ * @param {'sm' | 'md' | 'lg'} [props.size] - Button size.
  * @param {boolean} [props.disabled] - Whether the button is disabled.
- * @param {'submit' | 'button'} [props.type] - Button type.
- * @param {string} [props.form] - Form ID to associate with.
- * @param {() => void} [props.onClick] - Click handler.
- * @param {string} [props.className] - Additional CSS classes.
+ * @param {boolean} [props.loading] - Whether the button is in a loading state.
  * @param {boolean} [props.full] - Whether the button should be full width.
+ * @param {string} [props.className] - Additional CSS classes.
  * @returns {React.ReactElement} The Button component.
  */
-export default function Button ({ children, variant = 'primary', disabled, type = 'button', form, onClick, className = '', full }) {
-  const base = 'py-2 px-4 rounded-md cursor-pointer text-base font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+export default function Button ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  disabled,
+  loading,
+  full,
+  className = '',
+  ...rest
+}) {
+  const base = [
+    'inline-flex items-center justify-center gap-2',
+    'rounded-md font-semibold cursor-pointer',
+    'transition-colors duration-150',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900',
+    'disabled:opacity-50 disabled:cursor-not-allowed',
+    full ? 'w-full' : '',
+  ].join(' ')
+
+  const sizes = {
+    sm: 'h-8 px-3 text-sm',
+    md: 'h-10 px-4 text-sm',
+    lg: 'h-11 px-6 text-base',
+  }
+
   const variants = {
-    primary: `${full ? 'w-full' : ''} border border-transparent bg-brand hover:enabled:bg-red-700 text-white`,
-    secondary: 'border border-gray-500 text-gray-400 hover:bg-white/10',
-    danger: 'border border-red-400 text-red-400 hover:bg-red-400/10'
+    primary: 'border border-transparent bg-brand hover:enabled:bg-red-700 text-white',
+    secondary: 'border border-gray-600 text-gray-300 hover:enabled:bg-white/10 hover:enabled:border-gray-400',
+    danger: 'border border-red-500/50 text-red-400 hover:enabled:bg-red-500/10 hover:enabled:border-red-400',
+    ghost: 'border border-transparent text-gray-400 hover:enabled:bg-white/10 hover:enabled:text-gray-200',
   }
 
   return (
     <button
-      type={type}
-      form={form}
-      disabled={disabled}
-      onClick={onClick}
-      className={`${base} ${variants[variant]} ${className}`}
+      disabled={disabled || loading}
+      className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
+      {...rest}
     >
+      {loading
+        ? <span className='w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
+        : null}
       {children}
     </button>
   )

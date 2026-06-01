@@ -20,12 +20,12 @@ function App () {
   const { token } = useAuth()
 
   return (
-    <div className='flex flex-col md:flex-row h-dvh'>
+    <div className='flex flex-col lg:flex-row h-dvh'>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <aside className='fixed hidden lg:block left-0 top-0 h-full z-10'>
         <Navigation />
       </aside>
-      <main className='flex flex-1 justify-center min-h-0 max-sm:pb-14 lg:ml-60'>
+      <main className='flex flex-1 justify-center min-h-0 max-lg:pb-14 lg:ml-64 lg:px-8'>
         <Routes>
           <Route path='/' element={<DiscoveryPage key={token} />} />
           <Route path='/watchlist' element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} />

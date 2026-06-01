@@ -125,7 +125,7 @@ export default function DiscoveryPage () {
             className='relative shrink min-h-0 aspect-2/3'
             style={{
               width: 'min(95vw, calc((100dvh) * 2 / 3))',
-              maxHeight: 'calc(100dvh - 150px)'
+              maxHeight: 'max-calc(100dvh - 150px) md:calc(100dvh - 275px)'
             }}
           >
             {movies[currentIndex] && (

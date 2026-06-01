@@ -5,6 +5,11 @@ const animations = {
   lift: 'hover:-translate-y-1 hover:shadow-lg active:translate-y-0',
 }
 
+const sizes = {
+  sm: { padding: 'p-3', iconSize: 24 },
+  md: { padding: 'p-4', iconSize: 32 },
+}
+
 /**
  * Reusable icon button component.
  * @param {object} props - Component props.
@@ -12,37 +17,53 @@ const animations = {
  * @param {string} [props.backgroundColor] - Tailwind background color class.
  * @param {string} [props.textColor] - Tailwind text color class.
  * @param {number} [props.strokeWidth] - Icon stroke width.
- * @param {boolean} [props.filled] - Whether the icon is filled.
- * @param {string} [props.animation] - Animation preset (scale, lift).
- * @param {string} [props.size] - Button size (big, small).
+ * @param {boolean} [props.filled] - Whether the icon should appear filled.
+ * @param {'scale' | 'lift'} [props.animation] - Animation preset.
+ * @param {'sm' | 'md'} [props.size] - Button size.
  * @param {boolean} [props.disabled] - Whether the button is disabled.
- * @param {string} [props.ariaLabel] - Aria label.
- * @param {string} [props.title] - Title.
- * @param {() => void} [props.onClick] - Click handler.
+ * @param {string} [props.className] - Additional CSS classes.
  * @returns {React.ReactElement} The IconButton component.
  */
-export default function IconButton ({ icon, backgroundColor = 'bg-white/5', textColor = 'text-white', strokeWidth = 1.5, filled = false, animation, size = 'big', disabled, ariaLabel, title, onClick }) {
+export default function IconButton ({
+  icon: Icon,
+  backgroundColor = 'bg-white/5',
+  textColor = 'text-white',
+  strokeWidth = 1.5,
+  filled = false,
+  animation,
+  size = 'md',
+  disabled,
+  className = '',
+  ...rest
+}) {
   const [clicked, setClicked] = useState(false)
 
-  const handleClick = () => {
+  const handleClick = (e) => {
     if (!filled) {
       setClicked(true)
       setTimeout(() => setClicked(false), 150)
     }
-    onClick?.()
+    rest.onClick?.(e)
   }
 
-  const base = 'flex items-center justify-center aspect-1/1 rounded-full disabled:opacity-40 ring-1 ring-inset ring-white/10 hover:brightness-110'
-  const padding = size === 'big' ? 'p-4' : 'p-3'
-  const Icon = icon
-  const iconSize = size === 'big' ? 32 : 24
+  const { padding, iconSize } = sizes[size] ?? sizes.md
 
   return (
     <button
-      className={`${base} ${padding} ${backgroundColor} ${textColor} ${disabled ? 'cursor-not-allowed' : `cursor-pointer ${animations[animation] || ''}`} transition-all duration-150`}
       disabled={disabled}
-      aria-label={ariaLabel}
-      title={title}
+      className={[
+        'flex items-center justify-center aspect-square rounded-full',
+        'ring-1 ring-inset ring-white/10 hover:brightness-110',
+        'transition-all duration-150',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900',
+        'disabled:opacity-40 disabled:cursor-not-allowed',
+        disabled ? '' : `cursor-pointer ${animations[animation] || ''}`,
+        padding,
+        backgroundColor,
+        textColor,
+        className,
+      ].join(' ')}
+      {...rest}
       onClick={handleClick}
     >
       <Icon
