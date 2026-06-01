@@ -20,16 +20,21 @@ export default function RatingPanel ({ currentRating, onRate, title }) {
   const [selected, setSelected] = useState(currentRating)
 
   return (
-    <div className='flex flex-col items-center gap-8'>
-      <div className='flex flex-col items-center gap-2'>
-        <h2 className='text-xl font-bold text-center'>{title}</h2>
+    <div className='flex flex-col items-center gap-6'>
+      <div className='flex flex-col items-center gap-1.5'>
+        <h2 className='text-lg font-semibold text-center leading-tight'>{title}</h2>
         <p className='text-sm text-gray-400 leading-none'>How did you feel about it?</p>
       </div>
-      <fieldset className='flex gap-6'>
+
+      <fieldset className='flex gap-2'>
         {ratings.map(({ value, emoji, label }) => (
           <label
             key={value}
-            className={`group flex flex-col items-center cursor-pointer ${selected === value ? '' : 'opacity-50 hover:opacity-100'}`}
+            className={`flex flex-col items-center gap-1.5 px-4 py-3 rounded-lg cursor-pointer transition-all duration-150 ${
+        selected === value
+          ? 'opacity-100'
+          : 'opacity-40 hover:opacity-90'
+      }`}
           >
             <input
               type='radio'
@@ -39,15 +44,21 @@ export default function RatingPanel ({ currentRating, onRate, title }) {
               onChange={() => setSelected(value)}
               className='sr-only'
             />
-            <span className='text-3xl transition-all duration-150 group-hover:scale-110 group-hover:-translate-y-px'>
+            <span className={`text-2xl transition-transform duration-150 ${selected === value ? 'scale-125' : 'group-hover:scale-110'}`}>
               {emoji}
             </span>
-            <span className='text-xs text-gray-400 mt-1 leading-none'>{label}</span>
+            <span className='text-xs text-gray-400 leading-none'>{label}</span>
           </label>
         ))}
       </fieldset>
-      <Button onClick={() => onRate(selected)} disabled={!selected || selected === currentRating} full>
-        Rate
+
+      <Button
+        type='button'
+        onClick={() => onRate(selected)}
+        disabled={!selected || selected === currentRating}
+        full
+      >
+        {currentRating ? 'Update rating' : 'Rate'}
       </Button>
     </div>
   )

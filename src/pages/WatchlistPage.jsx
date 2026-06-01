@@ -85,12 +85,12 @@ export default function WatchlistPage () {
   }
 
   return (
-    <div className='flex flex-col gap-6 py-6 max-lg:px-4 lg:pr-6 max-w-6xl size-full'>
+    <div className='flex flex-col gap-6 py-6 max-w-6xl size-full max-lg:p-4'>
       <div className='flex items-center justify-between'>
-        <span className='text-sm font-medium text-gray-400'>{`${total ?? '0'} movies`}</span>
+        <span className='text-sm font-medium text-gray-300'>{`${total ?? '0'} movies`}</span>
         <div className='relative'>
           <select
-            className='appearance-none pr-6 rounded-sm text-sm font-medium text-gray-400'
+            className='appearance-none pr-6 rounded-sm text-sm font-medium text-gray-300'
             aria-label='Sort watchlist by'
           >
             <option value='date'>Sort by: Date added</option>
@@ -98,10 +98,10 @@ export default function WatchlistPage () {
           <ChevronDown size={16} className='absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400' />
         </div>
       </div>
-      {movies.length === 0 && hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>Loading...</p>}
-      {movies.length === 0 && !hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-400'>No saved movies yet.</p>}
+      {movies.length === 0 && hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-300'>Loading...</p>}
+      {movies.length === 0 && !hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-300'>No saved movies yet.</p>}
       {movies.length > 0 && (
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:pb-6 max-lg:pb-16'>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:pb-6 max-lg:pb-18'>
           {movies.map(movie => (
             <WatchlistCard
               key={movie.tmdb_id} movie={movie}
