@@ -11,6 +11,8 @@ import Modal from '../components/Modal.jsx'
 import { posterUrl } from '../utils/imageUtils.js'
 import { Film } from 'lucide-react'
 
+const REFILL_THRESHOLD = 5
+
 /**
  * Discovery page where users swipe through movie suggestions.
  * @returns {React.ReactElement} The DiscoveryPage component.
@@ -49,10 +51,20 @@ export default function DiscoveryPage () {
     loadMovies()
   }, [fetchTrigger])
 
-  const advanceQueue = () => {
-    setCurrentIndex(currentIndex + 1)
+  /**
+   * Advances the queue after an interaction.
+   * Removes the interacted movie immediately and trims history to one card
+   * so the back button always works but stale cards never resurface.
+   * @param {number} interactedId - The TMDB ID of the movie just interacted with.
+   */
+  const advanceQueue = (interactedId) => {
+    setMovies(prev => {
+      const trimmed = prev.slice(Math.max(0, currentIndex - 1))
+      return trimmed.filter(m => m.id !== interactedId)
+    })
+    setCurrentIndex(prev => Math.min(prev + 1, 1))
     setCanGoBack(true)
-    if (currentIndex + 5 >= movies.length) {
+    if (currentIndex + REFILL_THRESHOLD >= movies.length) {
       setFetchTrigger(prev => prev + 1)
     }
   }
@@ -67,10 +79,10 @@ export default function DiscoveryPage () {
     if (isInteracting) return
     setIsInteracting(true)
     try {
-      const body = { movieId: movies[currentIndex].id, interaction: type }
+      const interactedId = movies[currentIndex].id
+      const body = { movieId: interactedId, interaction: type }
       await apiRequest('/movies/interact', { method: 'POST', body: JSON.stringify(body) })
-
-      advanceQueue()
+      advanceQueue(interactedId)
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
@@ -84,10 +96,10 @@ export default function DiscoveryPage () {
     if (!requireAuth()) return
     setShowRating(false)
     try {
-      const body = { movieId: movies[currentIndex].id, rating }
+      const ratedId = movies[currentIndex].id
+      const body = { movieId: ratedId, rating }
       await apiRequest('/ratings', { method: 'POST', body: JSON.stringify(body) })
-
-      advanceQueue()
+      advanceQueue(ratedId)
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
