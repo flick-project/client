@@ -28,7 +28,7 @@ export default function SettingsPage () {
   const handleDelete = async () => {
     setIsLoading(true)
     try {
-      await apiRequest('/user', { method: 'DELETE' })
+      await apiRequest('/user/account', { method: 'DELETE' })
       logout()
     } catch (err) {
       setIsLoading(false)
