@@ -65,7 +65,7 @@ export default function WatchlistPage () {
     try {
       wasSaved
         ? await apiRequest(`/watchlist/${movieId}`, { method: 'DELETE' })
-        : await apiRequest('/movies/interact', { method: 'POST', body: JSON.stringify({ movieId, interaction: 'saved' }) })
+        : await apiRequest('/interactions', { method: 'POST', body: JSON.stringify({ movieId, interaction: 'saved' }) })
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')

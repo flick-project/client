@@ -28,7 +28,7 @@ export default function ProfilePage () {
         const [profileData, statsData, favoritesData] = await Promise.all([
           apiRequest('/user/profile'),
           apiRequest('/user/stats'),
-          apiRequest('/user/favorites')
+          apiRequest('/favorites')
         ])
         setProfile(profileData)
         setStats(statsData)
@@ -44,7 +44,7 @@ export default function ProfilePage () {
 
   const handleAdd = async (movie) => {
     try {
-      await apiRequest('/user/favorite', {
+      await apiRequest('/favorites', {
         method: 'POST',
         body: JSON.stringify({ movie })
       })
@@ -60,7 +60,7 @@ export default function ProfilePage () {
 
   const handleRemove = async (movie) => {
     try {
-      await apiRequest(`/user/favorites/${movie.id}`, { method: 'DELETE' })
+      await apiRequest(`/favorites/${movie.id}`, { method: 'DELETE' })
       setFavorites(prev => prev.filter(f => f.id !== movie.id))
     } catch (err) {
       console.error(err)

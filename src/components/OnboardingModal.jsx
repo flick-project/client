@@ -27,7 +27,7 @@ export default function OnboardingModal ({ onComplete }) {
   const handleConfirm = async () => {
     setIsLoading(true)
     try {
-      await apiRequest('/user/favorites', {
+      await apiRequest('/favorites/batch', {
         method: 'POST',
         body: JSON.stringify({ movies: favorites })
       })
