@@ -3,6 +3,7 @@ import { Film, Compass, Bookmark, User, ChevronsUpDown, Settings, LogOut } from 
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
 import { useToast } from '../hooks/useToast.js'
+import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
 import Button from './Button.jsx'
 import AuthFlow from './AuthFlow.jsx'
 
@@ -20,6 +21,7 @@ const navLinks = [
 export default function Navigation () {
   const { user, logout } = useAuth()
   const { showToast } = useToast()
+  const { reset } = useDiscoveryQueue()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { pathname } = useLocation()
@@ -36,8 +38,9 @@ export default function Navigation () {
     }
   }
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
+    await reset()
     showToast('Logged out successfully!', 'success')
     navigate('/')
   }

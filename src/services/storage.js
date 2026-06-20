@@ -24,12 +24,3 @@ export function saveQueue (movies) {
     // storage unavailable, continue without persistence.
   }
 }
-
-/**
- * Clears the discovery queue from localStorage.
- */
-export function clearQueue () {
-  try {
-    localStorage.removeItem(QUEUE_KEY)
-  } catch {}
-}
