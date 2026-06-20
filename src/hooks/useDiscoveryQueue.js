@@ -1,5 +1,6 @@
 import { useState, useEffect, useReducer } from 'react'
 import { apiRequest } from '../services/api.js'
+import { getQueue, saveQueue } from '../services/storage.js'
 
 const REFILL_THRESHOLD = 5
 
@@ -30,7 +31,7 @@ const queueReducer = (state, action) => {
 export function useDiscoveryQueue () {
   const [error, setError] = useState(null)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [queue, dispatch] = useReducer(queueReducer, { movies: [], interactedIds: new Set() })
+  const [queue, dispatch] = useReducer(queueReducer, { movies: getQueue() ?? [], interactedIds: new Set() })
   const [isInteracting, setIsInteracting] = useState(false)
   const [canGoBack, setCanGoBack] = useState(false)
 
@@ -56,6 +57,10 @@ export function useDiscoveryQueue () {
     }
     init()
   }, [])
+
+  useEffect(() => {
+    saveQueue(queue.movies)
+  }, [queue.movies])
 
   /**
    * Advances the queue after an interaction.
