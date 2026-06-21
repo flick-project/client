@@ -16,7 +16,7 @@ import { Film } from 'lucide-react'
  * @returns {React.ReactElement} The DiscoveryPage component.
  */
 export default function DiscoveryPage () {
-  const [showRating, setShowRating] = useState(false)
+  const [isRatingOpen, setIsRatingOpen] = useState(false)
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const { user } = useAuth()
   const { showToast } = useToast()
@@ -30,7 +30,7 @@ export default function DiscoveryPage () {
   // Record save/skip interaction and advance to the next movie.
   const handleInteraction = async (type) => {
     if (!requireAuth()) return
-    if (type === 'rate') { setShowRating(true); return }
+    if (type === 'rate') { setIsRatingOpen(true); return }
     try {
       await interact(type)
     } catch (err) {
@@ -42,7 +42,6 @@ export default function DiscoveryPage () {
   // Record rating and advance to the next movie.
   const handleRate = async (rating) => {
     if (!requireAuth()) return
-    setShowRating(false)
     try {
       await rate(rating)
     } catch (err) {
@@ -109,13 +108,13 @@ export default function DiscoveryPage () {
         <DiscoveryControls interaction={handleInteraction} handleBack={back} canGoBack={canGoBack} onRate={handleRate} requireAuth={requireAuth} />
       </div>
 
-      {showRating && (
-        <Modal onClose={() => setShowRating(false)}>
-          <RatingPanel currentRating={null} onRate={handleRate} title={currentMovie?.title} />
-        </Modal>
-      )}
-      {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
+      <Modal isOpen={isRatingOpen} onClose={() => setIsRatingOpen(false)}>
+        <RatingPanel currentRating={null} onRate={handleRate} title={currentMovie?.title} />
+      </Modal>
 
+      <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
+        <AuthFlow onClose={() => setIsAuthOpen(false)} />
+      </Modal>
     </div>
   )
 }

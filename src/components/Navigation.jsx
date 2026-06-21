@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'motion/react'
 import { Film, Compass, Bookmark, User, ChevronsUpDown, Settings, LogOut } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
@@ -6,6 +7,7 @@ import { useToast } from '../hooks/useToast.js'
 import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
 import Button from './Button.jsx'
 import AuthFlow from './AuthFlow.jsx'
+import Modal from './Modal.jsx'
 
 const navLinks = [
   { to: '/', icon: Compass, label: 'Discover', protected: false },
@@ -87,7 +89,10 @@ export default function Navigation () {
             <Button full onClick={() => setIsAuthOpen(true)}>Log in</Button>
           </div>
         )}
-        {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
+
+        <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
+          <AuthFlow onClose={() => setIsAuthOpen(false)} />
+        </Modal>
       </div>
 
       {user && <hr className='border-t border-white/10 my-4' />}
@@ -113,34 +118,42 @@ export default function Navigation () {
             <ChevronsUpDown size={16} className='shrink-0 text-gray-300' />
           </button>
 
-          {isMenuOpen && (
-            <div className='absolute left-full ml-2 bottom-0 w-56 bg-surface-light border border-white/10 rounded-lg overflow-hidden shadow-lg animate-in fade-in slide-in-from-left-2 duration-150'>
-              <div className='flex items-center gap-3 px-3 py-3 border-b border-white/10'>
-                {user.gravatar
-                  ? <img src={user.gravatar} alt='Avatar' className='rounded-full w-8 h-8 shrink-0' />
-                  : <div className={`w-8 h-8 shrink-0 rounded-full ${avatarColor(user.displayName)} flex items-center justify-center text-sm leading-none`}>{user.displayName[0]}</div>}
-                <div className='flex flex-col gap-1 min-w-0'>
-                  <span className='text-sm font-medium leading-none'>{user.displayName}</span>
-                  <span className='text-xs leading-none text-gray-300 truncate'>{user.email}</span>
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                className='absolute left-full ml-2 bottom-0 w-56 bg-surface-light border border-white/10 rounded-lg overflow-hidden shadow-lg'
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -8 }}
+                transition={{ duration: 0.15 }}
+              >
+                <div className='flex items-center gap-3 px-3 py-3 border-b border-white/10'>
+                  {user.gravatar
+                    ? <img src={user.gravatar} alt='Avatar' className='rounded-full w-8 h-8 shrink-0' />
+                    : <div className={`w-8 h-8 shrink-0 rounded-full ${avatarColor(user.displayName)} flex items-center justify-center text-sm leading-none`}>{user.displayName[0]}</div>}
+                  <div className='flex flex-col gap-1 min-w-0'>
+                    <span className='text-sm font-medium leading-none'>{user.displayName}</span>
+                    <span className='text-xs leading-none text-gray-300 truncate'>{user.email}</span>
+                  </div>
                 </div>
-              </div>
-              <Link
-                to='/settings'
-                onClick={() => setIsMenuOpen(false)}
-                className='flex items-center gap-3 px-3 py-2 text-sm leading-none hover:bg-white/10 transition-colors'
-              >
-                <Settings size={16} />
-                Settings
-              </Link>
-              <button
-                onClick={() => { setIsMenuOpen(false); handleLogout() }}
-                className='w-full flex items-center gap-3 px-3 py-2 text-sm leading-none hover:bg-white/10 transition-colors text-red-400 cursor-pointer'
-              >
-                <LogOut size={16} />
-                Log out
-              </button>
-            </div>
-          )}
+                <Link
+                  to='/settings'
+                  onClick={() => setIsMenuOpen(false)}
+                  className='flex items-center gap-3 px-3 py-2 text-sm leading-none hover:bg-white/10 transition-colors'
+                >
+                  <Settings size={16} />
+                  Settings
+                </Link>
+                <button
+                  onClick={() => { setIsMenuOpen(false); handleLogout() }}
+                  className='w-full flex items-center gap-3 px-3 py-2 text-sm leading-none hover:bg-white/10 transition-colors text-red-400 cursor-pointer'
+                >
+                  <LogOut size={16} />
+                  Log out
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </nav>

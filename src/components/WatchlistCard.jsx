@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { Bookmark, Star, Ellipsis, X } from 'lucide-react'
 import { posterUrl } from '../utils/imageUtils'
 
@@ -48,29 +49,37 @@ export default function WatchlistCard ({ movie, onSave, onRate }) {
           {menuOpen ? <X size={20} /> : <Ellipsis size={20} />}
         </button>
 
-        {menuOpen && (
-          <div className='absolute inset-0 z-10 bg-black/75 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center gap-3 p-3 animate-in fade-in zoom-in-95 duration-150'>
-            <p className='text-sm font-medium text-white text-center leading-snug line-clamp-2'>
-              {movie.title}
-            </p>
-            <div className='flex flex-col w-full gap-2'>
-              <button
-                onClick={() => { setSaved(!saved); onSave(saved); setMenuOpen(false) }}
-                className='flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium text-white transition-colors duration-150'
-              >
-                <Bookmark size={16} className={saved ? 'fill-yellow-400 text-yellow-400' : ''} />
-                {saved ? 'Remove' : 'Save'}
-              </button>
-              <button
-                onClick={() => { onRate(); setMenuOpen(false) }}
-                className='flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium text-white transition-colors duration-150'
-              >
-                <Star size={16} className={movie.rating ? 'fill-blue-400 text-blue-400' : ''} />
-                {movie.rating ? 'Change rating' : 'Rate'}
-              </button>
-            </div>
-          </div>
-        )}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              className='absolute inset-0 z-10 bg-black/75 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center gap-3 p-3'
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+            >
+              <p className='text-sm font-medium text-white text-center leading-snug line-clamp-2'>
+                {movie.title}
+              </p>
+              <div className='flex flex-col w-full gap-2'>
+                <button
+                  onClick={() => { setSaved(!saved); onSave(saved); setMenuOpen(false) }}
+                  className='flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium text-white transition-colors duration-150'
+                >
+                  <Bookmark size={16} className={saved ? 'fill-yellow-400 text-yellow-400' : ''} />
+                  {saved ? 'Remove' : 'Save'}
+                </button>
+                <button
+                  onClick={() => { onRate(); setMenuOpen(false) }}
+                  className='flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium text-white transition-colors duration-150'
+                >
+                  <Star size={16} className={movie.rating ? 'fill-blue-400 text-blue-400' : ''} />
+                  {movie.rating ? 'Change rating' : 'Rate'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
