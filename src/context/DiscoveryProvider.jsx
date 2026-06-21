@@ -35,8 +35,6 @@ export function DiscoveryProvider ({ children }) {
   const [isInteracting, setIsInteracting] = useState(false)
   const [canGoBack, setCanGoBack] = useState(false)
 
-  console.log('provider render', currentIndex, queue.movies.length)
-
   const loadMovies = async () => {
     try {
       const result = await apiRequest('/movies/discover')
