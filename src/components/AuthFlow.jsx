@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useToast } from '../hooks/useToast'
+import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
 import Modal from './Modal.jsx'
 import AuthModal from './AuthModal.jsx'
 import OnboardingModal from './OnboardingModal.jsx'
@@ -12,9 +13,11 @@ import OnboardingModal from './OnboardingModal.jsx'
  */
 export default function AuthFlow ({ onClose }) {
   const { showToast } = useToast()
+  const { reset } = useDiscoveryQueue()
   const [step, setStep] = useState('auth')
 
   const handleComplete = (message) => {
+    reset()
     showToast(message, 'success')
     onClose()
   }
