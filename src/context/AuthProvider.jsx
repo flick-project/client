@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from './AuthContext.jsx'
 import { apiRequest, setAuthToken, setSessionExpiredCallback } from '../services/api.js'
+import { clearQueue } from '../services/storage.js'
 /**
  * Provider that makes auth functionality available to all children.
  * @param {object} props - Component props.
@@ -35,6 +36,7 @@ export function AuthProvider ({ children }) {
     } catch {
     // Logout failed, clear local state anyway.
     }
+    clearQueue()
     setToken(null)
     setUser(null)
     setAuthToken(null)
@@ -56,6 +58,7 @@ export function AuthProvider ({ children }) {
 
   useEffect(() => {
     setSessionExpiredCallback(() => {
+      clearQueue()
       setToken(null)
       setUser(null)
       setAuthToken(null)

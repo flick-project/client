@@ -18,7 +18,7 @@ export default function AuthFlow ({ onClose }) {
 
   const handleComplete = (message) => {
     reset()
-    showToast(message, 'success')
+    if (message) showToast(message, 'success')
     onClose()
   }
 
