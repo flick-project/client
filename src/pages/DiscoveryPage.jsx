@@ -1,7 +1,8 @@
+import { useState, useCallback } from 'react'
 import { usePageMetadata } from '../hooks/usePageMetadata.js'
-import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
 import { useToast } from '../hooks/useToast'
+import { useDiscoveryTour } from '../hooks/useTour.js'
 import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
 import DiscoveryCard from '../components/DiscoveryCard.jsx'
 import DiscoveryControls from '../components/DiscoveryControls.jsx'
@@ -9,17 +10,17 @@ import AuthFlow from '../components/AuthFlow.jsx'
 import RatingPanel from '../components/RatingPanel.jsx'
 import Modal from '../components/Modal.jsx'
 import { posterUrl } from '../utils/imageUtils.js'
-import { Film } from 'lucide-react'
 
 /**
  * Discovery page where users swipe through movie suggestions.
  * @returns {React.ReactElement} The DiscoveryPage component.
  */
 export default function DiscoveryPage () {
-  const [showRating, setShowRating] = useState(false)
+  const [isRatingOpen, setIsRatingOpen] = useState(false)
   const [isAuthOpen, setIsAuthOpen] = useState(false)
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const { showToast } = useToast()
+  const { startTour } = useDiscoveryTour()
   const { currentMovie, canGoBack, back, interact, rate, error } = useDiscoveryQueue()
 
   usePageMetadata(
@@ -30,7 +31,7 @@ export default function DiscoveryPage () {
   // Record save/skip interaction and advance to the next movie.
   const handleInteraction = async (type) => {
     if (!requireAuth()) return
-    if (type === 'rate') { setShowRating(true); return }
+    if (type === 'rate') { setIsRatingOpen(true); return }
     try {
       await interact(type)
     } catch (err) {
@@ -42,9 +43,9 @@ export default function DiscoveryPage () {
   // Record rating and advance to the next movie.
   const handleRate = async (rating) => {
     if (!requireAuth()) return
-    setShowRating(false)
     try {
       await rate(rating)
+      setIsRatingOpen(false)
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
@@ -59,63 +60,40 @@ export default function DiscoveryPage () {
     return true
   }
 
+  const controlsRef = useCallback((node) => {
+    if (node && !loading && user) startTour()
+  }, [loading, user, startTour])
+
   return (
-    <div className='size-full flex flex-col'>
-      {/* Mobile */}
-      <div className='lg:hidden flex items-center gap-2 p-4'>
-        <Film size={28} className='text-brand rotate-90' />
-        <h1 className='text-xl font-semibold'>Flick</h1>
-      </div>
-      <div className='lg:hidden flex flex-col flex-1 min-h-0 justify-center'>
-
-        <div className='flex flex-col items-center justify-center gap-4 px-2 overflow-hidden'>
-          <div
-            className='relative shrink min-h-0 aspect-2/3'
-            style={{
-              width: 'min(95vw, calc((100dvh) * 2 / 3))',
-              maxHeight: 'max-calc(100dvh - 150px) md:calc(100dvh - 275px)'
-            }}
-          >
-            {currentMovie && (
-              <DiscoveryCard movie={currentMovie} error={error} />
-            )}
-          </div>
-        </div>
-
-        <div className='shrink-0 p-4'>
-          <DiscoveryControls
-            interaction={handleInteraction}
-            handleBack={back}
-            canGoBack={canGoBack}
-            onRate={handleRate}
-            requireAuth={requireAuth}
-          />
-        </div>
-      </div>
-
-      {/* Desktop */}
-      <div className='h-full lg:size-full hidden lg:flex flex-col items-center justify-center gap-2 p-4 md:gap-6 md:p-8'>
-        <div className='full-size relative flex-1 min-h-0 aspect-2/3'>
-          {currentMovie &&
-            <img
-              src={posterUrl(currentMovie.poster_path, 300)}
-              className='absolute inset-0 size-full object-cover opacity-20 scale-100 xl:scale-125 -top-1/4 mix-blend-screen -z-10 pointer-events-none'
-              style={{ filter: 'blur(80px) saturate(1.5)' }}
-              loading='eager'
-              aria-hidden='true'
-            />}
-          <DiscoveryCard movie={currentMovie} error={error} />
-        </div>
-        <DiscoveryControls interaction={handleInteraction} handleBack={back} canGoBack={canGoBack} onRate={handleRate} requireAuth={requireAuth} />
-      </div>
-
-      {showRating && (
-        <Modal onClose={() => setShowRating(false)}>
-          <RatingPanel currentRating={null} onRate={handleRate} title={currentMovie?.title} />
-        </Modal>
+    <div className='h-full grid grid-rows-[minmax(0,1fr)_auto] p-4 lg:p-8 gap-4 lg:gap-6 relative'>
+      {currentMovie && (
+        <img
+          src={posterUrl(currentMovie.poster_path, 92)}
+          className='hidden motion-reduce:hidden lg:block absolute left-1/2 -top-1/5 transform -translate-x-1/2 h-full object-cover opacity-20 scale-100 2xl:scale-115 mix-blend-screen -z-10 pointer-events-none'
+          style={{ filter: 'blur(80px) saturate(1.5)' }}
+          loading='eager'
+          aria-hidden='true'
+        />
       )}
-      {isAuthOpen && <AuthFlow onClose={() => setIsAuthOpen(false)} />}
-
+      <div className='min-h-0 flex items-center justify-center overflow-hidden'>
+        <div className='aspect-2/3 h-full max-w-full lg:w-auto'>
+          <DiscoveryCard movie={currentMovie} error={error} className='bg-white/80' />
+        </div>
+      </div>
+      <DiscoveryControls
+        ref={controlsRef}
+        interaction={handleInteraction}
+        handleBack={back}
+        canGoBack={canGoBack}
+        onRate={handleRate}
+        requireAuth={requireAuth}
+      />
+      <Modal isOpen={isRatingOpen} onClose={() => setIsRatingOpen(false)}>
+        <RatingPanel currentRating={null} onRate={handleRate} title={currentMovie?.title} />
+      </Modal>
+      <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
+        <AuthFlow onClose={() => setIsAuthOpen(false)} />
+      </Modal>
     </div>
   )
 }

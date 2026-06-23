@@ -1,5 +1,5 @@
+import { useEffect, useRef, useReducer, useState } from 'react'
 import { DiscoveryContext } from './DiscoveryContext.jsx'
-import { useState, useEffect, useReducer } from 'react'
 import { apiRequest } from '../services/api.js'
 import { getQueue, saveQueue } from '../services/storage.js'
 import { useAuth } from '../hooks/useAuth.js'
@@ -13,8 +13,15 @@ const queueReducer = (state, action) => {
       const newMovies = action.movies.filter(m => !existingIds.has(m.id))
       return { ...state, movies: [...state.movies, ...newMovies] }
     }
+    case 'ADVANCE': {
+      return { ...state, currentIndex: state.currentIndex + 1, canGoBack: true }
+    }
+    case 'GO_BACK': {
+      if (!state.canGoBack || state.currentIndex <= 0) return state
+      return { ...state, currentIndex: state.currentIndex - 1, canGoBack: false }
+    }
     case 'RESET': {
-      return { movies: [] }
+      return { movies: [], currentIndex: 0, canGoBack: false }
     }
     default:
       return state
@@ -28,14 +35,16 @@ const queueReducer = (state, action) => {
  * @returns {React.ReactElement} The DiscoveryProvider component.
  */
 export function DiscoveryProvider ({ children }) {
-  const { loading } = useAuth()
+  const { user, loading } = useAuth()
   const [error, setError] = useState(null)
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [queue, dispatch] = useReducer(queueReducer, { movies: getQueue() ?? [] })
   const [isInteracting, setIsInteracting] = useState(false)
-  const [canGoBack, setCanGoBack] = useState(false)
+  const prevUserRef = useRef(user)
 
-  console.log('provider render', currentIndex, queue.movies.length)
+  const [queue, dispatch] = useReducer(queueReducer, {
+    movies: getQueue() ?? [],
+    currentIndex: 0,
+    canGoBack: false
+  })
 
   const loadMovies = async () => {
     try {
@@ -47,54 +56,52 @@ export function DiscoveryProvider ({ children }) {
     }
   }
 
-  // Initial load: wait for auth to settle before fetching.
+  // Initial load: fetch if cache is low.
   useEffect(() => {
     if (loading) return
     const init = async () => {
-      const saved = getQueue()
-      if (saved?.length >= REFILL_THRESHOLD) return
       await loadMovies()
     }
     init()
   }, [loading])
 
+  // Reset queue when user logs out or session expires.
   useEffect(() => {
-    saveQueue(queue.movies.slice(currentIndex))
-  }, [queue.movies, currentIndex])
+    if (loading) return
+    if (prevUserRef.current && !user) {
+      dispatch({ type: 'RESET' })
+      loadMovies()
+    }
+    prevUserRef.current = user
+  }, [loading, user])
 
-  const reset = async () => {
-    dispatch({ type: 'RESET' })
-    setCurrentIndex(0)
-    setCanGoBack(false)
-    saveQueue([])
-    await loadMovies()
-  }
+  // Persist queue to localStorage.
+  useEffect(() => {
+    saveQueue(queue.movies.slice(queue.currentIndex))
+  }, [queue.movies, queue.currentIndex])
 
-  /**
-   * Advances the queue after an interaction.
-   */
   const advance = () => {
-    const nextIndex = currentIndex + 1
-    setCurrentIndex(nextIndex)
-    setCanGoBack(true)
-    if (nextIndex + REFILL_THRESHOLD >= queue.movies.length) {
+    dispatch({ type: 'ADVANCE' })
+    if (queue.currentIndex + 1 + REFILL_THRESHOLD >= queue.movies.length) {
       loadMovies()
     }
   }
 
-  // Go back one movie. Only allowed once per forward move.
   const back = () => {
-    if (canGoBack && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1)
-      setCanGoBack(false)
-    }
+    dispatch({ type: 'GO_BACK' })
+  }
+
+  const reset = async () => {
+    dispatch({ type: 'RESET' })
+    saveQueue([])
+    await loadMovies()
   }
 
   const interact = async (type) => {
     if (isInteracting) return
     setIsInteracting(true)
     try {
-      const movieId = queue.movies[currentIndex].id
+      const movieId = queue.movies[queue.currentIndex].id
       const body = { movieId, interaction: type }
       await apiRequest('/interactions', { method: 'POST', body: JSON.stringify(body) })
       advance()
@@ -108,7 +115,7 @@ export function DiscoveryProvider ({ children }) {
 
   const rate = async (rating) => {
     try {
-      const movieId = queue.movies[currentIndex].id
+      const movieId = queue.movies[queue.currentIndex].id
       const body = { movieId, rating }
       await apiRequest('/ratings', { method: 'POST', body: JSON.stringify(body) })
       advance()
@@ -119,7 +126,16 @@ export function DiscoveryProvider ({ children }) {
   }
 
   return (
-    <DiscoveryContext value={{ currentMovie: queue.movies[currentIndex], canGoBack, back, interact, rate, reset, error }}>
+    <DiscoveryContext value={{
+      currentMovie: queue.movies[queue.currentIndex],
+      canGoBack: queue.canGoBack,
+      back,
+      interact,
+      rate,
+      reset,
+      error
+    }}
+    >
       {children}
     </DiscoveryContext>
   )

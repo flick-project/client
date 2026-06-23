@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "tailwindcss-animate";
 
 @theme {
   --font-sans: 'Inter', sans-serif;
@@ -35,4 +34,8 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: rgb(255 255 255 / 0.15) transparent;
+}
+
+:not(body):has(> .driver-active-element) {
+  overflow: visible !important;
 }

@@ -72,7 +72,7 @@ export default function OnboardingModal ({ onComplete }) {
         <hr className='border-white/10' />
 
         <div className='grid grid-cols-3 items-center justify-between'>
-          <button onClick={() => onComplete('Welcome to Flick!')} className='justify-self-start text-sm font-medium p-2 -m-2 text-gray-400 hover:underline cursor-pointer' disabled={isLoading}>
+          <button onClick={onComplete} className='justify-self-start text-sm font-medium p-2 -m-2 text-gray-400 hover:underline cursor-pointer' disabled={isLoading}>
             Skip
           </button>
           <div className='justify-self-center flex gap-2'>

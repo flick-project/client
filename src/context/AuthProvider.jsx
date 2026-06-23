@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from './AuthContext.jsx'
 import { apiRequest, setAuthToken, setSessionExpiredCallback } from '../services/api.js'
+import { saveQueue } from '../services/storage.js'
+
 /**
  * Provider that makes auth functionality available to all children.
  * @param {object} props - Component props.
@@ -46,7 +48,7 @@ export function AuthProvider ({ children }) {
         const result = await apiRequest('/auth/refresh', { method: 'POST' })
         login(result)
       } catch {
-        // No valid refresh token, user stays logged out.
+        saveQueue([])
       } finally {
         setLoading(false)
       }
@@ -56,6 +58,7 @@ export function AuthProvider ({ children }) {
 
   useEffect(() => {
     setSessionExpiredCallback(() => {
+      saveQueue([])
       setToken(null)
       setUser(null)
       setAuthToken(null)
