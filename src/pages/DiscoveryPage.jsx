@@ -69,7 +69,7 @@ export default function DiscoveryPage () {
       {currentMovie && (
         <img
           src={posterUrl(currentMovie.poster_path, 92)}
-          className='hidden motion-reduce:hidden lg:block absolute left-1/2 -top-1/5 transform -translate-x-1/2 h-full object-cover opacity-20 scale-100 2xl:scale-125 mix-blend-screen -z-10 pointer-events-none'
+          className='hidden motion-reduce:hidden lg:block absolute left-1/2 -top-1/5 transform -translate-x-1/2 h-full object-cover opacity-20 scale-100 2xl:scale-115 mix-blend-screen -z-10 pointer-events-none'
           style={{ filter: 'blur(80px) saturate(1.5)' }}
           loading='eager'
           aria-hidden='true'

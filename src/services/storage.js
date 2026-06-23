@@ -26,13 +26,6 @@ export function saveQueue (movies) {
 }
 
 /**
- * Removes the discovery queue from localStorage.
- */
-export function clearQueue () {
-  localStorage.removeItem(QUEUE_KEY)
-}
-
-/**
  * Checks if a localStorage key exists.
  * @param {string} key - The key to check.
  * @returns {boolean} Whether the key exists.
