@@ -134,7 +134,7 @@ export default function ProfilePage () {
         {/* Favorites */}
         <div className='flex flex-col gap-4'>
           <h2 className='text-base font-medium px-4 md:px-0'>Favorite movies</h2>
-          <div className='grid grid-cols-2 min-[380px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 md:px-0 max-lg:pb-10'>
+          <div className='grid grid-cols-2 min-[380px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 md:px-0'>
             {favorites.map((fav) => (
               <div key={fav.id} className='relative group overflow-hidden rounded-lg will-change-transform'>
                 <div className='aspect-2/3'>

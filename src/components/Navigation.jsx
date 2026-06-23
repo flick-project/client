@@ -65,7 +65,7 @@ export default function Navigation () {
   }, [isMenuOpen])
 
   return (
-    <nav className='hidden lg:flex flex-col h-full w-64 py-4'>
+    <nav className='flex flex-col h-full w-64 py-4'>
       {/* Top section */}
       <div className='flex flex-col gap-4 px-4'>
         <div className='flex items-center gap-3.5 px-2.5 py-2'>
@@ -96,9 +96,7 @@ export default function Navigation () {
       </div>
 
       {user && <hr className='border-t border-white/10 my-4' />}
-
       {user && <div className='flex-1' />}
-
       {user && <hr className='border-t border-white/10 my-4' />}
 
       {/* User section */}

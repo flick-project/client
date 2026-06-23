@@ -10,7 +10,7 @@ import { posterUrl } from '../utils/imageUtils.js'
  * @param {string} props.error - Error message to display if the API call fails.
  * @returns {React.ReactElement} The MovieCard component.
  */
-export default function MovieCard ({ movie, error }) {
+export default function DiscoveryCard ({ movie, error }) {
   if (error || !movie) {
     return (
       <div className='size-full rounded-xl lg:rounded-2xl overflow-hidden bg-surface-light ring-1 ring-inset ring-white/10 animate-pulse' />
@@ -35,8 +35,8 @@ export default function MovieCard ({ movie, error }) {
       />
 
       {/* Content */}
-      <div className='relative flex flex-col justify-end gap-3 w-full h-full p-4 md:p-6 text-white'>
-        <h1 className='text-xl md:text-2xl font-semibold leading-tight text-shadow-md'>{movie.title}</h1>
+      <div className='relative flex flex-col justify-end gap-3 size-full p-4 lg:p-6 text-white'>
+        <h1 className='text-xl lg:text-2xl font-semibold leading-tight text-shadow-md'>{movie.title}</h1>
 
         <div className='flex items-center gap-4 flex-wrap text-sm'>
           <span className='flex items-center gap-1 text-shadow-md'>
@@ -54,7 +54,7 @@ export default function MovieCard ({ movie, error }) {
           </span>
         </div>
 
-        <p className='line-clamp-3 text-sm md:text-base text-white/80 text-shadow-md'>{movie.overview}</p>
+        <p className='line-clamp-3 text-sm lg:text-base text-white/80 text-shadow-md'>{movie.overview}</p>
       </div>
       <div className='absolute inset-0 border border-white/10 pointer-events-none rounded-xl lg:rounded-2xl' />
     </div>

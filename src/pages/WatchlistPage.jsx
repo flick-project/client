@@ -101,7 +101,7 @@ export default function WatchlistPage () {
       {movies.length === 0 && hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-300'>Loading...</p>}
       {movies.length === 0 && !hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-300'>No saved movies yet.</p>}
       {movies.length > 0 && (
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:pb-6 max-lg:pb-18'>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:pb-6'>
           {movies.map(movie => (
             <WatchlistCard
               key={movie.tmdb_id} movie={movie}
