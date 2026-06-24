@@ -11,7 +11,7 @@ import OnboardingModal from './OnboardingModal.jsx'
  * @param {() => void} props.onClose - Callback to close the modal.
  * @returns {React.ReactElement|null} Auth or onboarding content.
  */
-export default function AuthFlow ({ onClose }) {
+export default function AuthFlow ({ isOpen, onClose }) {
   const { showToast } = useToast()
   const { reset } = useDiscoveryQueue()
   const [step, setStep] = useState('auth')
@@ -26,5 +26,9 @@ export default function AuthFlow ({ onClose }) {
   if (step === 'auth') content = <AuthModal onLoginSuccess={handleComplete} onRegisterSuccess={() => setStep('onboarding')} />
   if (step === 'onboarding') content = <OnboardingModal onComplete={handleComplete} />
 
-  return content
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} wide={step === 'onboarding'}>
+      {content}
+    </Modal>
+  )
 }

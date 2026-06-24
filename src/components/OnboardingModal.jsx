@@ -57,7 +57,7 @@ export default function OnboardingModal ({ onComplete }) {
             <div key={i} className={`relative w-full aspect-2/3 rounded-lg overflow-hidden ${favorites[i] ? 'border border-solid border-white/10' : 'border border-dashed border-white/20'}`}>
               {favorites[i] && (
                 <>
-                  <img src={`https://image.tmdb.org/t/p/w154${favorites[i].poster_path}`} alt={favorites[i].title} className='w-full h-full object-cover' />
+                  <img src={`https://image.tmdb.org/t/p/w154${favorites[i].poster_path}`} alt={favorites[i].title} className='size-full object-cover' />
                   <button onClick={() => handleRemove(favorites[i].id)} className='absolute top-1 right-1 bg-black/70 rounded-full p-1 cursor-pointer'>
                     <X size={16} />
                   </button>

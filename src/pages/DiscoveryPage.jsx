@@ -34,6 +34,7 @@ export default function DiscoveryPage () {
     if (type === 'rate') { setIsRatingOpen(true); return }
     try {
       await interact(type)
+      setIsRatingOpen(false)
     } catch (err) {
       console.error(err)
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
@@ -89,11 +90,9 @@ export default function DiscoveryPage () {
         requireAuth={requireAuth}
       />
       <Modal isOpen={isRatingOpen} onClose={() => setIsRatingOpen(false)}>
-        <RatingPanel currentRating={null} onRate={handleRate} title={currentMovie?.title} />
+        <RatingPanel currentRating={null} onRate={handleRate} onDismiss={handleInteraction} title={currentMovie?.title} />
       </Modal>
-      <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
-        <AuthFlow onClose={() => setIsAuthOpen(false)} />
-      </Modal>
+      <AuthFlow isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </div>
   )
 }

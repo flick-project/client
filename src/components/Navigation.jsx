@@ -90,9 +90,7 @@ export default function Navigation () {
           </div>
         )}
 
-        <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
-          <AuthFlow onClose={() => setIsAuthOpen(false)} />
-        </Modal>
+        <AuthFlow isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       </div>
 
       {user && <hr className='border-t border-white/10 my-4' />}
