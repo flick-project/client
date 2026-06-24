@@ -119,7 +119,7 @@ export default function Navigation () {
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
-                className='absolute left-full ml-2 bottom-0 w-56 bg-surface-light border border-white/10 rounded-lg overflow-hidden shadow-lg'
+                className='absolute left-full ml-2 bottom-0 w-56 bg-surface-light border border-white/10 rounded-lg overflow-hidden shadow-lg z-99'
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -8 }}
