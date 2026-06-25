@@ -90,9 +90,7 @@ export default function Navigation () {
           </div>
         )}
 
-        <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
-          <AuthFlow onClose={() => setIsAuthOpen(false)} />
-        </Modal>
+        <AuthFlow isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       </div>
 
       {user && <hr className='border-t border-white/10 my-4' />}
@@ -109,7 +107,7 @@ export default function Navigation () {
             {user.gravatar
               ? <img src={user.gravatar} alt='Avatar' className='rounded-full w-8 h-8 shrink-0' />
               : <div className={`w-8 h-8 shrink-0 rounded-full ${avatarColor(user.displayName)} flex items-center justify-center text-sm leading-none`}>{user.displayName[0]}</div>}
-            <div className='flex flex-col gap-1 min-w-0 flex-1'>
+            <div className='flex flex-col gap-1 min-w-0 flex-1 overflow-visible'>
               <span className='text-sm text-left font-medium leading-none truncate'>{user.displayName}</span>
               <span className='text-xs text-gray-300 text-left leading-none truncate'>{user.email}</span>
             </div>
