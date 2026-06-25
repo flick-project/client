@@ -37,9 +37,7 @@ export default function BottomNav () {
         <User size={24} />
         <p className='text-xs leading-none'>Profile</p>
       </Link>
-      <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
-        <AuthFlow onClose={() => setIsAuthOpen(false)} />
-      </Modal>
+      <AuthFlow isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </nav>
   )
 }
