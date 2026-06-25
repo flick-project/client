@@ -13,7 +13,7 @@ const ratings = [
  * @param {object} props - Component props.
  * @param {string|null} props.currentRating - The active rating, or null.
  * @param {function(string): void} props.onRate - Called with the selected rating value.
- * @param props.onDismiss
+ * @param {() => void} props.onDismiss - Dismiss movie.
  * @param {string} props.title - Movie title.
  * @returns {void}
  */

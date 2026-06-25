@@ -8,6 +8,7 @@ import OnboardingModal from './OnboardingModal.jsx'
 /**
  * Handles the auth and onboarding flow.
  * @param {object} props - Component props.
+ * @param {() => void} props.isOpen - Callback to close the modal
  * @param {() => void} props.onClose - Callback to close the modal.
  * @returns {React.ReactElement|null} Auth or onboarding content.
  */
@@ -28,7 +29,7 @@ export default function AuthFlow ({ isOpen, onClose }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} wide={step === 'onboarding'}>
-      {content}
+      {isOpen && content}
     </Modal>
   )
 }

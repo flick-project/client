@@ -107,7 +107,7 @@ export default function Navigation () {
             {user.gravatar
               ? <img src={user.gravatar} alt='Avatar' className='rounded-full w-8 h-8 shrink-0' />
               : <div className={`w-8 h-8 shrink-0 rounded-full ${avatarColor(user.displayName)} flex items-center justify-center text-sm leading-none`}>{user.displayName[0]}</div>}
-            <div className='flex flex-col gap-1 min-w-0 flex-1'>
+            <div className='flex flex-col gap-1 min-w-0 flex-1 overflow-visible'>
               <span className='text-sm text-left font-medium leading-none truncate'>{user.displayName}</span>
               <span className='text-xs text-gray-300 text-left leading-none truncate'>{user.email}</span>
             </div>
@@ -117,7 +117,7 @@ export default function Navigation () {
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
-                className='absolute left-full ml-2 bottom-0 w-56 bg-surface-light border border-white/10 rounded-lg overflow-hidden shadow-lg'
+                className='absolute left-full ml-2 bottom-0 w-56 bg-surface-light border border-white/10 rounded-lg overflow-hidden shadow-lg z-99'
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -8 }}
