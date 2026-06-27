@@ -66,7 +66,7 @@ export default function DiscoveryPage () {
   }, [loading, user, startTour])
 
   return (
-    <div className='h-full grid grid-rows-[minmax(0,1fr)_auto] p-4 lg:p-8 gap-4 lg:gap-6 relative'>
+    <div className='h-full grid grid-rows-[minmax(0,1fr)_auto] pt-4 pb-2 lg:p-8 gap-2 lg:gap-6 relative'>
       {currentMovie && (
         <img
           src={posterUrl(currentMovie.poster_path, 92)}
@@ -77,7 +77,7 @@ export default function DiscoveryPage () {
         />
       )}
       <div className='min-h-0 flex items-center justify-center overflow-hidden'>
-        <div className='aspect-2/3 h-full max-w-full lg:w-auto'>
+        <div className='aspect-2/3 size-full max-w-full lg:w-auto'>
           <DiscoveryCard movie={currentMovie} error={error} className='bg-white/80' />
         </div>
       </div>

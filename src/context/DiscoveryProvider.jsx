@@ -1,4 +1,4 @@
-import { useEffect, useRef, useReducer, useState } from 'react'
+import { useEffect, useRef, useReducer, useState, useCallback } from 'react'
 import { DiscoveryContext } from './DiscoveryContext.jsx'
 import { apiRequest } from '../services/api.js'
 import { getQueue, saveQueue } from '../services/storage.js'
@@ -13,16 +13,37 @@ const queueReducer = (state, action) => {
       const newMovies = action.movies.filter(m => !existingIds.has(m.id))
       return { ...state, movies: [...state.movies, ...newMovies] }
     }
-    case 'ADVANCE': {
+    case 'ADVANCE':
       return { ...state, currentIndex: state.currentIndex + 1, canGoBack: true }
-    }
     case 'GO_BACK': {
       if (!state.canGoBack || state.currentIndex <= 0) return state
       return { ...state, currentIndex: state.currentIndex - 1, canGoBack: false }
     }
-    case 'RESET': {
-      return { movies: [], currentIndex: 0, canGoBack: false }
+    case 'RESET':
+      return { movies: [], currentIndex: 0, canGoBack: false, injectedMovie: false, searchOpen: false }
+    case 'INJECT_MOVIE': {
+      const movies = [...state.movies]
+      if (state.injectedMovie) {
+        movies.splice(state.currentIndex, 1)
+      }
+      const existingIndex = movies.findIndex(m => m.id === action.movie.id)
+      if (existingIndex !== -1) {
+        movies.splice(existingIndex, 1)
+      }
+      const insertIndex = Math.min(state.currentIndex, movies.length)
+      movies.splice(insertIndex, 0, action.movie)
+      return { ...state, movies, currentIndex: insertIndex, canGoBack: false, injectedMovie: true, searchOpen: true }
     }
+    case 'EJECT_MOVIE': {
+      if (!state.injectedMovie) return { ...state, searchOpen: false }
+      const movies = [...state.movies]
+      movies.splice(state.currentIndex, 1)
+      return { ...state, movies, injectedMovie: false, searchOpen: false }
+    }
+    case 'OPEN_SEARCH':
+      return { ...state, searchOpen: true }
+    case 'CLOSE_SEARCH':
+      return { ...state, searchOpen: false }
     default:
       return state
   }
@@ -43,10 +64,12 @@ export function DiscoveryProvider ({ children }) {
   const [queue, dispatch] = useReducer(queueReducer, {
     movies: getQueue() ?? [],
     currentIndex: 0,
-    canGoBack: false
+    canGoBack: false,
+    injectedMovie: false,
+    searchOpen: false
   })
 
-  const loadMovies = async () => {
+  const loadMovies = useCallback(async () => {
     try {
       const result = await apiRequest('/movies/discover')
       dispatch({ type: 'APPEND_MOVIES', movies: result.movies })
@@ -54,18 +77,16 @@ export function DiscoveryProvider ({ children }) {
       console.error(err)
       setError(err.message || 'Something went wrong. Please try again.')
     }
-  }
+  }, [])
 
-  // Initial load: fetch if cache is low.
   useEffect(() => {
     if (loading) return
     const init = async () => {
       await loadMovies()
     }
     init()
-  }, [loading])
+  }, [loading, loadMovies])
 
-  // Reset queue when user logs out or session expires.
   useEffect(() => {
     if (loading) return
     if (prevUserRef.current && !user) {
@@ -73,37 +94,62 @@ export function DiscoveryProvider ({ children }) {
       loadMovies()
     }
     prevUserRef.current = user
-  }, [loading, user])
+  }, [loading, user, loadMovies])
 
-  // Persist queue to localStorage.
   useEffect(() => {
-    saveQueue(queue.movies.slice(queue.currentIndex))
-  }, [queue.movies, queue.currentIndex])
+    if (!queue.injectedMovie) {
+      saveQueue(queue.movies.slice(queue.currentIndex))
+    }
+  }, [queue.movies, queue.currentIndex, queue.injectedMovie])
 
-  const advance = () => {
+  const advance = useCallback(() => {
+    if (queue.injectedMovie) {
+      dispatch({ type: 'EJECT_MOVIE' })
+      return
+    }
     dispatch({ type: 'ADVANCE' })
     if (queue.currentIndex + 1 + REFILL_THRESHOLD >= queue.movies.length) {
       loadMovies()
     }
-  }
+  }, [queue.injectedMovie, queue.currentIndex, queue.movies.length, loadMovies])
 
-  const back = () => {
-    dispatch({ type: 'GO_BACK' })
-  }
+  const back = useCallback(() => {
+    if (!queue.injectedMovie) dispatch({ type: 'GO_BACK' })
+  }, [queue.injectedMovie])
 
-  const reset = async () => {
+  const reset = useCallback(async () => {
     dispatch({ type: 'RESET' })
     saveQueue([])
     await loadMovies()
-  }
+  }, [loadMovies])
 
-  const interact = async (type) => {
+  const inject = useCallback((movie) => {
+    dispatch({ type: 'INJECT_MOVIE', movie })
+  }, [])
+
+  const eject = useCallback(() => {
+    dispatch({ type: 'EJECT_MOVIE' })
+  }, [])
+
+  const openSearch = useCallback(() => {
+    dispatch({ type: 'OPEN_SEARCH' })
+  }, [])
+
+  const closeSearch = useCallback(() => {
+    dispatch({ type: 'CLOSE_SEARCH' })
+  }, [])
+
+  const interact = useCallback(async (type) => {
     if (isInteracting) return
     setIsInteracting(true)
     try {
       const movieId = queue.movies[queue.currentIndex].id
-      const body = { movieId, interaction: type }
-      await apiRequest('/interactions', { method: 'POST', body: JSON.stringify(body) })
+      if (!(queue.injectedMovie && type === 'skipped')) {
+        await apiRequest('/interactions', {
+          method: 'POST',
+          body: JSON.stringify({ movieId, interaction: type })
+        })
+      }
       advance()
     } catch (err) {
       console.error(err)
@@ -111,28 +157,36 @@ export function DiscoveryProvider ({ children }) {
     } finally {
       setIsInteracting(false)
     }
-  }
+  }, [isInteracting, queue.movies, queue.currentIndex, queue.injectedMovie, advance])
 
-  const rate = async (rating) => {
+  const rate = useCallback(async (rating) => {
     try {
       const movieId = queue.movies[queue.currentIndex].id
-      const body = { movieId, rating }
-      await apiRequest('/ratings', { method: 'POST', body: JSON.stringify(body) })
+      await apiRequest('/ratings', {
+        method: 'POST',
+        body: JSON.stringify({ movieId, rating })
+      })
       advance()
     } catch (err) {
       console.error(err)
       throw err
     }
-  }
+  }, [queue.movies, queue.currentIndex, advance])
 
   return (
     <DiscoveryContext value={{
       currentMovie: queue.movies[queue.currentIndex],
       canGoBack: queue.canGoBack,
+      injectedMovie: queue.injectedMovie,
+      searchOpen: queue.searchOpen,
       back,
       interact,
       rate,
       reset,
+      inject,
+      eject,
+      openSearch,
+      closeSearch,
       error
     }}
     >
