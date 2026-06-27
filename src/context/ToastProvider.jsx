@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { ToastContext } from './ToastContext.jsx'
 
 /**
@@ -10,10 +10,10 @@ import { ToastContext } from './ToastContext.jsx'
 export function ToastProvider ({ children }) {
   const [toast, setToast] = useState(null)
 
-  const showToast = (message, type = 'success') => {
+  const showToast = useCallback((message, type = 'success') => {
     setToast(null)
     requestAnimationFrame(() => setToast({ message, type }))
-  }
+  }, [])
 
   return (
     <ToastContext value={{ toast, setToast, showToast }}>
