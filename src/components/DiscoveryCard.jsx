@@ -13,7 +13,7 @@ import { posterUrl } from '../utils/imageUtils.js'
 export default function DiscoveryCard ({ movie, error }) {
   if (error || !movie) {
     return (
-      <div className='size-full rounded-xl lg:rounded-2xl overflow-hidden bg-surface-light ring-1 ring-inset ring-white/10 animate-pulse' />
+      <div className='size-full rounded-xl lg:rounded-2xl overflow-hidden bg-surface-light md:ring-1 md:ring-inset md:ring-white/10 animate-pulse' />
     )
   }
 
@@ -56,7 +56,7 @@ export default function DiscoveryCard ({ movie, error }) {
 
         <p className='line-clamp-3 text-sm lg:text-base text-white/80 text-shadow-md'>{movie.overview}</p>
       </div>
-      <div className='absolute inset-0 border border-white/10 pointer-events-none rounded-xl lg:rounded-2xl' />
+      <div className='absolute inset-0 md:border border-white/10 pointer-events-none rounded-xl lg:rounded-2xl' />
     </div>
   )
 }

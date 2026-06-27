@@ -85,7 +85,7 @@ export default function WatchlistPage () {
   }
 
   return (
-    <div className='flex flex-col gap-6 py-6 max-w-6xl size-full max-lg:p-4'>
+    <div className='flex flex-col gap-4 lg:gap-6 py-6 max-w-6xl size-full max-lg:p-4'>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-medium text-gray-300'>{`${total ?? '0'} movies`}</span>
         <div className='relative'>
