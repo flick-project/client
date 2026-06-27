@@ -17,7 +17,13 @@ export default function AuthFlow ({ isOpen, onClose }) {
   const { reset } = useDiscoveryQueue()
   const [step, setStep] = useState('auth')
 
+  const handleClose = () => {
+    setStep('auth')
+    onClose()
+  }
+
   const handleComplete = (message) => {
+    setStep('auth')
     reset()
     if (message) showToast(message, 'success')
     onClose()
@@ -28,7 +34,7 @@ export default function AuthFlow ({ isOpen, onClose }) {
   if (step === 'onboarding') content = <OnboardingModal onComplete={handleComplete} />
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} wide={step === 'onboarding'}>
+    <Modal isOpen={isOpen} onClose={handleClose} wide={step === 'onboarding'}>
       {isOpen && content}
     </Modal>
   )
