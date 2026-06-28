@@ -10,6 +10,7 @@ import PrivacyPage from './pages/PrivacyPage.jsx'
 import DiscoveryHeader from './components/DiscoveryHeader.jsx'
 import Toast from './components/Toast.jsx'
 import SearchModal from './components/SearchModal.jsx'
+import { useAuth } from './hooks/useAuth.js'
 import { useToast } from './hooks/useToast.js'
 import { useDiscoveryQueue } from './hooks/useDiscoveryQueue.js'
 
@@ -18,11 +19,21 @@ import { useDiscoveryQueue } from './hooks/useDiscoveryQueue.js'
  * @returns {React.ReactElement} The App component.
  */
 function App () {
+  const { user, loading } = useAuth()
   const { toast, setToast } = useToast()
+  const navigate = useNavigate()
   const { pathname } = useLocation()
+  const prevUser = useRef(user)
+  const prevPathname = useRef(pathname)
   const { inject, eject, searchOpen, openSearch, closeSearch } = useDiscoveryQueue()
 
-  const navigate = useNavigate()
+  useEffect(() => {
+    if (loading) return
+    if (prevUser.current && !user) {
+      navigate('/')
+    }
+    prevUser.current = user
+  }, [user, loading, navigate])
 
   const handleSearchSelect = useCallback((movie) => {
     if (movie) {
@@ -33,8 +44,6 @@ function App () {
       eject()
     }
   }, [inject, eject, closeSearch, pathname, navigate])
-
-  const prevPathname = useRef(pathname)
 
   useEffect(() => {
     if (prevPathname.current === '/' && pathname !== '/') {
