@@ -1,4 +1,3 @@
-import { forwardRef } from 'react'
 import IconButton from './IconButton.jsx'
 import { RotateCcw, X, Bookmark, Star } from 'lucide-react'
 
@@ -10,9 +9,9 @@ import { RotateCcw, X, Bookmark, Star } from 'lucide-react'
  * @param {boolean} props.canGoBack - Whether the back button is enabled.
  * @returns {React.ReactElement} The DiscoveryControls component.
  */
-const DiscoveryControls = forwardRef(function DiscoveryControls ({ interaction, handleBack, canGoBack }, ref) {
+export default function DiscoveryControls ({ interaction, handleBack, canGoBack }) {
   return (
-    <div ref={ref} className='flex items-center justify-center gap-6'>
+    <div className='flex items-center justify-center gap-6'>
       <IconButton
         onClick={handleBack} disabled={!canGoBack} icon={RotateCcw}
         backgroundColor='bg-yellow-500/10' textColor='text-yellow-400'
@@ -38,6 +37,4 @@ const DiscoveryControls = forwardRef(function DiscoveryControls ({ interaction, 
       />
     </div>
   )
-})
-
-export default DiscoveryControls
+}

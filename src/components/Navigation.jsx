@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
-import { Film, Compass, Bookmark, User, ChevronsUpDown, Settings, LogOut } from 'lucide-react'
+import { Film, Compass, Bookmark, User, ChevronsUpDown, Settings, LogOut, Search } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
 import { useToast } from '../hooks/useToast.js'
@@ -23,7 +23,7 @@ const navLinks = [
 export default function Navigation () {
   const { user, logout } = useAuth()
   const { showToast } = useToast()
-  const { reset } = useDiscoveryQueue()
+  const { reset, openSearch } = useDiscoveryQueue()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { pathname } = useLocation()
@@ -72,6 +72,11 @@ export default function Navigation () {
           <Film size={28} className='text-brand rotate-90' />
           <h1 className='text-xl font-bold leading-none tracking-wide'>Flick</h1>
         </div>
+
+        <button onClick={openSearch} className='flex items-center gap-4 px-3 py-2.5 rounded-full text-sm font-medium leading-none text-gray-400 cursor-pointer bg-white/10'>
+          <Search size={20} />
+          Search movie
+        </button>
 
         <ul className='flex flex-col'>
           {navLinks.map(({ to, icon: Icon, label, protected: isProtected }) => (
