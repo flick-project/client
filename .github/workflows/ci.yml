@@ -24,6 +24,7 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
+
       - name: Deploy
         run: |
           eval $(ssh-agent -s)
