@@ -9,9 +9,11 @@ const REFILL_THRESHOLD = 5
 const queueReducer = (state, action) => {
   switch (action.type) {
     case 'APPEND_MOVIES': {
-      const existingIds = new Set(state.movies.map(m => m.id))
+      // Trim already-watched movies before appending.
+      const remaining = state.movies.slice(state.currentIndex)
+      const existingIds = new Set(remaining.map(m => m.id))
       const newMovies = action.movies.filter(m => !existingIds.has(m.id))
-      return { ...state, movies: [...state.movies, ...newMovies] }
+      return { ...state, movies: [...remaining, ...newMovies], currentIndex: 0 }
     }
     case 'ADVANCE':
       return { ...state, currentIndex: state.currentIndex + 1, canGoBack: true }
@@ -78,6 +80,17 @@ export function DiscoveryProvider ({ children }) {
       setError(err.message || 'Something went wrong. Please try again.')
     }
   }, [])
+
+  useEffect(() => {
+    if (loading) return
+    const init = async () => {
+      const saved = getQueue()
+      if (!saved?.length || saved.length <= REFILL_THRESHOLD) {
+        await loadMovies()
+      }
+    }
+    init()
+  }, [loading, loadMovies])
 
   useEffect(() => {
     if (loading) return
@@ -172,6 +185,12 @@ export function DiscoveryProvider ({ children }) {
       throw err
     }
   }, [queue.movies, queue.currentIndex, advance])
+
+  useEffect(() => {
+    const handleImport = () => reset()
+    window.addEventListener('import-complete', handleImport)
+    return () => window.removeEventListener('import-complete', handleImport)
+  }, [reset])
 
   return (
     <DiscoveryContext value={{
