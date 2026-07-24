@@ -74,7 +74,7 @@ export default function ProfilePage () {
 
   if (isLoading || !profile) {
     return (
-      <div className='w-full flex flex-col max-w-6xl gap-8'>
+      <div className='w-full flex flex-col max-w-4xl gap-8'>
         <div className='flex gap-6 px-4 md:px-0'>
           <div className='w-24 h-24 md:w-32 md:h-32 rounded-full bg-white/5 animate-pulse' />
           <div className='flex flex-col gap-3 justify-center'>
@@ -94,7 +94,7 @@ export default function ProfilePage () {
   }
 
   return (
-    <div className='w-full flex flex-col max-w-5xl md:p-4 md:pt-6'>
+    <div className='w-full flex flex-col max-w-4xl md:p-4 md:pt-6'>
       <PageHeader action={
         <Link to='/settings' className='text-gray-400 hover:text-white transition-colors'>
           <Settings size={24} />

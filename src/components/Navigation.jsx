@@ -98,7 +98,6 @@ export default function Navigation () {
         <AuthFlow isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       </div>
 
-      {user && <hr className='border-t border-white/10 my-4' />}
       {user && <div className='flex-1' />}
       {user && <hr className='border-t border-white/10 my-4' />}
 

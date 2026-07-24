@@ -24,6 +24,7 @@ export default function TasteTicket ({ profile, stats }) {
       <div className='
         relative shrink-0
         flex sm:flex-col items-center justify-between gap-4 p-5
+        bg-surface-light
         border border-white/10
         border-b-0 sm:border-b sm:border-r-0
         rounded-t-xl sm:rounded-t-none sm:rounded-l-xl
@@ -63,6 +64,7 @@ export default function TasteTicket ({ profile, stats }) {
       {/* Main body */}
       <div className='
         flex-1 min-w-0 flex flex-col gap-4 p-5
+        bg-surface-light
         border border-white/10
         border-t-0 sm:border-t sm:border-l-0
         rounded-b-xl sm:rounded-r-xl
