@@ -15,7 +15,7 @@ export default function FavoriteMovies ({ favorites, onAdd, onRemove }) {
   const slots = Array.from({ length: MAX_FAVORITES }, (_, i) => favorites[i] || null)
 
   return (
-    <ul className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4'>
+    <ul className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3'>
       {slots.map((movie, i) => movie
         ? (
           <li key={movie.id} className='relative aspect-2/3 group rounded-lg overflow-hidden border border-white/10'>
