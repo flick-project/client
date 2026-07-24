@@ -22,7 +22,7 @@ export default function Button ({
 }) {
   const base = [
     'inline-flex items-center justify-center gap-2',
-    'rounded-md font-semibold cursor-pointer',
+    'rounded-lg cursor-pointer',
     'transition-colors duration-150',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900',
     'disabled:opacity-50 disabled:cursor-not-allowed',
@@ -30,16 +30,15 @@ export default function Button ({
   ].join(' ')
 
   const sizes = {
-    sm: 'h-8 px-3 text-sm',
-    md: 'h-10 px-4 text-sm',
-    lg: 'h-11 px-6 text-base',
+    md: 'min-h-10 px-4 text-sm',
+    lg: 'min-h-11 px-6 text-base',
   }
 
   const variants = {
-    primary: 'border border-transparent bg-brand hover:enabled:bg-red-700 text-white',
-    secondary: 'border border-gray-600 text-gray-300 hover:enabled:bg-white/10 hover:enabled:border-gray-400',
-    danger: 'border border-red-500/50 text-red-400 hover:enabled:bg-red-500/10 hover:enabled:border-red-400',
-    ghost: 'border border-transparent text-gray-400 hover:enabled:bg-white/10 hover:enabled:text-gray-200',
+    primary: 'font-semibold border border-transparent bg-brand hover:enabled:bg-red-700 text-white',
+    secondary: 'font-medium border border-gray-600 text-gray-300 hover:enabled:bg-white/10 hover:enabled:border-gray-400',
+    danger: 'font-medium border border-red-500/50 text-red-400 hover:enabled:bg-red-500/10 hover:enabled:border-red-400',
+    ghost: 'font-medium border border-transparent text-gray-400 hover:enabled:bg-white/10 hover:enabled:text-gray-200',
   }
 
   return (
@@ -49,9 +48,8 @@ export default function Button ({
       {...rest}
     >
       {loading
-        ? <span className='w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
-        : null}
-      {children}
+        ? <span className='w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' aria-label='Loading' />
+        : children}
     </button>
   )
 }
