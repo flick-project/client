@@ -4,12 +4,12 @@ import { apiRequest } from '../services/api.js'
 import { getQueue, saveQueue } from '../services/storage.js'
 import { useAuth } from '../hooks/useAuth.js'
 
+// Fetch more movies when the queue has this many or fewer left.
 const REFILL_THRESHOLD = 5
 
 const queueReducer = (state, action) => {
   switch (action.type) {
     case 'APPEND_MOVIES': {
-      // Trim already-watched movies before appending.
       const remaining = state.movies.slice(state.currentIndex)
       const existingIds = new Set(remaining.map(m => m.id))
       const newMovies = action.movies.filter(m => !existingIds.has(m.id))
@@ -25,13 +25,9 @@ const queueReducer = (state, action) => {
       return { movies: [], currentIndex: 0, canGoBack: false, injectedMovie: false, searchOpen: false }
     case 'INJECT_MOVIE': {
       const movies = [...state.movies]
-      if (state.injectedMovie) {
-        movies.splice(state.currentIndex, 1)
-      }
+      if (state.injectedMovie) movies.splice(state.currentIndex, 1)
       const existingIndex = movies.findIndex(m => m.id === action.movie.id)
-      if (existingIndex !== -1) {
-        movies.splice(existingIndex, 1)
-      }
+      if (existingIndex !== -1) movies.splice(existingIndex, 1)
       const insertIndex = Math.min(state.currentIndex, movies.length)
       movies.splice(insertIndex, 0, action.movie)
       return { ...state, movies, currentIndex: insertIndex, canGoBack: false, injectedMovie: true, searchOpen: true }
@@ -53,6 +49,8 @@ const queueReducer = (state, action) => {
 
 /**
  * Provides discovery queue state and controls to the app.
+ * The queue persists to localStorage between sessions and refills
+ * from the server when it runs low.
  * @param {object} props - Component props.
  * @param {React.ReactElement} props.children - Child components.
  * @returns {React.ReactElement} The DiscoveryProvider component.
@@ -60,18 +58,18 @@ const queueReducer = (state, action) => {
 export function DiscoveryProvider ({ children }) {
   const { user, loading } = useAuth()
   const [error, setError] = useState(null)
-  const [isInteracting, setIsInteracting] = useState(false)
   const prevUserRef = useRef(user)
+  const isInteractingRef = useRef(false)
 
-  const [queue, dispatch] = useReducer(queueReducer, {
+  const [queue, dispatch] = useReducer(queueReducer, null, () => ({
     movies: getQueue() ?? [],
     currentIndex: 0,
     canGoBack: false,
     injectedMovie: false,
     searchOpen: false
-  })
+  }))
 
-  const loadMovies = useCallback(async () => {
+  const loadMovies = async () => {
     try {
       const result = await apiRequest('/movies/discover')
       dispatch({ type: 'APPEND_MOVIES', movies: result.movies })
@@ -79,43 +77,10 @@ export function DiscoveryProvider ({ children }) {
       console.error(err)
       setError(err.message || 'Something went wrong. Please try again.')
     }
-  }, [])
+  }
 
-  useEffect(() => {
-    if (loading) return
-    const init = async () => {
-      const saved = getQueue()
-      if (!saved?.length || saved.length <= REFILL_THRESHOLD) {
-        await loadMovies()
-      }
-    }
-    init()
-  }, [loading, loadMovies])
-
-  useEffect(() => {
-    if (loading) return
-    const init = async () => {
-      await loadMovies()
-    }
-    init()
-  }, [loading, loadMovies])
-
-  useEffect(() => {
-    if (loading) return
-    if (prevUserRef.current && !user) {
-      dispatch({ type: 'RESET' })
-      loadMovies()
-    }
-    prevUserRef.current = user
-  }, [loading, user, loadMovies])
-
-  useEffect(() => {
-    if (!queue.injectedMovie) {
-      saveQueue(queue.movies.slice(queue.currentIndex))
-    }
-  }, [queue.movies, queue.currentIndex, queue.injectedMovie])
-
-  const advance = useCallback(() => {
+  // Advance to the next movie, refilling when the queue runs low.
+  const advance = () => {
     if (queue.injectedMovie) {
       dispatch({ type: 'EJECT_MOVIE' })
       return
@@ -124,37 +89,28 @@ export function DiscoveryProvider ({ children }) {
     if (queue.currentIndex + 1 + REFILL_THRESHOLD >= queue.movies.length) {
       loadMovies()
     }
-  }, [queue.injectedMovie, queue.currentIndex, queue.movies.length, loadMovies])
+  }
 
-  const back = useCallback(() => {
+  const back = () => {
     if (!queue.injectedMovie) dispatch({ type: 'GO_BACK' })
-  }, [queue.injectedMovie])
+  }
 
+  // Clear the queue and fetch fresh movies.
   const reset = useCallback(async () => {
     dispatch({ type: 'RESET' })
     saveQueue([])
     await loadMovies()
-  }, [loadMovies])
-
-  const inject = useCallback((movie) => {
-    dispatch({ type: 'INJECT_MOVIE', movie })
   }, [])
 
-  const eject = useCallback(() => {
-    dispatch({ type: 'EJECT_MOVIE' })
-  }, [])
+  const inject = (movie) => dispatch({ type: 'INJECT_MOVIE', movie })
+  const eject = () => dispatch({ type: 'EJECT_MOVIE' })
+  const openSearch = () => dispatch({ type: 'OPEN_SEARCH' })
+  const closeSearch = () => dispatch({ type: 'CLOSE_SEARCH' })
 
-  const openSearch = useCallback(() => {
-    dispatch({ type: 'OPEN_SEARCH' })
-  }, [])
-
-  const closeSearch = useCallback(() => {
-    dispatch({ type: 'CLOSE_SEARCH' })
-  }, [])
-
-  const interact = useCallback(async (type) => {
-    if (isInteracting) return
-    setIsInteracting(true)
+  // Record a save/skip/dismiss interaction and advance.
+  const interact = async (type) => {
+    if (isInteractingRef.current) return
+    isInteractingRef.current = true
     try {
       const movieId = queue.movies[queue.currentIndex].id
       if (!(queue.injectedMovie && type === 'skipped')) {
@@ -168,11 +124,14 @@ export function DiscoveryProvider ({ children }) {
       console.error(err)
       throw err
     } finally {
-      setIsInteracting(false)
+      isInteractingRef.current = false
     }
-  }, [isInteracting, queue.movies, queue.currentIndex, queue.injectedMovie, advance])
+  }
 
-  const rate = useCallback(async (rating) => {
+  // Record a rating and advance.
+  const rate = async (rating) => {
+    if (isInteractingRef.current) return
+    isInteractingRef.current = true
     try {
       const movieId = queue.movies[queue.currentIndex].id
       await apiRequest('/ratings', {
@@ -183,9 +142,40 @@ export function DiscoveryProvider ({ children }) {
     } catch (err) {
       console.error(err)
       throw err
+    } finally {
+      isInteractingRef.current = false
     }
-  }, [queue.movies, queue.currentIndex, advance])
+  }
 
+  // Clear queue on logout.
+  useEffect(() => {
+    if (loading) return
+    if (prevUserRef.current && !user) {
+      dispatch({ type: 'RESET' })
+      saveQueue([])
+    }
+    prevUserRef.current = user
+  }, [loading, user])
+
+  // Seed the queue when empty (first visit, post-logout, post-import).
+  useEffect(() => {
+    if (loading) return
+    if (queue.movies.length === 0) {
+      const init = async () => {
+        await loadMovies()
+      }
+      init()
+    }
+  }, [loading, queue.movies.length])
+
+  // Persist remaining movies to localStorage for session continuity.
+  useEffect(() => {
+    if (!queue.injectedMovie) {
+      saveQueue(queue.movies.slice(queue.currentIndex))
+    }
+  }, [queue.movies, queue.currentIndex, queue.injectedMovie])
+
+  // Reset queue when an import completes so fresh recommendations load.
   useEffect(() => {
     const handleImport = () => reset()
     window.addEventListener('import-complete', handleImport)

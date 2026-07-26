@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { useAuth } from '../hooks/useAuth.js'
-import { useToast } from '../hooks/useToast'
+import { useToast } from '../hooks/useToast.js'
 import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
 import DiscoveryCard from '../components/DiscoveryCard.jsx'
 import DiscoveryControls from '../components/DiscoveryControls.jsx'
@@ -12,6 +12,7 @@ import { posterUrl } from '../utils/imageUtils.js'
 
 /**
  * Discovery page where users swipe through movie suggestions.
+ * Shows a movie card with controls for saving, skipping, and rating.
  * @returns {React.ReactElement} The DiscoveryPage component.
  */
 export default function DiscoveryPage () {
@@ -26,7 +27,16 @@ export default function DiscoveryPage () {
     'Find your next movie tonight. Personalized recommendations. Swipe to discover.'
   )
 
-  // Record save/skip interaction and advance to the next movie.
+  // Redirect to auth if the user isn't logged in.
+  const requireAuth = useCallback(() => {
+    if (!user) {
+      setIsRatingOpen(false)
+      setIsAuthOpen(true)
+      return false
+    }
+    return true
+  }, [user])
+
   const handleInteraction = async (type) => {
     if (!requireAuth()) return
     if (type === 'rate') { setIsRatingOpen(true); return }
@@ -35,11 +45,10 @@ export default function DiscoveryPage () {
       setIsRatingOpen(false)
     } catch (err) {
       console.error(err)
-      showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
+      showToast(err.message || 'Something went wrong. Please try again.', 'fail')
     }
   }
 
-  // Record rating and advance to the next movie.
   const handleRate = async (rating) => {
     if (!requireAuth()) return
     try {
@@ -47,17 +56,8 @@ export default function DiscoveryPage () {
       setIsRatingOpen(false)
     } catch (err) {
       console.error(err)
-      showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
+      showToast(err.message || 'Something went wrong. Please try again.', 'fail')
     }
-  }
-
-  const requireAuth = () => {
-    if (!user) {
-      setIsRatingOpen(false)
-      setIsAuthOpen(true)
-      return false
-    }
-    return true
   }
 
   return (
