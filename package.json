@@ -1,7 +1,7 @@
 {
   "name": "flick-client",
   "private": true,
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Frontend for Flick, built with React.",
   "author": "Hans Nilsson",
   "license": "MIT",
@@ -21,7 +21,8 @@
     "papaparse": "^5.5.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-router-dom": "^7.14.1",
+    "react-modal-sheet": "^5.6.0",
+    "react-router-dom": "^7.11.0",
     "tailwindcss": "^4.2.3",
     "tailwindcss-animate": "^1.0.7"
   },
