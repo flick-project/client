@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthProvider.jsx'
 import { ToastProvider } from './context/ToastProvider.jsx'
 import { DiscoveryProvider } from './context/DiscoveryProvider.jsx'
+import { MovieOverlayProvider } from './context/MovieOverlayProvider.jsx'
 import { ImportProvider } from './context/ImportProvider.jsx'
 import App from './App.jsx'
 import './index.css'
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')).render(
         <ImportProvider>
           <ToastProvider>
             <DiscoveryProvider>
-              <App />
+              <MovieOverlayProvider>
+                <App />
+              </MovieOverlayProvider>
             </DiscoveryProvider>
           </ToastProvider>
         </ImportProvider>
