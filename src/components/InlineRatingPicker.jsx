@@ -23,7 +23,7 @@ export default function InlineRatingPicker ({ currentRating, onRate, onCancel })
       <button
         onClick={onCancel}
         aria-label='Back'
-        className='shrink-0 flex items-center justify-center w-11 h-11 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors'
+        className='shrink-0 flex items-center justify-center w-11 h-11 rounded-lg text-text-muted hover:text-white hover:bg-white/10 cursor-pointer transition-colors'
       >
         <ArrowLeft size={20} />
       </button>

@@ -38,7 +38,7 @@ export default function Button ({
     primary: 'font-semibold border border-transparent bg-brand hover:enabled:bg-red-700 text-white',
     secondary: 'font-medium border border-gray-600 text-gray-300 hover:enabled:bg-white/10 hover:enabled:border-gray-400',
     danger: 'font-medium border border-red-500/50 text-red-400 hover:enabled:bg-red-500/10 hover:enabled:border-red-400',
-    ghost: 'font-medium border border-transparent text-gray-400 hover:enabled:bg-white/10 hover:enabled:text-gray-200',
+    ghost: 'font-medium border border-transparent text-text-muted hover:enabled:bg-white/10 hover:enabled:text-gray-200',
   }
 
   return (

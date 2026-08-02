@@ -56,9 +56,9 @@ export default function RatingPanel ({ currentRating, onRate, onDismiss, title }
         {currentRating ? 'Update rating' : 'Rate'}
       </Button>
 
-      <div className='flex flex-col gap-4 w-full'>
+      <div className='flex flex-col gap-5 w-full'>
         <hr className='border-white/10' />
-        <p className='text-sm text-text-muted text-center'>
+        <p className='text-sm text-text-muted text-center leading-none'>
           Not interested?{' '}
           <button
             className='text-brand hover:underline cursor-pointer'

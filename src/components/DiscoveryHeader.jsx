@@ -27,7 +27,7 @@ export default function DiscoveryHeader ({ onSelect }) {
         <h1 className='text-xl font-semibold'>Flick</h1>
       </div>
       <button onClick={openSearch} className='cursor-pointer'>
-        <Search size={24} className='text-gray-400' />
+        <Search size={24} className='text-text-muted' />
       </button>
     </div>
   )

@@ -105,7 +105,7 @@ export default function WatchlistPage () {
           >
             <option value='date'>Sort by: Date added</option>
           </select>
-          <ChevronDown size={16} className='absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400' />
+          <ChevronDown size={16} className='absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted' />
         </div>
       </div>
       {movies.length === 0 && hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-300'>Loading...</p>}

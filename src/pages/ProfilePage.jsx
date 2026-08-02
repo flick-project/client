@@ -96,7 +96,7 @@ export default function ProfilePage () {
   return (
     <div className='w-full flex flex-col max-w-4xl md:p-4 md:pt-6'>
       <PageHeader action={
-        <Link to='/settings' className='text-gray-400 hover:text-white transition-colors'>
+        <Link to='/settings' className='text-text-muted hover:text-white transition-colors'>
           <Settings size={24} />
         </Link>
       }

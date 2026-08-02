@@ -73,7 +73,7 @@ export default function Navigation () {
           <h1 className='text-xl font-bold leading-none tracking-wide'>Flick</h1>
         </div>
 
-        <button onClick={openSearch} className='flex items-center gap-4 px-3 py-2.5 rounded-full text-sm font-medium leading-none text-gray-400 cursor-pointer bg-white/10'>
+        <button onClick={openSearch} className='flex items-center gap-4 px-3 py-2.5 rounded-full text-sm font-medium leading-none text-text-muted cursor-pointer bg-white/10'>
           <Search size={20} />
           Search movie
         </button>

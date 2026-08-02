@@ -23,7 +23,7 @@ export default function SearchHeader ({ onSelect, onClose }) {
     <div className='relative h-6'>
       <div className='flex items-center gap-3 h-full'>
         <button onClick={onClose} className='cursor-pointer'>
-          <ArrowLeft size={20} className='text-gray-400' />
+          <ArrowLeft size={20} className='text-text-muted' />
         </button>
         <input
           type='text'

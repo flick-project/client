@@ -49,7 +49,7 @@ export default function SearchModal ({ onSelect, onClose, excludeIds, variant = 
       }}
     >
       <div className='w-full max-w-lg bg-surface-light rounded-xl border border-white/10 overflow-hidden'>
-        <div className={`flex items-center gap-3 p-4 ${results.length > 0 ? 'border-b border-white/10' : ''}`}>
+        <div className={`flex items-center gap-3 p-3 ${results.length > 0 ? 'border-b border-white/10' : ''}`}>
           <Search size={24} className='text-gray-500' />
           <input
             type='text'
@@ -76,23 +76,23 @@ export default function SearchModal ({ onSelect, onClose, excludeIds, variant = 
           </ul>
         )}
         {variant === 'discovery' && (
-          <div className='flex items-center gap-4 px-4 py-2.5 border-t border-white/5 text-sm text-gray-400'>
+          <div className='flex items-center gap-4 px-4 py-2.5 border-t border-white/5 text-sm text-text-muted'>
             <span className='flex items-center gap-1'>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-gray-400'>↑</kbd>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-gray-400'>↓</kbd>
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>↑</kbd>
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>↓</kbd>
               to navigate
             </span>
             <span className='flex items-center gap-1'>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-gray-400'>↵</kbd>
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>↵</kbd>
               to select
             </span>
             <span className='flex items-center gap-1'>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-gray-400'>Esc</kbd>
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>Esc</kbd>
               to close
             </span>
             <span className='flex items-center gap-1 ml-auto'>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-gray-400'>Ctrl+K</kbd>
-              to search
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>Ctrl+K</kbd>
+              to open
             </span>
           </div>
         )}

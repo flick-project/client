@@ -64,11 +64,11 @@ export default function ImportPanel ({ onDone }) {
             {summary.imported} imported
           </p>
           <p className='flex items-center gap-2'>
-            <SkipForward size={16} className='text-gray-400' aria-hidden='true' />
+            <SkipForward size={16} className='text-text-muted' aria-hidden='true' />
             {summary.skipped} skipped (already rated)
           </p>
           <p className='flex items-center gap-2'>
-            <HelpCircle size={16} className='text-gray-400' aria-hidden='true' />
+            <HelpCircle size={16} className='text-text-muted' aria-hidden='true' />
             {summary.notFound} not found
           </p>
         </div>
@@ -90,7 +90,7 @@ export default function ImportPanel ({ onDone }) {
       >
         <div className='flex items-center justify-between'>
           <p className='text-sm font-medium'>Importing ratings...</p>
-          <p className='text-sm text-gray-400'>{progress}%</p>
+          <p className='text-sm text-text-muted'>{progress}%</p>
         </div>
         <div
           className='w-full bg-white/10 rounded-full h-1.5'
@@ -105,7 +105,7 @@ export default function ImportPanel ({ onDone }) {
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className='text-xs text-gray-400'>You can leave this page. The import will continue in the background.</p>
+        <p className='text-xs text-text-muted'>You can leave this page. The import will continue in the background.</p>
       </div>
     )
   }
@@ -125,7 +125,7 @@ export default function ImportPanel ({ onDone }) {
                 className={`text-sm min-h-10 px-1 pb-1 transition-colors cursor-pointer ${
                   activeTab === p.value
                     ? 'text-white border-b-2 border-white'
-                    : 'text-gray-400 hover:text-gray-300'
+                    : 'text-text-muted hover:text-gray-300'
                 }`}
               >
                 {p.label}
@@ -135,7 +135,7 @@ export default function ImportPanel ({ onDone }) {
         </ul>
       </nav>
 
-      <p className='text-sm text-gray-400'>{current.instructions}</p>
+      <p className='text-sm text-text-muted'>{current.instructions}</p>
 
       <div
         onDrop={handleDrop}
@@ -152,11 +152,11 @@ export default function ImportPanel ({ onDone }) {
             : 'border-white/30 hover:border-white/50 hover:bg-white/3'
         }`}
       >
-        <Upload size={20} className={dragging ? 'text-brand' : 'text-gray-400'} aria-hidden='true' />
-        <p className='text-sm text-gray-400'>
+        <Upload size={20} className={dragging ? 'text-brand' : 'text-text-muted'} aria-hidden='true' />
+        <p className='text-sm text-text-muted'>
           {dragging ? 'Drop file here' : 'Drag and drop or click to browse'}
         </p>
-        <p className='text-xs text-gray-400'>.csv or .zip</p>
+        <p className='text-xs text-text-muted'>.csv or .zip</p>
       </div>
 
       {error && <p className='text-sm text-red-400' role='alert'>{error}</p>}

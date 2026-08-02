@@ -43,7 +43,7 @@ export default function FavoriteMovies ({ favorites, onAdd, onRemove }) {
             <button
               type='button'
               onClick={onAdd}
-              className='flex size-full items-center justify-center rounded-lg border border-dashed border-white/10 text-gray-400 transition hover:border-white/20 hover:text-gray-300 cursor-pointer'
+              className='flex size-full items-center justify-center rounded-lg border border-dashed border-white/10 text-text-muted transition hover:border-white/20 hover:text-gray-300 cursor-pointer'
             >
               <Plus className='size-5' />
             </button>

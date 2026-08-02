@@ -61,7 +61,7 @@ export default function OnboardingModal ({ onComplete }) {
       <div className='flex flex-col gap-6'>
         <div className='flex flex-col gap-2'>
           <h2 className='text-xl font-bold'>Import ratings</h2>
-          <p className='text-sm text-gray-400'>Already rated movies on another platform? Import them to get better recommendations instantly.</p>
+          <p className='text-sm text-text-muted'>Already rated movies on another platform? Import them to get better recommendations instantly.</p>
         </div>
 
         <ImportPanel hideBack />
@@ -71,7 +71,7 @@ export default function OnboardingModal ({ onComplete }) {
           <div className='grid grid-cols-3 items-center'>
             <button
               onClick={() => setStep(0)}
-              className='justify-self-start text-sm font-medium min-h-11 px-2 text-gray-400 hover:text-gray-300 transition-colors cursor-pointer'
+              className='justify-self-start text-sm font-medium min-h-11 px-2 text-text-muted hover:text-gray-300 transition-colors cursor-pointer'
             >
               Back
             </button>
@@ -92,7 +92,7 @@ export default function OnboardingModal ({ onComplete }) {
     <div className='flex flex-col gap-6'>
       <div className='flex flex-col gap-2'>
         <h2 className='text-xl font-bold'>Pick 3 favorites</h2>
-        <p className='text-sm text-gray-400'>Helps us tailor your recommendations from the start.</p>
+        <p className='text-sm text-text-muted'>Helps us tailor your recommendations from the start.</p>
       </div>
 
       {errors.general && <p className='text-red-500 text-sm text-center' role='alert'>{errors.general}</p>}
@@ -126,7 +126,7 @@ export default function OnboardingModal ({ onComplete }) {
         <div className='grid grid-cols-3 items-center'>
           <button
             onClick={() => onComplete()}
-            className='justify-self-start text-sm font-medium min-h-11 px-2 text-gray-400 hover:text-gray-300 transition-colors cursor-pointer'
+            className='justify-self-start text-sm font-medium min-h-11 px-2 text-text-muted hover:text-gray-300 transition-colors cursor-pointer'
             disabled={isLoading}
           >
             Skip

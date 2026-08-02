@@ -33,9 +33,9 @@ export default function Modal ({ isOpen, onClose, wide, children }) {
           >
             <button
               onClick={onClose}
-              className='absolute top-4 right-4 text-gray-400 hover:text-white hover:bg-white/10 p-1.5 rounded-md cursor-pointer transition-colors'
+              className='absolute top-2 right-2 text-text-muted hover:text-white hover:bg-white/10 p-2 rounded-md cursor-pointer transition-colors'
             >
-              <X size={16} />
+              <X size={20} />
             </button>
             {children}
           </motion.div>

@@ -152,7 +152,7 @@ export default function MovieOverlay () {
   )
 
   const metaRow = movie && (
-    <div className='flex items-center gap-2 flex-wrap text-base text-gray-400'>
+    <div className='flex items-center gap-2 flex-wrap text-base text-text-muted'>
       {movie.vote_average > 0 && (
         <>
           <span className='flex items-center gap-1.5'>
@@ -179,13 +179,13 @@ export default function MovieOverlay () {
         <div className='flex flex-col gap-3 px-4 pb-4 border-b border-white/10'>
           {director && (
             <div>
-              <p className='text-sm text-gray-400 mb-0.5'>Director</p>
+              <p className='text-sm text-text-muted mb-0.5'>Director</p>
               <p className='text-base text-gray-200'>{director.name}</p>
             </div>
           )}
           {cast && (
             <div>
-              <p className='text-sm text-gray-400 mb-0.5'>Cast</p>
+              <p className='text-sm text-text-muted mb-0.5'>Cast</p>
               <p className='text-base text-gray-200'>{cast}</p>
             </div>
           )}
@@ -195,13 +195,13 @@ export default function MovieOverlay () {
         <div className='flex gap-8 px-4'>
           {movie.budget > 0 && (
             <div>
-              <p className='text-sm text-gray-400 mb-0.5'>Budget</p>
+              <p className='text-sm text-text-muted mb-0.5'>Budget</p>
               <p className='text-base text-gray-200'>{formatCurrency(movie.budget)}</p>
             </div>
           )}
           {movie.revenue > 0 && (
             <div>
-              <p className='text-sm text-gray-400 mb-0.5'>Box office</p>
+              <p className='text-sm text-text-muted mb-0.5'>Box office</p>
               <p className='text-base text-gray-200'>{formatCurrency(movie.revenue)}</p>
             </div>
           )}
@@ -293,12 +293,12 @@ export default function MovieOverlay () {
     <div className='flex flex-col w-full h-full px-1 pb-1 bg-black'>
       <div className='shrink-0 flex items-center justify-between gap-3 pl-4 pr-1 py-2 bg-black'>
         <div className='min-w-0'>
-          <p className='text-base font-medium text-white truncate'>{movie.title} <span className='text-gray-400'>{new Date(movie.release_date).getFullYear()}</span></p>
+          <p className='text-base font-medium text-white truncate'>{movie.title} <span className='text-text-muted'>{new Date(movie.release_date).getFullYear()}</span></p>
         </div>
         <button
           onClick={() => setShowTrailer(false)}
           aria-label='Close trailer'
-          className='shrink-0 flex items-center justify-center min-w-11 min-h-11 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors'
+          className='shrink-0 flex items-center justify-center min-w-11 min-h-11 rounded-lg text-text-muted hover:text-white hover:bg-white/10 cursor-pointer transition-colors'
         >
           <X size={20} />
         </button>
@@ -341,7 +341,7 @@ export default function MovieOverlay () {
         <button
           onClick={closeOverlay}
           aria-label='Close'
-          className='absolute right-3 top-2 z-10 p-2.5 rounded-md text-gray-400 backdrop-blur-md hover:text-white hover:bg-white/10 cursor-pointer transition-colors flex items-center justify-center min-w-11 min-h-11'
+          className='absolute right-3 top-2 z-10 p-2.5 rounded-md text-text-muted backdrop-blur-md hover:text-white hover:bg-white/10 cursor-pointer transition-colors flex items-center justify-center min-w-11 min-h-11'
         >
           <X size={24} />
         </button>
@@ -350,7 +350,7 @@ export default function MovieOverlay () {
           <div className='flex flex-col gap-2 p-4 border-b border-white/10'>
             <h2 className='text-2xl font-semibold text-white leading-snug pr-10'>
               {movie.title}
-              <span className='ml-2 text-lg font-normal text-gray-400 whitespace-nowrap'>
+              <span className='ml-2 text-lg font-normal text-text-muted whitespace-nowrap'>
                 {new Date(movie.release_date).getFullYear()}
               </span>
             </h2>
@@ -405,7 +405,7 @@ export default function MovieOverlay () {
         <div className='flex flex-col gap-2 px-4 pb-4 border-b border-white/10'>
           <h2 className='text-xl font-semibold text-white leading-snug'>
             {movie.title}
-            <span className='ml-2 text-sm font-normal text-gray-400 whitespace-nowrap'>
+            <span className='ml-2 text-sm font-normal text-text-muted whitespace-nowrap'>
               {new Date(movie.release_date).getFullYear()}
             </span>
           </h2>
@@ -445,7 +445,7 @@ export default function MovieOverlay () {
                     <button
                       onClick={closeOverlay}
                       aria-label='Close'
-                      className='absolute right-3 top-2 z-10 p-2.5 rounded-md text-gray-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors flex items-center justify-center min-w-11 min-h-11'
+                      className='absolute right-3 top-2 z-10 p-2.5 rounded-md text-text-muted hover:text-white hover:bg-white/10 cursor-pointer transition-colors flex items-center justify-center min-w-11 min-h-11'
                     >
                       <X size={24} />
                     </button>
