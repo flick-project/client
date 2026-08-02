@@ -1,12 +1,6 @@
 import { useState } from 'react'
+import { RATINGS } from '../utils/ratings'
 import Button from './Button'
-
-const ratings = [
-  { value: 'hate', emoji: '😡', label: 'Hate' },
-  { value: 'dislike', emoji: '😕', label: 'Dislike' },
-  { value: 'like', emoji: '😊', label: 'Like' },
-  { value: 'love', emoji: '😍', label: 'Love' },
-]
 
 /**
  * Rating panel with emoji-based options.
@@ -28,14 +22,14 @@ export default function RatingPanel ({ currentRating, onRate, onDismiss, title }
       </div>
 
       <fieldset className='flex gap-2'>
-        {ratings.map(({ value, emoji, label }) => (
+        {RATINGS.map(({ value, emoji, label }) => (
           <label
             key={value}
             className={`flex flex-col items-center gap-1.5 px-4 py-3 rounded-lg cursor-pointer transition-all duration-150 ${
-        selected === value
-          ? 'opacity-100'
-          : 'opacity-40 hover:opacity-90'
-      }`}
+              selected === value
+                ? 'opacity-100'
+                : 'opacity-40 hover:opacity-90'
+            }`}
           >
             <input
               type='radio'
