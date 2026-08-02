@@ -3,6 +3,7 @@ import { apiRequest } from '../services/api.js'
 import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { useToast } from '../hooks/useToast'
 import { ChevronDown } from 'lucide-react'
+import { useMovieOverlay } from '../hooks/useMovieOverlay.js'
 import WatchlistCard from '../components/WatchlistCard.jsx'
 import Modal from '../components/Modal.jsx'
 import RatingPanel from '../components/RatingPanel.jsx'
@@ -15,6 +16,7 @@ const WATCHLIST_PAGE_LIMIT = 20
  */
 export default function WatchlistPage () {
   const { showToast } = useToast()
+  const { subscribe } = useMovieOverlay()
   const [page, setPage] = useState(1)
   const [movies, setMovies] = useState([])
   const [total, setTotal] = useState(null)
@@ -83,6 +85,14 @@ export default function WatchlistPage () {
       showToast((err.message || 'Something went wrong. Please try again.'), 'fail')
     }
   }
+
+  useEffect(() => {
+    return subscribe((event) => {
+      if (event.type === 'save' && !event.saved) {
+        setMovies(prev => prev.filter(m => m.tmdb_id !== event.movieId))
+      }
+    })
+  }, [subscribe])
 
   return (
     <div className='flex flex-col gap-4 lg:gap-6 p-6 max-w-7xl size-full max-lg:p-4'>
