@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useMovieOverlay } from '../hooks/useMovieOverlay'
 import { motion, AnimatePresence } from 'motion/react'
 import { apiRequest } from '../services/api'
@@ -6,38 +7,42 @@ import { posterUrl, backdropUrl } from '../utils/imageUtils'
 import { X, Bookmark, Star, Play } from 'lucide-react'
 import { Sheet } from 'react-modal-sheet'
 import { findRating } from '../utils/ratings'
-import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../hooks/useToast'
 import InlineRatingPicker from './InlineRatingPicker'
+
+const currencyFormat = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  notation: 'compact',
+  maximumFractionDigits: 1
+})
 
 /**
  * Global movie detail overlay, driven by MovieOverlayContext.
  * @returns {React.ReactElement} The MovieOverlay component.
  */
 export default function MovieOverlay () {
-  const { user } = useAuth()
-  const { movieId, closeOverlay, notifyChange } = useMovieOverlay()
+  const { movieId, closeOverlay, notifyChange, showTrailer, openTrailer, closeTrailer } = useMovieOverlay()
   const { showToast } = useToast()
+  const location = useLocation()
+  const navigate = useNavigate()
+
   const [movie, setMovie] = useState(null)
   const [imageLoaded, setImageLoaded] = useState(false)
   const [scrolledToBottom, setScrolledToBottom] = useState(false)
-  const [showTrailer, setShowTrailer] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
   const [saved, setSaved] = useState(false)
   const [ratingOpen, setRatingOpen] = useState(false)
   const [userRating, setUserRating] = useState(null)
   const [error, setError] = useState(false)
+  const [retryKey, setRetryKey] = useState(0)
   const scrollRef = useRef(null)
 
-  useEffect(() => {
-    if (!user && movieId) {
-      closeOverlay()
-    }
-  }, [user, movieId, closeOverlay])
+  // ── Data fetching ──────────────────────────────────────────
 
   useEffect(() => {
     /**
-     * Fetch movie details when movieId changes.
+     *
      */
     async function fetchMovie () {
       if (!movieId) {
@@ -46,7 +51,6 @@ export default function MovieOverlay () {
         return
       }
       setImageLoaded(false)
-      setShowTrailer(false)
       setError(false)
       try {
         const data = await apiRequest(`/movies/${movieId}/details`)
@@ -57,48 +61,42 @@ export default function MovieOverlay () {
       }
     }
     fetchMovie()
-  }, [movieId])
-
-  const retry = async () => {
-    setError(false)
-    try {
-      const data = await apiRequest(`/movies/${movieId}/details`)
-      setMovie(data)
-    } catch (err) {
-      console.error(err)
-      setError(true)
-    }
-  }
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el || !movie) return
-
-    const check = () => {
-      setScrolledToBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 1)
-    }
-    check()
-    el.addEventListener('scroll', check)
-    return () => el.removeEventListener('scroll', check)
-  }, [movie])
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 1024)
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
+  }, [movieId, retryKey])
 
   useEffect(() => {
     /**
-     * Reset interaction state when movie changes.
+     *
      */
-    async function interact () {
+    async function syncInteractionState () {
       setSaved(movie?.saved ?? false)
       setUserRating(movie?.user_rating ?? null)
       setRatingOpen(false)
     }
-    interact()
+    syncInteractionState()
   }, [movie])
+
+  // ── Listeners ──────────────────────────────────────────────
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el || !movie) return
+    const check = () => {
+      setScrolledToBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 1)
+    }
+    check()
+    el.addEventListener('scroll', check, { passive: true })
+    return () => el.removeEventListener('scroll', check)
+  }, [movie])
+
+  useEffect(() => {
+    if (!movieId) return
+    const check = () => setIsMobile(window.innerWidth < 1024)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [movieId])
+
+  // ── Handlers ───────────────────────────────────────────────
 
   const handleSave = async () => {
     if (!movie) return
@@ -135,13 +133,13 @@ export default function MovieOverlay () {
     }
   }
 
+  const dismissOverlay = () => navigate(location.pathname)
+
+  // ── Derived values ─────────────────────────────────────────
+
   const currentRating = findRating(userRating)
-
-  const formatCurrency = (amount) => {
-    if (!amount) return null
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(amount)
-  }
-
+  const formatCurrency = (amount) => amount ? currencyFormat.format(amount) : null
+  const releaseYear = movie?.release_date ? new Date(movie.release_date).getFullYear() : null
   const primaryGenre = movie?.genres?.find(g => g.name !== 'Drama')?.name ?? movie?.genres?.[0]?.name
   const director = movie?.credits?.crew?.find(c => c.job === 'Director')
   const cast = movie?.credits?.cast?.slice(0, 5).map(c => c.name).join(', ')
@@ -150,6 +148,8 @@ export default function MovieOverlay () {
   ) ?? movie?.videos?.results?.find(
     v => v.site === 'YouTube' && v.type === 'Trailer'
   )
+
+  // ── Shared fragments ──────────────────────────────────────
 
   const metaRow = movie && (
     <div className='flex items-center gap-2 flex-wrap text-base text-text-muted'>
@@ -268,7 +268,7 @@ export default function MovieOverlay () {
   const trailerButton = trailer && (
     <div className='absolute inset-0 flex items-center justify-center'>
       <button
-        onClick={() => setShowTrailer(true)}
+        onClick={openTrailer}
         className='flex items-center justify-center w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors cursor-pointer min-w-11 min-h-11'
         aria-label='Play trailer'
       >
@@ -281,7 +281,7 @@ export default function MovieOverlay () {
     <div className='flex flex-col items-center justify-center gap-4 p-8 w-full h-full min-h-64'>
       <p className='text-base text-gray-300 text-center'>Couldn't load movie details.</p>
       <button
-        onClick={retry}
+        onClick={() => setRetryKey(k => k + 1)}
         className='px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-base text-white transition-colors cursor-pointer min-h-11'
       >
         Try again
@@ -289,14 +289,18 @@ export default function MovieOverlay () {
     </div>
   )
 
+  // ── Desktop views ──────────────────────────────────────────
+
   const desktopTrailerView = movie && trailer && (
     <div className='flex flex-col w-full h-full px-1 pb-1 bg-black'>
       <div className='shrink-0 flex items-center justify-between gap-3 pl-4 pr-1 py-2 bg-black'>
         <div className='min-w-0'>
-          <p className='text-base font-medium text-white truncate'>{movie.title} <span className='text-text-muted'>{new Date(movie.release_date).getFullYear()}</span></p>
+          <p className='text-base font-medium text-white truncate'>
+            {movie.title} <span>({releaseYear})</span>
+          </p>
         </div>
         <button
-          onClick={() => setShowTrailer(false)}
+          onClick={closeTrailer}
           aria-label='Close trailer'
           className='shrink-0 flex items-center justify-center min-w-11 min-h-11 rounded-lg text-text-muted hover:text-white hover:bg-white/10 cursor-pointer transition-colors'
         >
@@ -351,7 +355,7 @@ export default function MovieOverlay () {
             <h2 className='text-2xl font-semibold text-white leading-snug pr-10'>
               {movie.title}
               <span className='ml-2 text-lg font-normal text-text-muted whitespace-nowrap'>
-                {new Date(movie.release_date).getFullYear()}
+                {releaseYear}
               </span>
             </h2>
             {metaRow}
@@ -366,6 +370,8 @@ export default function MovieOverlay () {
       </div>
     </>
   )
+
+  // ── Mobile view ────────────────────────────────────────────
 
   const mobileDetailView = movie && (
     <>
@@ -387,9 +393,9 @@ export default function MovieOverlay () {
               <img
                 src={backdropUrl(movie.backdrop_path || movie.poster_path, 780)}
                 srcSet={`
-                ${backdropUrl(movie.backdrop_path || movie.poster_path, 300)} 300w,
-                ${backdropUrl(movie.backdrop_path || movie.poster_path, 780)} 780w
-              `}
+                  ${backdropUrl(movie.backdrop_path || movie.poster_path, 300)} 300w,
+                  ${backdropUrl(movie.backdrop_path || movie.poster_path, 780)} 780w
+                `}
                 sizes='100vw'
                 alt={movie.title}
                 className={`w-full h-full object-cover ${imageLoaded ? 'block' : 'hidden'}`}
@@ -406,7 +412,7 @@ export default function MovieOverlay () {
           <h2 className='text-xl font-semibold text-white leading-snug'>
             {movie.title}
             <span className='ml-2 text-sm font-normal text-text-muted whitespace-nowrap'>
-              {new Date(movie.release_date).getFullYear()}
+              {releaseYear}
             </span>
           </h2>
           {metaRow}
@@ -417,9 +423,11 @@ export default function MovieOverlay () {
     </>
   )
 
+  // ── Render ─────────────────────────────────────────────────
+
   return (
     <>
-      {/* ===================== DESKTOP ===================== */}
+      {/* Desktop */}
       <AnimatePresence>
         {!isMobile && movieId && (
           <motion.div
@@ -429,7 +437,7 @@ export default function MovieOverlay () {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
             onMouseDown={(e) => {
-              if (e.target === e.currentTarget) closeOverlay()
+              if (e.button === 0 && e.target === e.currentTarget) dismissOverlay()
             }}
           >
             <motion.div
@@ -460,7 +468,7 @@ export default function MovieOverlay () {
         )}
       </AnimatePresence>
 
-      {/* ===================== MOBILE ===================== */}
+      {/* Mobile */}
       {isMobile && movieId && (
         <div className='lg:hidden'>
           <Sheet
@@ -480,7 +488,7 @@ export default function MovieOverlay () {
                 </div>
               )}
             </Sheet.Container>
-            <Sheet.Backdrop onTap={closeOverlay} />
+            <Sheet.Backdrop onTap={dismissOverlay} />
           </Sheet>
         </div>
       )}
