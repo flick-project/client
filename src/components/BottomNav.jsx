@@ -25,15 +25,15 @@ export default function BottomNav () {
 
   return (
     <nav className='flex lg:hidden items-center justify-around border-t border-white/10 bg-surface h-14'>
-      <Link to='/' className={`flex flex-col items-center gap-1 ${pathname === '/' ? 'text-brand' : 'text-gray-400'}`}>
+      <Link to='/' className={`flex flex-col items-center gap-1 ${pathname === '/' ? 'text-brand' : 'text-text-muted'}`}>
         <Compass size={24} />
         <p className='text-xs leading-none'>Discover</p>
       </Link>
-      <Link to='/watchlist' onClick={requireAuth} className={`flex flex-col items-center gap-1 ${pathname === '/watchlist' ? 'text-brand' : 'text-gray-400'}`}>
+      <Link to='/watchlist' onClick={requireAuth} className={`flex flex-col items-center gap-1 ${pathname === '/watchlist' ? 'text-brand' : 'text-text-muted'}`}>
         <Bookmark size={24} />
         <p className='text-xs leading-none'>Watchlist</p>
       </Link>
-      <Link to='/profile' onClick={requireAuth} className={`flex flex-col items-center gap-1 ${pathname === '/profile' ? 'text-brand' : 'text-gray-400'}`}>
+      <Link to='/profile' onClick={requireAuth} className={`flex flex-col items-center gap-1 ${pathname === '/profile' ? 'text-brand' : 'text-text-muted'}`}>
         <User size={24} />
         <p className='text-xs leading-none'>Profile</p>
       </Link>

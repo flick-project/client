@@ -18,7 +18,7 @@ export default function AppLayout ({ header, children }) {
       </aside>
 
       {header && (
-        <header className='lg:hidden p-4 pb-0'>
+        <header className='lg:hidden'>
           {header}
         </header>
       )}

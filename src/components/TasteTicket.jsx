@@ -55,7 +55,7 @@ export default function TasteTicket ({ profile, stats }) {
           ].map(({ label, value }) => (
             <div key={label} className='flex flex-col items-center justify-center gap-1'>
               <span className='text-xl font-bold leading-none font-mono'>{value}</span>
-              <span className='text-xs uppercase tracking-wide text-gray-400 leading-none'>{label}</span>
+              <span className='text-xs uppercase tracking-wide text-text-muted leading-none'>{label}</span>
             </div>
           ))}
         </div>
@@ -72,20 +72,20 @@ export default function TasteTicket ({ profile, stats }) {
       >
         <header className='flex items-baseline justify-between gap-4 pb-3 border-b border-dashed border-white/10'>
           <div>
-            <p className='text-xs uppercase tracking-widest text-gray-400 font-mono'>Flick Cinema</p>
+            <p className='text-xs uppercase tracking-widest text-text-muted font-mono'>Flick Cinema</p>
             <h2 className='text-sm font-mono uppercase tracking-wide font-bold text-gray-200 mt-0.5'>
               {profile.displayName}'s taste
             </h2>
           </div>
           <div className='text-right'>
-            <p className='text-xs uppercase tracking-widest text-gray-400 font-mono'>Member Since</p>
+            <p className='text-xs uppercase tracking-widest text-text-muted font-mono'>Member Since</p>
             <p className='text-sm font-mono uppercase tracking-wide font-bold text-gray-200 mt-0.5'>{memberSince}</p>
           </div>
         </header>
 
         <div className='grid md:grid-cols-2 gap-4 md:gap-6'>
           <div className='flex flex-col gap-2'>
-            <p className='text-xs uppercase tracking-wide font-medium text-gray-400'>Loves</p>
+            <p className='text-xs uppercase tracking-wide font-medium text-text-muted'>Loves</p>
             <div className='flex flex-wrap gap-1.5'>
               {topGenres.map(({ key }) => (
                 <span key={key} className='text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 font-medium'>
@@ -102,7 +102,7 @@ export default function TasteTicket ({ profile, stats }) {
 
           {worstKeywords.length > 0 && (
             <div className='flex flex-col gap-2'>
-              <p className='text-xs uppercase tracking-wide font-medium text-gray-400'>Hates</p>
+              <p className='text-xs uppercase tracking-wide font-medium text-text-muted'>Hates</p>
               <div className='flex flex-wrap gap-1.5'>
                 {worstKeywords.map(({ key }) => (
                   <span key={key} className='text-xs px-2.5 py-1 rounded-md bg-red-500/10 text-red-400'>

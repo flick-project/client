@@ -1,55 +1,67 @@
+import { Loader2 } from 'lucide-react'
+
 /**
- * Reusable button component.
+ * Rectangular action button with variant and size support.
+ * Follows shadcn conventions: disabled via pointer-events-none (no hover:enabled: needed),
+ * no transition classes on interactive elements, icon rendered via children or icon prop.
  * @param {object} props - Component props.
- * @param {React.ReactElement} props.children - Button content.
- * @param {'primary' | 'secondary' | 'danger' | 'ghost'} [props.variant] - Button style variant.
- * @param {'sm' | 'md' | 'lg'} [props.size] - Button size.
- * @param {boolean} [props.disabled] - Whether the button is disabled.
- * @param {boolean} [props.loading] - Whether the button is in a loading state.
- * @param {boolean} [props.full] - Whether the button should be full width.
- * @param {string} [props.className] - Additional CSS classes.
+ * @param {React.ReactNode} props.children - Button label.
+ * @param {() => void} [props.onClick] - Click handler.
+ * @param {'primary'|'secondary'|'danger'|'ghost'} [props.variant] - Visual style.
+ * @param {'sm'|'md'|'lg'} [props.size] - Height and padding.
+ * @param {React.ReactNode} [props.icon] - Icon element shown before children (or after, with iconPosition).
+ * @param {'left'|'right'} [props.iconPosition] - Icon placement.
+ * @param {boolean} [props.full] - Stretch to container width.
+ * @param {boolean} [props.disabled] - Disables interaction and dims the button.
+ * @param {boolean} [props.loading] - Shows a spinner and disables interaction.
+ * @param {'button'|'submit'|'reset'} [props.type] - HTML button type.
+ * @param {string} [props.className] - Extra classes merged last.
  * @returns {React.ReactElement} The Button component.
  */
 export default function Button ({
   children,
+  onClick,
   variant = 'primary',
   size = 'md',
-  disabled,
-  loading,
-  full,
+  icon,
+  iconPosition = 'left',
+  full = false,
+  disabled = false,
+  loading = false,
+  type = 'button',
   className = '',
   ...rest
 }) {
-  const base = [
-    'inline-flex items-center justify-center gap-2',
-    'rounded-lg cursor-pointer',
-    'transition-colors duration-150',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900',
-    'disabled:opacity-50 disabled:cursor-not-allowed',
-    full ? 'w-full' : '',
-  ].join(' ')
-
-  const sizes = {
-    md: 'min-h-10 px-4 text-sm',
-    lg: 'min-h-11 px-6 text-base',
-  }
+  const isDisabled = disabled || loading
 
   const variants = {
-    primary: 'font-semibold border border-transparent bg-brand hover:enabled:bg-red-700 text-white',
-    secondary: 'font-medium border border-gray-600 text-gray-300 hover:enabled:bg-white/10 hover:enabled:border-gray-400',
-    danger: 'font-medium border border-red-500/50 text-red-400 hover:enabled:bg-red-500/10 hover:enabled:border-red-400',
-    ghost: 'font-medium border border-transparent text-gray-400 hover:enabled:bg-white/10 hover:enabled:text-gray-200',
+    primary: 'bg-brand font-semibold text-white hover:bg-red-700',
+    secondary: 'font-medium text-gray-300 border border-gray-600 hover:bg-white/5 hover:border-gray-500',
+    danger: 'font-medium text-red-400 border border-red-500/40 hover:bg-red-500/5 hover:border-red-400/60',
+    ghost: 'font-medium text-gray-400 hover:bg-white/10 hover:text-gray-200'
+  }
+
+  const sizes = {
+    sm: 'h-9 px-3 text-sm gap-1.5 rounded-sm',
+    md: 'h-11 px-4 text-sm gap-2 rounded-sm',
+    lg: 'h-12 px-5 text-base gap-2.5 rounded-md'
   }
 
   return (
     <button
-      disabled={disabled || loading}
-      className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
+      type={type}
+      onClick={onClick}
+      disabled={isDisabled}
+      className={`inline-flex items-center justify-center cursor-pointer disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-light ${variants[variant]} ${sizes[size]} ${full ? 'w-full' : ''} ${className}`}
       {...rest}
     >
       {loading
-        ? <span className='w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' aria-label='Loading' />
-        : children}
+        ? <Loader2 className='size-4 animate-spin' aria-hidden='true' />
+        : icon && iconPosition === 'left' && <span className='shrink-0' aria-hidden='true'>{icon}</span>}
+      {children}
+      {!loading && icon && iconPosition === 'right' && (
+        <span className='shrink-0' aria-hidden='true'>{icon}</span>
+      )}
     </button>
   )
 }

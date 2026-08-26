@@ -16,7 +16,7 @@ export default function MovieSearch ({ onSelect, disabled }) {
     <div className='relative' tabIndex={-1} onBlur={clearResults}>
       <div className='relative flex flex-col align-center'>
         <Input type='text' placeholder='Search movie' value={query} onChange={(e) => setQuery(e.target.value)} disabled={disabled} />
-        <Search className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400' size={24} />
+        <Search className='absolute right-3 top-1/2 -translate-y-1/2 text-text-muted' size={24} />
         {results.length > 0 && (
           <ul className='absolute top-full shadow-lg/40 w-full mt-1 bg-surface outline-1 outline-white/10 rounded-lg max-h-50 overflow-y-auto z-99 divide divide-y divide-white/10 divide-solid'>
             {results.map(movie => (

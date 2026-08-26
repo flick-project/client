@@ -21,13 +21,13 @@ export default function DiscoveryHeader ({ onSelect }) {
   }
 
   return (
-    <div className='flex items-center justify-between h-6'>
+    <div className='w-full flex items-center justify-between size-14 px-4 border-b border-white/10 bg-surface z-20'>
       <div className='flex items-center gap-2'>
         <Film size={28} className='text-brand rotate-90' />
         <h1 className='text-xl font-semibold'>Flick</h1>
       </div>
       <button onClick={openSearch} className='cursor-pointer'>
-        <Search size={24} className='text-gray-400' />
+        <Search size={24} className='text-text-muted' />
       </button>
     </div>
   )

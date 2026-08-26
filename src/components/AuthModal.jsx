@@ -149,7 +149,7 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
           )}
           {errors.confirmPassword && <p className='text-red-500 text-sm text-center'>{errors.confirmPassword}</p>}
         </form>
-        <Button type='submit' form='auth-form' loading={isLoading}>
+        <Button type='submit' form='auth-form' disabled={isLoading}>
           {isLogin ? 'Log in' : 'Sign up'}
         </Button>
       </div>

@@ -10,6 +10,7 @@ export default defineConfig([
   globalIgnores(['dist']),
   ...neostandard(),
   {
+    // Base config.
     files: ['**/*.{js,jsx}'],
     extends: [
       js.configs.recommended,
@@ -28,6 +29,13 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+    },
+  },
+  {
+    // Override shadcn.
+    files: ['src/components/ui/**/*.{js,jsx}'],
+    rules: {
+      'jsdoc/require-jsdoc': 'off',
     },
   },
 ])

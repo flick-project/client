@@ -150,18 +150,18 @@ export default function SettingsPage () {
                 className='flex items-center justify-between px-4 min-h-11 hover:bg-white/5 transition-colors'
               >
                 <span className='text-sm'>Data provided by TMDB</span>
-                <ExternalLink size={16} className='text-gray-400' aria-hidden='true' />
+                <ExternalLink size={16} className='text-text-muted' aria-hidden='true' />
               </a>
               <Link
                 to='/privacy'
                 className='flex items-center justify-between px-4 min-h-11 hover:bg-white/5 transition-colors'
               >
                 <span className='text-sm'>Privacy Policy</span>
-                <ChevronRight size={16} className='text-gray-400' aria-hidden='true' />
+                <ChevronRight size={16} className='text-text-muted' aria-hidden='true' />
               </Link>
             </div>
 
-            <p className='text-xs text-gray-400 px-1'>Flick v{import.meta.env.VITE_APP_VERSION}</p>
+            <p className='text-xs text-text-muted px-1'>Flick v{import.meta.env.VITE_APP_VERSION}</p>
           </div>
         )}
       </div>

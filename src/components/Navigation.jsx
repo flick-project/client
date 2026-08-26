@@ -5,9 +5,8 @@ import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
 import { useToast } from '../hooks/useToast.js'
 import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
-import Button from './Button.jsx'
+import { Button } from '@/components/ui/button'
 import AuthFlow from './AuthFlow.jsx'
-import Modal from './Modal.jsx'
 
 const navLinks = [
   { to: '/', icon: Compass, label: 'Discover', protected: false },
@@ -73,7 +72,7 @@ export default function Navigation () {
           <h1 className='text-xl font-bold leading-none tracking-wide'>Flick</h1>
         </div>
 
-        <button onClick={openSearch} className='flex items-center gap-4 px-3 py-2.5 rounded-full text-sm font-medium leading-none text-gray-400 cursor-pointer bg-white/10'>
+        <button onClick={openSearch} className='flex items-center gap-4 px-3 py-2.5 rounded-full text-sm font-medium leading-none text-text-muted cursor-pointer bg-white/10'>
           <Search size={20} />
           Search movie
         </button>
@@ -90,9 +89,7 @@ export default function Navigation () {
         </ul>
 
         {!user && (
-          <div className='px-2'>
-            <Button full onClick={() => setIsAuthOpen(true)}>Log in</Button>
-          </div>
+          <Button size='lg' className='w-full h-11' onClick={() => setIsAuthOpen(true)}>Log in</Button>
         )}
 
         <AuthFlow isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
