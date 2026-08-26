@@ -29,7 +29,10 @@ export default function AuthFlow ({ isOpen, onClose }) {
     reset()
     if (message) showToast(message, 'success')
     onClose()
-    startTour()
+
+    Promise.resolve().then(() => {
+      startTour()
+    })
   }
 
   let content

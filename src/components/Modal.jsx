@@ -15,7 +15,7 @@ export default function Modal ({ isOpen, onClose, wide, children }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4'
+          className='fixed inset-0 z-99 flex items-center justify-center bg-black/80 p-4'
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -33,9 +33,9 @@ export default function Modal ({ isOpen, onClose, wide, children }) {
           >
             <button
               onClick={onClose}
-              className='absolute top-2 right-2 text-text-muted hover:text-white hover:bg-white/10 p-2 rounded-md cursor-pointer transition-colors'
+              className='absolute top-2 right-2 text-text-muted hover:text-white hover:bg-white/10 p-2.5 rounded-md cursor-pointer transition-colors'
             >
-              <X size={20} />
+              <X size={24} />
             </button>
             {children}
           </motion.div>

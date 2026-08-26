@@ -1,13 +1,7 @@
-import { useState } from 'react'
-
-const animations = {
-  scale: 'hover:scale-105 active:scale-95',
-  lift: 'hover:-translate-y-1 hover:shadow-lg active:translate-y-0',
-}
-
 const sizes = {
   sm: { padding: 'p-3', iconSize: 24 },
-  md: { padding: 'p-4', iconSize: 32 },
+  md: { padding: 'p-3.5', iconSize: 28 },
+  lg: { padding: 'p-4', iconSize: 32 },
 }
 
 /**
@@ -15,37 +9,31 @@ const sizes = {
  * @param {object} props - Component props.
  * @param {React.ComponentType} props.icon - Lucide icon component.
  * @param {string} [props.backgroundColor] - Tailwind background color class.
+ * @param {string} [props.hoverBg] - Tailwind hover background color class.
  * @param {string} [props.textColor] - Tailwind text color class.
+ * @param {string} [props.hoverColor] - Tailwind hover text color class.
  * @param {number} [props.strokeWidth] - Icon stroke width.
- * @param {boolean} [props.filled] - Whether the icon should appear filled.
- * @param {'scale' | 'lift'} [props.animation] - Animation preset.
- * @param {'sm' | 'md'} [props.size] - Button size.
+ * @param {boolean} [props.ghost] - Renders without background for minimal nav buttons.
+ * @param {boolean} [props.filled] - Whether to fill the icon.
+ * @param {'sm' | 'md' | 'lg'} [props.size] - Button size.
  * @param {boolean} [props.disabled] - Whether the button is disabled.
  * @param {string} [props.className] - Additional CSS classes.
  * @returns {React.ReactElement} The IconButton component.
  */
 export default function IconButton ({
   icon: Icon,
-  backgroundColor = 'bg-white/5',
-  textColor = 'text-white',
-  strokeWidth = 1.5,
+  backgroundColor = 'backdrop-blur-sm bg-white/10',
+  hoverBg = 'hover:bg-white/20',
+  textColor = 'text-gray-200',
+  strokeWidth = 2,
+  ghost = false,
   filled = false,
-  animation,
-  size = 'md',
+  size = 'sm',
   disabled,
   className = '',
+  iconShadow = '',
   ...rest
 }) {
-  const [clicked, setClicked] = useState(false)
-
-  const handleClick = (e) => {
-    if (!filled) {
-      setClicked(true)
-      setTimeout(() => setClicked(false), 150)
-    }
-    rest.onClick?.(e)
-  }
-
   const { padding, iconSize } = sizes[size] ?? sizes.md
 
   return (
@@ -53,25 +41,17 @@ export default function IconButton ({
       disabled={disabled}
       className={[
         'flex items-center justify-center aspect-square rounded-full',
-        'ring-1 ring-inset ring-white/10 hover:brightness-110',
-        'transition-all duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900',
-        'disabled:opacity-40 disabled:cursor-not-allowed',
-        disabled ? '' : `cursor-pointer ${animations[animation] || ''}`,
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400',
+        'disabled:opacity-30 disabled:cursor-not-allowed',
+        disabled ? '' : `cursor-pointer ${hoverBg}`,
         padding,
-        backgroundColor,
+        ghost ? '' : `${backgroundColor}`,
         textColor,
         className,
       ].join(' ')}
       {...rest}
-      onClick={handleClick}
     >
-      <Icon
-        size={iconSize}
-        strokeWidth={strokeWidth}
-        fill={filled || clicked ? 'currentColor' : 'none'}
-        className='transition-all duration-150'
-      />
+      <Icon size={iconSize} strokeWidth={strokeWidth} fill={filled ? 'currentColor' : 'none'} className={`${iconShadow}`} />
     </button>
   )
 }

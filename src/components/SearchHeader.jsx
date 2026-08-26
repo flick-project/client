@@ -20,7 +20,7 @@ export default function SearchHeader ({ onSelect, onClose }) {
   }
 
   return (
-    <div className='relative h-6'>
+    <div className='size-full relative h-14 px-4'>
       <div className='flex items-center gap-3 h-full'>
         <button onClick={onClose} className='cursor-pointer'>
           <ArrowLeft size={20} className='text-text-muted' />
@@ -33,11 +33,11 @@ export default function SearchHeader ({ onSelect, onClose }) {
           onFocus={() => setShowResults(true)}
           onBlur={() => setShowResults(false)}
           autoFocus
-          className='w-full bg-transparent text-sm text-white placeholder-gray-500 outline-none'
+          className='w-full bg-transparent text-sm text-white placeholder-text-muted outline-none'
         />
       </div>
       {showResults && results.length > 0 && (
-        <ul className='fixed inset-x-0 top-14 bottom-14 bg-surface overflow-y-auto divide-y divide-white/5 z-10'>
+        <ul className='fixed inset-x-0 top-14 bottom-14 bg-surface overflow-y-auto divide-y divide-white/5 z-20'>
           {results.map(movie => (
             <li
               key={movie.id}
