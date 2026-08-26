@@ -1,14 +1,15 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useMovieOverlay } from '../hooks/useMovieOverlay'
 import { motion, AnimatePresence } from 'motion/react'
 import { apiRequest } from '../services/api'
-import { posterUrl, backdropUrl } from '../utils/imageUtils'
-import { X, Bookmark, Star, Play } from 'lucide-react'
+import { backdropUrl } from '../utils/imageUtils'
+import { X, Play, Star } from 'lucide-react'
 import { Sheet } from 'react-modal-sheet'
-import { findRating } from '../utils/ratings'
 import { useToast } from '../hooks/useToast'
-import InlineRatingPicker from './InlineRatingPicker'
+import { Button } from '@/components/ui/button'
+import OverlayActions from './OverlayActions'
+import TrailerModal from './TrailerModal'
 
 const currencyFormat = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -19,6 +20,10 @@ const currencyFormat = new Intl.NumberFormat('en-US', {
 
 /**
  * Global movie detail overlay, driven by MovieOverlayContext.
+ * Desktop: centered modal with a stacked TrailerModal for playback.
+ * Mobile: bottom sheet whose content is replaced by an inline trailer
+ * view when playback starts, avoiding stacked modals (an established
+ * mobile UX anti-pattern per NN/G).
  * @returns {React.ReactElement} The MovieOverlay component.
  */
 export default function MovieOverlay () {
@@ -26,19 +31,20 @@ export default function MovieOverlay () {
   const { showToast } = useToast()
   const location = useLocation()
   const navigate = useNavigate()
-
   const [movie, setMovie] = useState(null)
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const [scrolledToBottom, setScrolledToBottom] = useState(false)
+  const [heroLoaded, setHeroLoaded] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
   const [saved, setSaved] = useState(false)
-  const [ratingOpen, setRatingOpen] = useState(false)
   const [userRating, setUserRating] = useState(null)
+  const [watched, setWatched] = useState(false)
   const [error, setError] = useState(false)
   const [retryKey, setRetryKey] = useState(0)
-  const scrollRef = useRef(null)
 
-  // ── Data fetching ──────────────────────────────────────────
+  // Reset trailer when overlay closes or movie changes so a stale
+  // showTrailer state doesn't linger between different movies.
+  useEffect(() => {
+    if (!movieId && showTrailer) closeTrailer()
+  }, [movieId, showTrailer, closeTrailer])
 
   useEffect(() => {
     /**
@@ -50,7 +56,7 @@ export default function MovieOverlay () {
         setError(false)
         return
       }
-      setImageLoaded(false)
+      setHeroLoaded(false)
       setError(false)
       try {
         const data = await apiRequest(`/movies/${movieId}/details`)
@@ -70,22 +76,9 @@ export default function MovieOverlay () {
     async function syncInteractionState () {
       setSaved(movie?.saved ?? false)
       setUserRating(movie?.user_rating ?? null)
-      setRatingOpen(false)
+      setWatched(movie?.watched ?? false)
     }
     syncInteractionState()
-  }, [movie])
-
-  // ── Listeners ──────────────────────────────────────────────
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el || !movie) return
-    const check = () => {
-      setScrolledToBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 1)
-    }
-    check()
-    el.addEventListener('scroll', check, { passive: true })
-    return () => el.removeEventListener('scroll', check)
   }, [movie])
 
   useEffect(() => {
@@ -95,8 +88,6 @@ export default function MovieOverlay () {
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [movieId])
-
-  // ── Handlers ───────────────────────────────────────────────
 
   const handleSave = async () => {
     if (!movie) return
@@ -118,26 +109,53 @@ export default function MovieOverlay () {
   }
 
   const handleRate = async (value) => {
+    if (!movie) return
     const previous = userRating
     setUserRating(value)
-    setRatingOpen(false)
+    if (value !== null) setWatched(true)
     try {
-      await apiRequest('/ratings', {
-        method: 'POST',
-        body: JSON.stringify({ movieId: movie.id, rating: value })
-      })
+      if (value === null) {
+        await apiRequest(`/ratings/${movie.id}`, { method: 'DELETE' })
+      } else {
+        await apiRequest('/ratings', {
+          method: 'POST',
+          body: JSON.stringify({ movieId: movie.id, rating: value })
+        })
+      }
     } catch (err) {
       console.error(err)
       setUserRating(previous)
+      if (value !== null) setWatched(false)
       showToast('Could not rate. Try again.', 'fail')
+    }
+  }
+
+  const handleToggleWatched = async () => {
+    if (!movie) return
+    const wasWatched = watched
+    const previousRating = userRating
+    setWatched(!wasWatched)
+    if (wasWatched) setUserRating(null)
+    try {
+      if (wasWatched) {
+        if (previousRating) await apiRequest(`/ratings/${movie.id}`, { method: 'DELETE' })
+        await apiRequest(`/watched/${movie.id}`, { method: 'DELETE' })
+      } else {
+        await apiRequest('/watched', {
+          method: 'POST',
+          body: JSON.stringify({ movieId: movie.id })
+        })
+      }
+    } catch (err) {
+      console.error(err)
+      setWatched(wasWatched)
+      setUserRating(previousRating)
+      showToast('Could not update. Try again.', 'fail')
     }
   }
 
   const dismissOverlay = () => navigate(location.pathname)
 
-  // ── Derived values ─────────────────────────────────────────
-
-  const currentRating = findRating(userRating)
   const formatCurrency = (amount) => amount ? currencyFormat.format(amount) : null
   const releaseYear = movie?.release_date ? new Date(movie.release_date).getFullYear() : null
   const primaryGenre = movie?.genres?.find(g => g.name !== 'Drama')?.name ?? movie?.genres?.[0]?.name
@@ -148,290 +166,176 @@ export default function MovieOverlay () {
   ) ?? movie?.videos?.results?.find(
     v => v.site === 'YouTube' && v.type === 'Trailer'
   )
+  const runtimeText = movie?.runtime > 0
+    ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
+    : null
 
-  // ── Shared fragments ──────────────────────────────────────
-
-  const metaRow = movie && (
-    <div className='flex items-center gap-2 flex-wrap text-base text-text-muted'>
-      {movie.vote_average > 0 && (
+  const heroSection = movie && (
+    <div className='relative aspect-video bg-black shrink-0 lg:rounded-t-xl overflow-hidden landscape:max-lg:fixed landscape:max-lg:inset-0 landscape:max-lg:z-10003 landscape:max-lg:aspect-auto landscape:max-lg:rounded-none'>
+      {!showTrailer && (
         <>
-          <span className='flex items-center gap-1.5'>
-            <Star size={14} className='fill-yellow-400 text-yellow-400' aria-hidden='true' />
-            <span className='text-gray-200'>{movie.vote_average.toFixed(1)}</span>
-            <span className='ml-1 px-1.5 py-0.5 rounded text-xs font-medium bg-[#0d253f] text-[#01b4e4]'>TMDB</span>
-          </span>
-          <span aria-hidden='true'>·</span>
+          {!heroLoaded && <div className='absolute inset-0 animate-pulse bg-gray-800' />}
+          <img
+            src={backdropUrl(movie.backdrop_path || movie.poster_path, 780)}
+            srcSet={`
+            ${backdropUrl(movie.backdrop_path || movie.poster_path, 300)} 300w,
+            ${backdropUrl(movie.backdrop_path || movie.poster_path, 780)} 780w,
+            ${backdropUrl(movie.backdrop_path || movie.poster_path, 1280)} 1280w
+          `}
+            sizes='(min-width: 1024px) 672px, 100vw'
+            alt=''
+            className={`w-full h-full object-cover ${heroLoaded ? 'block' : 'hidden'}`}
+            onLoad={() => setHeroLoaded(true)}
+            fetchPriority='high'
+          />
+          <div className='absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-surface-light via-surface-light/60 to-transparent pointer-events-none' />
+          {trailer && (
+            <button
+              onClick={openTrailer}
+              className='absolute inset-0 flex items-center justify-center group cursor-pointer focus-visible:outline-none'
+              aria-label='Play trailer'
+            >
+              <span className='flex items-center justify-center size-14 rounded-full bg-black/60 backdrop-blur-sm text-gray-100 group-hover:bg-black/80 group-focus-visible:ring-2 group-focus-visible:ring-ring'>
+                <Play size={24} className='ml-1' aria-hidden='true' />
+              </span>
+            </button>
+          )}
+          <button
+            onClick={closeOverlay}
+            aria-label='Close'
+            className='absolute top-3 right-3 z-10 flex items-center justify-center p-2.5 rounded-full bg-black/60 backdrop-blur-sm text-gray-100 hover:bg-black/80 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+          >
+            <X size={20} aria-hidden='true' />
+          </button>
         </>
       )}
-      {primaryGenre && <span>{primaryGenre}</span>}
-      {movie.runtime > 0 && (
+
+      {showTrailer && trailer && isMobile && (
         <>
-          <span aria-hidden='true'>·</span>
-          <span>{Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m</span>
+          <iframe
+            src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1&playsinline=1&rel=0`}
+            allow='autoplay; encrypted-media; fullscreen'
+            className='absolute inset-0 max-lg:size-full'
+            title={`${movie.title} trailer`}
+          />
         </>
       )}
     </div>
   )
 
-  const detailsContent = movie && (
-    <>
-      {(director || cast) && (
-        <div className='flex flex-col gap-3 px-4 pb-4 border-b border-white/10'>
+  const bodySection = movie && (
+    <div className='flex flex-col gap-3 px-5 pt-3 pb-5'>
+      <h2 className='text-xl lg:text-2xl font-semibold text-white leading-snug'>
+        {movie.title}
+      </h2>
+      <div className='flex items-center gap-2 text-sm text-gray-400 flex-wrap'>
+        {movie.vote_average > 0 && (
+          <span className='flex items-center gap-1 font-medium text-gray-200'>
+            <Star size={14} className='fill-brand-400 text-brand-400' aria-hidden='true' />
+            {movie.vote_average.toFixed(1)}
+          </span>
+        )}
+        {[releaseYear, primaryGenre, runtimeText].filter(Boolean).map((item, i) => (
+          <span key={i} className='flex items-center gap-2'>
+            <span className='text-gray-600' aria-hidden='true'>·</span>
+            <span>{item}</span>
+          </span>
+        ))}
+      </div>
+      {movie.overview && (
+        <p className='text-sm text-white leading-relaxed'>
+          {movie.overview}
+        </p>
+      )}
+      {(director || cast || movie.budget > 0 || movie.revenue > 0) && (
+        <div className='flex flex-col gap-1.5 pt-4 text-sm'>
           {director && (
-            <div>
-              <p className='text-sm text-text-muted mb-0.5'>Director</p>
-              <p className='text-base text-gray-200'>{director.name}</p>
-            </div>
+            <p>
+              <span className='text-gray-400'>Director </span>
+              <span className='text-gray-200'>{director.name}</span>
+            </p>
           )}
           {cast && (
-            <div>
-              <p className='text-sm text-text-muted mb-0.5'>Cast</p>
-              <p className='text-base text-gray-200'>{cast}</p>
-            </div>
+            <p>
+              <span className='text-gray-400'>Cast </span>
+              <span className='text-gray-200'>{cast}</span>
+            </p>
+          )}
+          {(movie.budget > 0 || movie.revenue > 0) && (
+            <p>
+              {movie.budget > 0 && (
+                <>
+                  <span className='text-gray-400'>Budget </span>
+                  <span className='text-gray-200'>{formatCurrency(movie.budget)}</span>
+                </>
+              )}
+              {movie.budget > 0 && movie.revenue > 0 && (
+                <span className='text-gray-600 mx-2' aria-hidden='true'>·</span>
+              )}
+              {movie.revenue > 0 && (
+                <>
+                  <span className='text-gray-400'>Box office </span>
+                  <span className='text-gray-200'>{formatCurrency(movie.revenue)}</span>
+                </>
+              )}
+            </p>
           )}
         </div>
       )}
-      {(movie.budget > 0 || movie.revenue > 0) && (
-        <div className='flex gap-8 px-4'>
-          {movie.budget > 0 && (
-            <div>
-              <p className='text-sm text-text-muted mb-0.5'>Budget</p>
-              <p className='text-base text-gray-200'>{formatCurrency(movie.budget)}</p>
-            </div>
-          )}
-          {movie.revenue > 0 && (
-            <div>
-              <p className='text-sm text-text-muted mb-0.5'>Box office</p>
-              <p className='text-base text-gray-200'>{formatCurrency(movie.revenue)}</p>
-            </div>
-          )}
-        </div>
-      )}
-    </>
-  )
-
-  const actionButtons = (
-    <div className='relative min-h-11'>
-      <AnimatePresence mode='wait'>
-        {ratingOpen
-          ? (
-            <InlineRatingPicker
-              currentRating={userRating}
-              onRate={handleRate}
-              onCancel={() => setRatingOpen(false)}
-            />
-            )
-          : (
-            <motion.div
-              key='actions'
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.15 }}
-              className='flex gap-3'
-            >
-              <button
-                onClick={handleSave}
-                className='flex items-center justify-center gap-2 flex-1 py-2 px-4 rounded-lg bg-white/10 hover:bg-white/20 text-base text-white transition-colors cursor-pointer min-h-11'
-              >
-                <Bookmark size={20} className={saved ? 'fill-white' : ''} aria-hidden='true' />
-                {saved ? 'Saved' : 'Save'}
-              </button>
-              <button
-                onClick={() => setRatingOpen(true)}
-                className={`flex items-center justify-center gap-2 flex-1 py-2 px-4 rounded-lg text-base text-white transition-colors cursor-pointer min-h-11 ${
-                  currentRating
-                    ? currentRating.activeClass
-                    : 'bg-white/10 hover:bg-white/20'
-                }`}
-              >
-                {currentRating
-                  ? (
-                    <>
-                      <span className='text-lg' aria-hidden='true'>{currentRating.emoji}</span>
-                      {currentRating.pastTense}
-                    </>
-                    )
-                  : (
-                    <>
-                      <Star size={20} aria-hidden='true' />
-                      Rate
-                    </>
-                    )}
-              </button>
-            </motion.div>
-            )}
-      </AnimatePresence>
     </div>
   )
 
-  const trailerButton = trailer && (
-    <div className='absolute inset-0 flex items-center justify-center'>
-      <button
-        onClick={openTrailer}
-        className='flex items-center justify-center w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors cursor-pointer min-w-11 min-h-11'
-        aria-label='Play trailer'
-      >
-        <Play size={24} className='ml-1' />
-      </button>
+  const actionBar = movie && (
+    <div className='w-full py-2 px-4 border-gray-800 border-t'>
+      <OverlayActions
+        saved={saved}
+        rating={userRating}
+        watched={watched}
+        onSave={handleSave}
+        onRate={handleRate}
+        onToggleWatched={handleToggleWatched}
+      />
     </div>
   )
 
   const errorView = (
-    <div className='flex flex-col items-center justify-center gap-4 p-8 w-full h-full min-h-64'>
-      <p className='text-base text-gray-300 text-center'>Couldn't load movie details.</p>
-      <button
-        onClick={() => setRetryKey(k => k + 1)}
-        className='px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-base text-white transition-colors cursor-pointer min-h-11'
-      >
+    <div className='flex flex-col items-center justify-center gap-4 p-8 min-h-64'>
+      <p className='text-base text-gray-200 text-center'>Couldn't load movie details.</p>
+      <Button variant='secondary' onClick={() => setRetryKey(k => k + 1)}>
         Try again
-      </button>
+      </Button>
     </div>
   )
 
-  // ── Desktop views ──────────────────────────────────────────
-
-  const desktopTrailerView = movie && trailer && (
-    <div className='flex flex-col w-full h-full px-1 pb-1 bg-black'>
-      <div className='shrink-0 flex items-center justify-between gap-3 pl-4 pr-1 py-2 bg-black'>
-        <div className='min-w-0'>
-          <p className='text-base font-medium text-white truncate'>
-            {movie.title} <span>({releaseYear})</span>
-          </p>
-        </div>
-        <button
-          onClick={closeTrailer}
-          aria-label='Close trailer'
-          className='shrink-0 flex items-center justify-center min-w-11 min-h-11 rounded-lg text-text-muted hover:text-white hover:bg-white/10 cursor-pointer transition-colors'
-        >
-          <X size={20} />
-        </button>
-      </div>
-      <div className='relative w-full aspect-video bg-black rounded-b-xl overflow-hidden'>
-        <iframe
-          src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1&rel=0`}
-          allow='autoplay; encrypted-media; fullscreen'
-          allowFullScreen
-          className='w-full h-full'
-          title={`${movie.title} trailer`}
-        />
-      </div>
-    </div>
-  )
-
-  const desktopDetailView = movie && (
+  const detailContent = movie && (
     <>
-      <div className='shrink-0 h-full relative' style={{ aspectRatio: '2 / 3.3' }}>
-        {!imageLoaded && (
-          <div className='absolute inset-0 animate-pulse bg-white/5' />
-        )}
-        <img
-          src={posterUrl(movie.poster_path, 300)}
-          srcSet={`
-            ${posterUrl(movie.poster_path, 185)} 185w,
-            ${posterUrl(movie.poster_path, 300)} 300w,
-            ${posterUrl(movie.poster_path, 500)} 500w
-          `}
-          sizes='256px'
-          alt={movie.title}
-          className={`w-full h-full object-cover ${imageLoaded ? 'block' : 'hidden'}`}
-          onLoad={() => setImageLoaded(true)}
-          fetchPriority='high'
-        />
-        {trailerButton}
-      </div>
-
-      <div className='flex flex-col flex-1 min-h-0 relative'>
-        <button
-          onClick={closeOverlay}
-          aria-label='Close'
-          className='absolute right-3 top-2 z-10 p-2.5 rounded-md text-text-muted backdrop-blur-md hover:text-white hover:bg-white/10 cursor-pointer transition-colors flex items-center justify-center min-w-11 min-h-11'
-        >
-          <X size={24} />
-        </button>
-
-        <div ref={scrollRef} className='flex-1 overflow-y-auto flex flex-col gap-4 pb-4'>
-          <div className='flex flex-col gap-2 p-4 border-b border-white/10'>
-            <h2 className='text-2xl font-semibold text-white leading-snug pr-10'>
-              {movie.title}
-              <span className='ml-2 text-lg font-normal text-text-muted whitespace-nowrap'>
-                {releaseYear}
-              </span>
-            </h2>
-            {metaRow}
-            <p className='text-base text-gray-100 leading-relaxed'>{movie.overview}</p>
-          </div>
-          {detailsContent}
-        </div>
-
-        <div className={`shrink-0 border-t border-white/10 p-4 bg-surface-light transition-shadow duration-200 ${scrolledToBottom ? 'shadow-none' : 'shadow-[0_-16px_24px_var(--color-surface-light)]'}`}>
-          {actionButtons}
-        </div>
-      </div>
+      {heroSection}
+      {bodySection}
     </>
   )
-
-  // ── Mobile view ────────────────────────────────────────────
-
-  const mobileDetailView = movie && (
-    <>
-      <div className='w-full aspect-video relative bg-black'>
-        {showTrailer && trailer
-          ? (
-            <iframe
-              src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1&playsinline=1&rel=0`}
-              allow='autoplay; encrypted-media; fullscreen'
-              className='w-full h-full'
-              title={`${movie.title} trailer`}
-            />
-            )
-          : (
-            <>
-              {!imageLoaded && (
-                <div className='absolute inset-0 animate-pulse bg-white/5' />
-              )}
-              <img
-                src={backdropUrl(movie.backdrop_path || movie.poster_path, 780)}
-                srcSet={`
-                  ${backdropUrl(movie.backdrop_path || movie.poster_path, 300)} 300w,
-                  ${backdropUrl(movie.backdrop_path || movie.poster_path, 780)} 780w
-                `}
-                sizes='100vw'
-                alt={movie.title}
-                className={`w-full h-full object-cover ${imageLoaded ? 'block' : 'hidden'}`}
-                onLoad={() => setImageLoaded(true)}
-                fetchPriority='high'
-              />
-              {trailerButton}
-            </>
-            )}
-      </div>
-
-      <div className='flex flex-col gap-4 py-4'>
-        <div className='flex flex-col gap-2 px-4 pb-4 border-b border-white/10'>
-          <h2 className='text-xl font-semibold text-white leading-snug'>
-            {movie.title}
-            <span className='ml-2 text-sm font-normal text-text-muted whitespace-nowrap'>
-              {releaseYear}
-            </span>
-          </h2>
-          {metaRow}
-          <p className='text-base text-gray-100 leading-relaxed'>{movie.overview}</p>
-        </div>
-        {detailsContent}
-      </div>
-    </>
-  )
-
-  // ── Render ─────────────────────────────────────────────────
 
   return (
     <>
+      {/* Desktop-only stacked TrailerModal */}
+      {!isMobile && (
+        <TrailerModal
+          isOpen={showTrailer}
+          trailerKey={trailer?.key}
+          title={movie?.title}
+          year={releaseYear}
+          onClose={closeTrailer}
+          onBackdropClick={() => {
+            closeTrailer()
+            dismissOverlay()
+          }}
+        />
+      )}
+
       {/* Desktop */}
       <AnimatePresence>
         {!isMobile && movieId && (
           <motion.div
-            className='hidden lg:flex fixed inset-0 z-50 items-center justify-center bg-black/80'
+            className='hidden lg:flex fixed inset-0 z-50 items-center justify-center bg-black/80 p-6'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -440,30 +344,40 @@ export default function MovieOverlay () {
               if (e.button === 0 && e.target === e.currentTarget) dismissOverlay()
             }}
           >
-            <motion.div
-              className={`relative ${showTrailer ? 'aspect-video w-2/3' : 'w-2/3 max-w-4xl h-[70vh] max-h-125'} bg-surface-light rounded-xl border border-white/10 overflow-hidden flex flex-row`}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 40 }}
-              transition={{ duration: 0.2 }}
-            >
-              {error
-                ? (
-                  <>
-                    <button
-                      onClick={closeOverlay}
-                      aria-label='Close'
-                      className='absolute right-3 top-2 z-10 p-2.5 rounded-md text-text-muted hover:text-white hover:bg-white/10 cursor-pointer transition-colors flex items-center justify-center min-w-11 min-h-11'
-                    >
-                      <X size={24} />
-                    </button>
-                    {errorView}
-                  </>
-                  )
-                : showTrailer
-                  ? desktopTrailerView
-                  : desktopDetailView}
-            </motion.div>
+            {!showTrailer && (
+              <motion.div
+                className='relative w-full max-w-2xl max-h-full bg-surface-light lg:rounded-xl border border-gray-800 flex flex-col'
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 40 }}
+                transition={{ duration: 0.2 }}
+                role='dialog'
+                aria-modal='true'
+                aria-label={movie?.title ?? 'Movie details'}
+              >
+                {error
+                  ? (
+                    <>
+                      <button
+                        onClick={closeOverlay}
+                        aria-label='Close'
+                        className='absolute right-3 top-3 z-10 flex items-center justify-center p-2 rounded-full bg-black/60 text-gray-100 hover:bg-black/80 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                      >
+                        <X size={20} aria-hidden='true' />
+                      </button>
+                      {errorView}
+                    </>
+                    )
+                  : (
+                    <>
+                      <div className='flex-1 overflow-y-auto'>
+                        {detailContent}
+                      </div>
+                      {actionBar}
+                    </>
+                    )}
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -476,17 +390,14 @@ export default function MovieOverlay () {
             onClose={closeOverlay}
             snapPoints={[0, 1]}
             initialSnap={1}
+            detent='content'
           >
             <Sheet.Container className='bg-surface-light! rounded-t-xl!'>
               <Sheet.Header />
               <Sheet.Content>
-                {error ? errorView : mobileDetailView}
+                {error ? errorView : detailContent}
               </Sheet.Content>
-              {!error && (
-                <div className='shrink-0 border-t border-white/10 p-4 bg-surface-light'>
-                  {actionButtons}
-                </div>
-              )}
+              {!error && actionBar}
             </Sheet.Container>
             <Sheet.Backdrop onTap={dismissOverlay} />
           </Sheet>
