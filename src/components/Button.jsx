@@ -43,8 +43,8 @@ export default function Button ({
 
   const sizes = {
     sm: 'h-9 px-3 text-sm gap-1.5 rounded-sm',
-    md: 'h-11 px-4 text-sm gap-2 rounded-sm',
-    lg: 'h-12 px-5 text-base gap-2.5 rounded-md'
+    md: 'h-11 px-4 text-sm gap-2 rounded-md',
+    lg: 'h-12 px-5 text-base gap-2.5 rounded-lg'
   }
 
   return (

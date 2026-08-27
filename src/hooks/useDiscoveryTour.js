@@ -1,7 +1,5 @@
 import { useCallback } from 'react'
 import { hasSeen, markSeen } from '../services/storage.js'
-import { driver } from 'driver.js'
-import 'driver.js/dist/driver.css'
 import './useTour.css'
 
 const MOBILE_STEPS = [
@@ -69,8 +67,11 @@ const DESKTOP_STEPS = [
  * @returns {{ startTour: () => void }} Tour controls.
  */
 export function useDiscoveryTour () {
-  const startTour = useCallback(() => {
+  const startTour = useCallback(async () => {
     if (hasSeen('discovery_tour_seen')) return
+
+    const { driver } = await import('driver.js')
+    await import('driver.js/dist/driver.css')
 
     const isMobile = window.innerWidth < 1024
     const steps = isMobile ? MOBILE_STEPS : DESKTOP_STEPS

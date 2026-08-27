@@ -7,7 +7,6 @@ import { readFileSync } from 'fs'
 
 const { version } = JSON.parse(readFileSync('./package.json', 'utf-8'))
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -21,6 +20,9 @@ export default defineConfig({
   },
   define: {
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(version),
+  },
+  build: {
+    modulePreload: { polyfill: false }
   },
   server: {
     host: '0.0.0.0',
