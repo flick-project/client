@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom'
 import { Compass, Bookmark, User } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
-import Modal from './Modal.jsx'
 import AuthFlow from './AuthFlow.jsx'
 
 /**

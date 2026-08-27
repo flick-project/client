@@ -1,4 +1,4 @@
-import { Bookmark, Star, Info } from 'lucide-react'
+import { Bookmark, Star } from 'lucide-react'
 import { findRating } from '../utils/ratings.js'
 import RatingPicker from './RatingPicker.jsx'
 

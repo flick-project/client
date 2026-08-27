@@ -8,10 +8,11 @@ import { posterUrl } from '../utils/imageUtils.js'
  * @param {object} props - The component props.
  * @param {object} props.movie - Movie data. Reads title, poster_path.
  * @param {boolean} props.compact - Mobile layout.
- * @param {boolean} props.expanded - Desktop expanded state — controls scrim intensity.
+ * @param {boolean} props.expanded - Desktop expanded state -- controls scrim intensity.
+ * @param {boolean} [props.isFirst] - First card in queue -- gets loading priority.
  * @returns {React.ReactElement} The poster slide.
  */
-export default function DiscoveryCardPosterSlide ({ movie, compact, expanded }) {
+export default function DiscoveryCardPosterSlide ({ movie, compact, expanded, isFirst }) {
   const [loaded, setLoaded] = useState(false)
   const posterHeight = compact ? 'min(100%, calc(100vw * 5 / 3))' : '100%'
 
@@ -49,6 +50,8 @@ export default function DiscoveryCardPosterSlide ({ movie, compact, expanded }) 
           src={posterUrl(movie.poster_path, 92)}
           className='absolute inset-0 size-full object-cover scale-110 blur-xl brightness-[0.05]'
           aria-hidden='true'
+          loading='lazy'
+          fetchPriority='low'
           decoding='async'
         />
       )}
@@ -70,8 +73,9 @@ export default function DiscoveryCardPosterSlide ({ movie, compact, expanded }) 
           maskImage: compact ? scrimMinimal : scrimFull
         }}
         onLoad={() => setLoaded(true)}
-        fetchPriority='high'
-        decoding='async'
+        fetchPriority={isFirst ? 'high' : 'auto'}
+        loading={isFirst ? 'eager' : 'lazy'}
+        decoding={isFirst ? 'auto' : 'async'}
       />
     </div>
   )

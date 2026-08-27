@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
-import { useLongPress } from 'react-aria'
+import { useLongPress } from 'react-aria/useLongPress'
 import { Sheet } from 'react-modal-sheet'
 import { Star, Play, ArrowLeft } from 'lucide-react'
 import { GENRES } from '../utils/genres.js'
@@ -25,13 +25,14 @@ const topBtnClass = 'flex items-center justify-center size-11 rounded-full curso
  * @param {object} props.movie - Movie data.
  * @param {string} [props.error] - Error message if fetch failed.
  * @param {boolean} [props.compact] - Mobile layout.
+ * @param {boolean} [props.isFirst] - Determines if this card should load first.
  * @param {number} [props.initialSlide] - Slide to mount on (0=poster, 1=trailer).
  * @param {(index: number) => void} [props.onSlideChange] - Called when active slide changes.
  * @param {(watched: boolean) => void} [props.onWatchedChange] - Called after successful watched toggle.
  * @param {() => void} [props.onAdvance] - Called to advance the queue.
  * @returns {React.ReactElement} The DiscoveryCard component.
  */
-export default function DiscoveryCard ({ movie, error, compact = false, initialSlide = 0, onSlideChange, onWatchedChange, onAdvance }) {
+export default function DiscoveryCard ({ movie, error, compact = false, isFirst = false, initialSlide = 0, onSlideChange, onWatchedChange, onAdvance }) {
   const [expanded, setExpanded] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [overflowOpen, setOverflowOpen] = useState(false)
@@ -223,6 +224,7 @@ export default function DiscoveryCard ({ movie, error, compact = false, initialS
           movie={movie}
           compact={compact}
           expanded={expanded}
+          isFirst={isFirst}
         />
         {trailerKey && (
           <DiscoveryCardTrailerSlide

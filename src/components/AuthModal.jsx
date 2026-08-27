@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
 import { apiRequest } from '../services/api.js'
-import Modal from './Modal.jsx'
 import Input from '../components/Input.jsx'
 import Button from '../components/Button.jsx'
 import { EyeOff, Eye } from 'lucide-react'

@@ -186,6 +186,7 @@ export default function DiscoveryPage () {
               <DiscoveryCard
                 movie={movie}
                 compact
+                isFirst={i === currentIndexInWindow}
                 initialSlide={preferredSlide}
                 onSlideChange={setPreferredSlide}
                 onWatchedChange={i === currentIndexInWindow ? handleWatchedChange : undefined}
@@ -235,6 +236,7 @@ export default function DiscoveryPage () {
                 <DiscoveryCard
                   movie={currentMovie}
                   error={error}
+                  isFirst
                   initialSlide={preferredSlide}
                   onSlideChange={setPreferredSlide}
                   onWatchedChange={handleWatchedChange}
