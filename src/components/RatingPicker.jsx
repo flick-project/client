@@ -45,7 +45,7 @@ export default function RatingPicker ({ rating, onSelect, arrowFrom, trigger }) 
                 aria-pressed={selected}
                 title={r.label}
                 style={{ transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)' }}
-                className={`flex items-center justify-center size-11 rounded-full cursor-pointer hover:scale-115 hover:opacity-100 ${rating && rating !== r.value ? 'opacity-60' : ''} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
+                className={`flex items-center justify-center size-11 rounded-full cursor-pointer hover:scale-115 hover:opacity-100 ${rating && rating !== r.value ? 'opacity-60' : ''} `}
               >
                 <img src={r.emoji} alt='' className='size-7 max-w-none' />
               </button>

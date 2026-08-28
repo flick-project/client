@@ -29,7 +29,7 @@ export default function OverflowSheet ({ open, onOpenChange, movieId, watched = 
     requestAnimationFrame(() => fn())
   }
 
-  const item = 'w-full flex items-center gap-4 px-6 py-4 text-base text-white text-left cursor-pointer hover:bg-white/5 focus-visible:outline-none focus-visible:bg-white/5 [&_svg]:size-5 [&_svg]:text-gray-300'
+  const item = 'w-full flex items-center gap-4 px-6 py-4 text-base text-foreground text-left cursor-pointer hover:bg-white/5 focus-visible:outline-none focus-visible:bg-white/5 [&_svg]:size-5 [&_svg]:text-gray-300'
 
   return (
     <Sheet isOpen={open} onClose={close} snapPoints={[0, 1]} initialSnap={1} detent='content'>

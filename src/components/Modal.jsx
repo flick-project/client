@@ -33,7 +33,7 @@ export default function Modal ({ isOpen, onClose, wide, children }) {
           >
             <button
               onClick={onClose}
-              className='absolute top-2 right-2 text-text-muted hover:text-white hover:bg-white/10 p-2.5 rounded-md cursor-pointer transition-colors'
+              className='absolute top-2 right-2 text-muted-foreground hover:text-foreground hover:bg-white/10 p-2.5 rounded-md cursor-pointer transition-colors'
             >
               <X size={24} />
             </button>

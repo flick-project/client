@@ -20,9 +20,9 @@ export default function Input ({ type, placeholder, value, onChange, required, d
         onChange={onChange}
         required={required}
         disabled={disabled}
-        className={`w-full text-sm px-3 py-2 ${icon ? 'pr-9' : ''} rounded-md bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-surface focus:ring-white/20 focus:border-white/30 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150`}
+        className={`w-full text-sm px-3 py-2 ${icon ? 'pr-9' : ''} rounded-md bg-white/5 border border-white/10 text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-surface focus:ring-white/20 focus:border-white/30 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150`}
       />
-      {icon && <div className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-text-muted'>{icon}</div>}
+      {icon && <div className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground'>{icon}</div>}
     </div>
   )
 }

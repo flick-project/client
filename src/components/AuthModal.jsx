@@ -157,10 +157,10 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
         <hr className='border-white/10' />
 
         {/* Toggle between login and registration. */}
-        <p className='text-sm text-text-muted text-center'>
+        <p className='text-sm text-center text-muted-foreground'>
           {isLogin
-            ? <>Don't have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
-            : <>Already have an account? <button className='text-brand hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
+            ? <>Don't have an account? <button className='text-primary hover:underline cursor-pointer' onClick={() => switchMode(false)}>Sign up</button></>
+            : <>Already have an account? <button className='text-primary hover:underline cursor-pointer' onClick={() => switchMode(true)}>Log in</button></>}
         </p>
       </div>
     </div>

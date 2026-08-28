@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { apiRequest } from '../services/api.js'
 import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { useToast } from '../hooks/useToast'
-import { ChevronDown } from 'lucide-react'
 import { useMovieOverlay } from '../hooks/useMovieOverlay.js'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import WatchlistCard from '../components/WatchlistCard.jsx'
 
 const WATCHLIST_PAGE_LIMIT = 20
@@ -116,24 +116,35 @@ export default function WatchlistPage () {
     })
   }, [subscribe])
 
+  const sortItems = [
+    { label: 'Date added', value: 'date' }
+  ]
+
   return (
     <div className='flex flex-col gap-4 lg:gap-6 p-6 max-w-7xl size-full max-lg:p-4'>
       <div className='flex items-center justify-between'>
-        <span className='text-sm font-medium text-gray-300'>{`${total ?? '0'} movies`}</span>
-        <div className='relative'>
-          <select
-            className='appearance-none pr-6 rounded-sm text-sm font-medium text-gray-300'
-            aria-label='Sort watchlist by'
-          >
-            <option value='date'>Sort by: Date added</option>
-          </select>
-          <ChevronDown size={16} className='absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted' />
-        </div>
+        <span className='text-sm font-medium text-muted-foreground'>{`${total ?? '0'} movies`}</span>
+        <>
+          <Select items={sortItems} defaultValue='date'>
+            <SelectTrigger size='sm' aria-label='Sort watchlist by'>
+              <SelectValue placeholder='Sort by' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {sortItems.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </>
       </div>
       {movies.length === 0 && hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-300'>Loading...</p>}
       {movies.length === 0 && !hasMore && <p className='size-full flex justify-center mt-[25%] text-base font-normal text-gray-300'>No saved movies yet.</p>}
       {movies.length > 0 && (
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:pb-6'>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:pb-6'>
           {movies.map(movie => (
             <WatchlistCard
               key={movie.tmdb_id}

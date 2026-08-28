@@ -12,7 +12,7 @@ import OverflowSheet from './OverflowSheet.jsx'
 
 const LONG_PRESS_MS = 450
 
-const topBtnClass = 'flex items-center justify-center size-11 rounded-full cursor-pointer bg-black/40 hover:bg-black/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+const topBtnClass = 'flex items-center justify-center size-11 rounded-full cursor-pointer backdrop-blur-sm bg-black/30 hover:bg-black/50 transition-colors '
 
 /**
  * Movie card with a two-slide carousel: poster (default) and trailer.
@@ -42,11 +42,14 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
   const trailerKey = useTrailer(movie?.id)
   const slideCount = trailerKey ? 2 : 1
 
+  const longPressedRef = useRef(false)
+
   const { longPressProps } = useLongPress({
     isDisabled: !compact,
     threshold: LONG_PRESS_MS,
     accessibilityDescription: 'Long press for more options',
     onLongPress: () => {
+      longPressedRef.current = true
       setOverflowOpen(true)
       if (navigator.vibrate && 'ontouchstart' in window && navigator.maxTouchPoints > 0) {
         try { navigator.vibrate(10) } catch { /* ignore */ }
@@ -83,12 +86,12 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
     const hasCredits = director || cast
 
     return (
-      <div className='flex flex-col gap-3 p-4 pb-6'>
-        <h2 className='text-xl font-semibold text-white leading-snug'>{movie.title}</h2>
-        <div className='flex items-center gap-2 text-sm text-gray-400 flex-wrap'>
+      <div className='flex flex-col gap-3 p-4 pb-8'>
+        <h2 className='text-xl font-semibold text-foreground leading-snug'>{movie.title}</h2>
+        <div className='flex items-center gap-2 text-muted-foreground flex-wrap'>
           {voteAverage > 0 && (
-            <span className='flex items-center gap-1 font-medium text-gray-200'>
-              <Star size={14} className='fill-yellow-400 text-yellow-400' aria-hidden='true' />
+            <span className='flex items-center gap-1 font-medium text-foreground'>
+              <Star size={16} fill='currentColor' className='text-primary' aria-hidden='true' />
               {voteAverage.toFixed(1)}
             </span>
           )}
@@ -106,15 +109,15 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
           ))}
         </div>
         {movie.overview && (
-          <p className='text-sm text-white leading-relaxed'>{movie.overview}</p>
+          <p className='leading-relaxed'>{movie.overview}</p>
         )}
         {hasCredits && (
-          <div className='flex flex-col gap-1.5 pt-3 text-sm'>
+          <div className='flex flex-col gap-1.5 pt-3'>
             {director && (
-              <p><span className='text-gray-400'>Director </span><span className='text-gray-200'>{director.name}</span></p>
+              <p><span className='text-gray-400'>Director </span><span className='text-foreground'>{director.name}</span></p>
             )}
             {cast && (
-              <p><span className='text-gray-400'>Cast </span><span className='text-gray-200'>{cast}</span></p>
+              <p><span className='text-gray-400'>Cast </span><span className='text-foreground'>{cast}</span></p>
             )}
           </div>
         )}
@@ -125,7 +128,7 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
   if (error) {
     return (
       <div className='size-full flex flex-col items-center justify-center gap-3 bg-surface-light p-6'>
-        <p className='text-sm text-gray-300 text-center'>Couldn't load this movie.</p>
+        <p className='text-sm text-foreground text-center'>Couldn't load this movie.</p>
       </div>
     )
   }
@@ -167,10 +170,10 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
                   onClick={() => scrollToSlide(i)}
                   aria-label={i === 0 ? 'Show poster' : 'Show trailer'}
                   aria-current={i === activeSlide ? 'true' : undefined}
-                  className='flex-1 h-1 rounded-full bg-black/30 overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                  className='flex-1 h-1 rounded-full bg-black/30 overflow-hidden cursor-pointer '
                 >
                   <span
-                    className={`block h-full rounded-full transition-colors ${i === activeSlide ? 'bg-white' : 'bg-white/40'}`}
+                    className={`block h-full rounded-full transition-colors ${i === activeSlide ? 'bg-foreground' : 'bg-white/40'}`}
                   />
                 </button>
               ))}
@@ -189,7 +192,7 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
               title='Exit trailer'
               className={topBtnClass}
             >
-              <ArrowLeft size={24} strokeWidth={2} className='text-white drop-shadow-sm/50' aria-hidden='true' />
+              <ArrowLeft size={24} strokeWidth={2} className='text-foreground' aria-hidden='true' />
             </button>
           )}
 
@@ -202,7 +205,7 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
                 title='Show trailer'
                 className={topBtnClass}
               >
-                <Play size={22} strokeWidth={2} className='text-white drop-shadow-sm/50' fill='currentColor' aria-hidden='true' />
+                <Play size={22} strokeWidth={2} className='text-foreground' fill='currentColor' aria-hidden='true' />
               </button>
             )}
             <OverflowMenu
@@ -217,8 +220,11 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
 
       <div
         ref={carouselRef}
+        role='region'
+        aria-label='Poster and trailer'
+        tabIndex={0}
         style={{ scrollbarWidth: 'none' }}
-        className='absolute inset-0 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory overscroll-x-contain bg-black [&::-webkit-scrollbar]:hidden'
+        className='absolute inset-0 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory overscroll-x-contain bg-black [&::-webkit-scrollbar]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset'
       >
         <DiscoveryCardPosterSlide
           movie={movie}
@@ -234,12 +240,26 @@ export default function DiscoveryCard ({ movie, error, compact = false, isFirst 
         )}
       </div>
 
+      {expanded && (
+        <div
+          className='absolute inset-0 z-9'
+          onClick={() => setExpanded(false)}
+          aria-hidden='true'
+        />
+      )}
+
       <DiscoveryCardInfoPanel
         movie={movie}
         compact={compact}
         expanded={expanded}
         onToggleExpand={toggleExpand}
-        onOpenSheet={openSheet}
+        onOpenSheet={() => {
+          if (longPressedRef.current) {
+            longPressedRef.current = false
+            return
+          }
+          openSheet()
+        }}
         minimal={activeSlide === 1}
       />
 

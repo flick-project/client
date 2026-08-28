@@ -22,8 +22,8 @@ export default function SearchHeader ({ onSelect, onClose }) {
   return (
     <div className='size-full relative h-14 px-4'>
       <div className='flex items-center gap-3 h-full'>
-        <button onClick={onClose} className='cursor-pointer'>
-          <ArrowLeft size={20} className='text-text-muted' />
+        <button onClick={onClose} className='size-11 cursor-pointer'>
+          <ArrowLeft size={24} className='text-muted-foreground' />
         </button>
         <input
           type='text'
@@ -33,16 +33,16 @@ export default function SearchHeader ({ onSelect, onClose }) {
           onFocus={() => setShowResults(true)}
           onBlur={() => setShowResults(false)}
           autoFocus
-          className='w-full bg-transparent text-sm text-white placeholder-text-muted outline-none'
+          className='w-full bg-transparent text-foreground placeholder-muted-foreground outline-none'
         />
       </div>
       {showResults && results.length > 0 && (
-        <ul className='fixed inset-x-0 top-14 bottom-14 bg-surface overflow-y-auto divide-y divide-white/5 z-20'>
+        <ul className='fixed inset-x-0 top-13 bottom-13 bg-surface overflow-y-auto divide-y divide-border z-10000'>
           {results.map(movie => (
             <li
               key={movie.id}
               onMouseDown={() => handleSelect(movie)}
-              className='px-4 py-3 hover:bg-white/5 cursor-pointer text-sm'
+              className='px-4 py-3 hover:bg-white/10 cursor-pointer'
             >
               {movie.title} ({new Date(movie.release_date).getFullYear()})
             </li>

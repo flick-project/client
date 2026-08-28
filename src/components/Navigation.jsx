@@ -30,7 +30,7 @@ export default function Navigation () {
   const navigate = useNavigate()
 
   const navLink = (to) =>
-  `flex items-center gap-4 px-3 py-2.5 rounded-lg text-sm font-medium leading-none hover:bg-white/10 ${pathname === to ? 'text-brand bg-brand/10' : ''}`
+  `flex items-center gap-4 px-3 h-11 rounded-lg text-sm font-medium leading-none hover:bg-white/10 ${pathname === to ? 'text-brand bg-brand/10' : ''}`
 
   const requireAuth = (e) => {
     if (!user) {
@@ -72,8 +72,8 @@ export default function Navigation () {
           <h1 className='text-xl font-bold leading-none tracking-wide'>Flick</h1>
         </div>
 
-        <button onClick={openSearch} className='flex items-center gap-4 px-3 py-2.5 rounded-full text-sm font-medium leading-none text-text-muted cursor-pointer bg-white/10'>
-          <Search size={20} />
+        <button onClick={openSearch} className='flex items-center gap-4 h-10 px-4 rounded-full text-sm leading-none text-muted-foreground cursor-pointer bg-white/10'>
+          <Search size={20} strokeWidth={2} className='flex items-center justify-center' />
           Search movie
         </button>
 
@@ -105,14 +105,14 @@ export default function Navigation () {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className='w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer'
           >
-            {user.gravatar
-              ? <img src={user.gravatar} alt='Avatar' className='rounded-full w-8 h-8 shrink-0' />
-              : <div className={`w-8 h-8 shrink-0 rounded-full ${avatarColor(user.displayName)} flex items-center justify-center text-sm leading-none`}>{user.displayName[0]}</div>}
+            <div className={`size-8 flex items-center justify-center rounded-full ${avatarColor(user.displayName)} text-xs leading-none`}>
+              {user.displayName[0]}
+            </div>
             <div className='flex flex-col gap-1 min-w-0 flex-1 overflow-visible'>
               <span className='text-sm text-left font-medium leading-none truncate'>{user.displayName}</span>
-              <span className='text-xs text-gray-300 text-left leading-none truncate'>{user.email}</span>
+              <span className='text-xs text-muted-foreground text-left leading-none truncate'>{user.email}</span>
             </div>
-            <ChevronsUpDown size={16} className='shrink-0 text-gray-300' />
+            <ChevronsUpDown size={16} className='shrink-0 text-muted-foreground' />
           </button>
 
           <AnimatePresence>
@@ -125,12 +125,12 @@ export default function Navigation () {
                 transition={{ duration: 0.15 }}
               >
                 <div className='flex items-center gap-3 px-3 py-3 border-b border-white/10'>
-                  {user.gravatar
-                    ? <img src={user.gravatar} alt='Avatar' className='rounded-full w-8 h-8 shrink-0' />
-                    : <div className={`w-8 h-8 shrink-0 rounded-full ${avatarColor(user.displayName)} flex items-center justify-center text-sm leading-none`}>{user.displayName[0]}</div>}
+                  <div className={`size-8 flex items-center justify-center rounded-full ${avatarColor(user.displayName)} text-xs leading-none`}>
+                    {user.displayName[0]}
+                  </div>
                   <div className='flex flex-col gap-1 min-w-0'>
                     <span className='text-sm font-medium leading-none'>{user.displayName}</span>
-                    <span className='text-xs leading-none text-gray-300 truncate'>{user.email}</span>
+                    <span className='text-xs leading-none text-muted-foreground truncate'>{user.email}</span>
                   </div>
                 </div>
                 <Link

@@ -32,7 +32,7 @@ export default function WatchlistCard ({ movie, onToggleSave }) {
   return (
     <div
       onClick={() => openOverlay(movie.tmdb_id)}
-      className='relative aspect-2/3 group will-change-transform cursor-pointer'
+      className='relative aspect-2/3 group will-change-transform cursor-pointer rounded-lg'
     >
       <img
         src={posterUrl(movie.poster_path, 92)}
@@ -45,18 +45,18 @@ export default function WatchlistCard ({ movie, onToggleSave }) {
         className='size-full object-cover rounded-lg pointer-events-none'
         fetchPriority='high'
       />
-      <div className='absolute inset-0 rounded-lg border border-white/10 pointer-events-none' />
+      <div className='absolute pointer-events-none' />
       <button
         type='button'
         onClick={handleToggle}
-        className='absolute top-1.5 left-1.5 z-20 p-2.5 rounded-full bg-black/60 hover:bg-black/80 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+        className='absolute top-1.5 left-1.5 z-20 p-2.5 rounded-full bg-black/60 hover:bg-black/80 cursor-pointer'
         aria-label={saved ? 'Remove from watchlist' : 'Save to watchlist'}
         aria-pressed={saved}
         title={saved ? 'Remove from watchlist' : 'Save to watchlist'}
       >
         <Bookmark
           size={24}
-          className={saved ? 'fill-amber-400 text-amber-400' : 'text-white'}
+          className={saved ? 'fill-amber-400 text-amber-400' : 'text-foreground'}
         />
       </button>
     </div>

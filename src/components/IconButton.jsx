@@ -24,7 +24,7 @@ export default function IconButton ({
   icon: Icon,
   backgroundColor = 'backdrop-blur-sm bg-white/10',
   hoverBg = 'hover:bg-white/20',
-  textColor = 'text-gray-200',
+  textColor = 'text-foreground',
   strokeWidth = 2,
   ghost = false,
   filled = false,
@@ -41,7 +41,6 @@ export default function IconButton ({
       disabled={disabled}
       className={[
         'flex items-center justify-center aspect-square rounded-full',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400',
         'disabled:opacity-30 disabled:cursor-not-allowed',
         disabled ? '' : `cursor-pointer ${hoverBg}`,
         padding,

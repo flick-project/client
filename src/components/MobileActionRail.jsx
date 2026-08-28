@@ -2,7 +2,7 @@ import { Bookmark, Star } from 'lucide-react'
 import { findRating } from '../utils/ratings.js'
 import RatingPicker from './RatingPicker.jsx'
 
-const railBtn = 'flex items-center justify-center size-12 rounded-full [text-shadow:0_1px_3px_rgba(0,0,0,0.8)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+const railBtn = 'flex items-center justify-center size-12 rounded-full [text-shadow:0_1px_3px_rgba(0,0,0,0.8)] cursor-pointer '
 
 /**
  * Vertical action rail for mobile discovery. Floats on the right side
@@ -21,7 +21,7 @@ export default function MobileActionRail ({ saved, rating, onSave, onRate }) {
     <div className='flex flex-col items-center gap-3'>
       <button onClick={onSave} aria-label={saved ? 'Unsave' : 'Save'} className={railBtn}>
         <Bookmark
-          className={`size-6 ${saved ? 'text-amber-400' : 'text-white'}`}
+          className={`size-6 ${saved ? 'text-amber-400' : 'text-foreground'}`}
           strokeWidth={2}
           fill={saved ? 'currentColor' : 'none'}
         />
@@ -35,7 +35,7 @@ export default function MobileActionRail ({ saved, rating, onSave, onRate }) {
           <button aria-label={current ? `Rated ${current.label}` : 'Rate'} className={railBtn}>
             {current
               ? <img src={current.emoji} alt='' className='size-6 max-w-none' />
-              : <Star className='size-6 text-white' strokeWidth={2} />}
+              : <Star className='size-6 text-foreground' strokeWidth={2} />}
           </button>
         )}
       />

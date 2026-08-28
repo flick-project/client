@@ -3,6 +3,7 @@ import { apiRequest } from '../services/api.js'
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useToast } from '../hooks/useToast'
+import { useAuth } from '../hooks/useAuth.js'
 import { CircleUser, Settings } from 'lucide-react'
 import PageHeader from '../components/PageHeader.jsx'
 import FavoriteSearchModal from '../components/SearchModal.jsx'
@@ -14,6 +15,7 @@ import FavoriteMovies from '../components/FavoriteMovies.jsx'
  * @returns {React.ReactElement} The ProfilePage component.
  */
 export default function ProfilePage () {
+  const { user } = useAuth()
   const [profile, setProfile] = useState(null)
   const [stats, setStats] = useState(null)
   const [favorites, setFavorites] = useState([])
@@ -69,6 +71,14 @@ export default function ProfilePage () {
     }
   }
 
+  const avatarColor = (name) => {
+    const colors = [
+      'bg-red-500/30', 'bg-orange-500/30', 'bg-yellow-500/30',
+      'bg-green-500/30', 'bg-blue-500/30', 'bg-purple-500/30',
+    ]
+    return colors[name.charCodeAt(0) % colors.length]
+  }
+
   usePageMetadata(isLoading ? 'Profile' : profile?.displayName)
 
   if (isLoading || !profile) {
@@ -95,7 +105,7 @@ export default function ProfilePage () {
   return (
     <div className='w-full flex flex-col max-w-4xl md:p-4 md:pt-6'>
       <PageHeader action={
-        <Link to='/settings' className='text-text-muted hover:text-white transition-colors'>
+        <Link to='/settings' className='text-muted-foreground hover:text-foreground transition-colors'>
           <Settings size={24} />
         </Link>
       }
@@ -106,12 +116,9 @@ export default function ProfilePage () {
         <div className='flex flex-col gap-8 px-4 md:px-0 justify-between'>
           {/* Left: profile info */}
           <div className='flex flex-col items-center gap-6 shrink-0'>
-            {profile.gravatar
-              ? <img src={profile.gravatar} alt='Avatar' className='rounded-full w-24 h-24 md:w-32 md:h-32' />
-              : <CircleUser size={96} strokeWidth={1.25} className='md:w-32 md:h-32' />}
             <div className='flex flex-col justify-center gap-3'>
-              <div className='flex flex-col items-center gap-1.5'>
-                <p className='text-xl font-semibold leading-none'>{profile.displayName}</p>
+              <div className={`flex flex-col items-center justify-center size-32 inset-0 rounded-full ${avatarColor(user.displayName)} text-3xl leading-none`}>
+                {user.displayName[0]}
               </div>
             </div>
           </div>

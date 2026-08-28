@@ -195,15 +195,15 @@ export default function MovieOverlay () {
               className='absolute inset-0 flex items-center justify-center group cursor-pointer focus-visible:outline-none'
               aria-label='Play trailer'
             >
-              <span className='flex items-center justify-center size-14 rounded-full bg-black/60 backdrop-blur-sm text-gray-100 group-hover:bg-black/80 group-focus-visible:ring-2 group-focus-visible:ring-ring'>
-                <Play size={24} className='ml-1' aria-hidden='true' />
+              <span className='flex items-center justify-center size-14 rounded-full backdrop-blur-sm bg-black/40 group-hover:bg-black/60 group-focus-visible:ring-2 group-focus-visible:ring-ring'>
+                <Play size={24} fill='currentColor' aria-hidden='true' />
               </span>
             </button>
           )}
           <button
             onClick={closeOverlay}
             aria-label='Close'
-            className='absolute top-3 right-3 z-10 flex items-center justify-center p-2.5 rounded-full bg-black/60 backdrop-blur-sm text-gray-100 hover:bg-black/80 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            className='absolute top-3 right-3 z-10 flex items-center justify-center size-11 rounded-full backdrop-blur-sm bg-black/40 hover:bg-black/60 cursor-pointer '
           >
             <X size={20} aria-hidden='true' />
           </button>
@@ -224,26 +224,26 @@ export default function MovieOverlay () {
   )
 
   const bodySection = movie && (
-    <div className='flex flex-col gap-3 px-5 pt-3 pb-5'>
-      <h2 className='text-xl lg:text-2xl font-semibold text-white leading-snug'>
+    <div className='flex flex-col gap-3 py-4 px-4'>
+      <h2 className='text-xl lg:text-2xl font-semibold text-foreground leading-snug'>
         {movie.title}
       </h2>
-      <div className='flex items-center gap-2 text-sm text-gray-400 flex-wrap'>
+      <div className='flex items-center gap-2 text-sm text-muted-foreground flex-wrap'>
         {movie.vote_average > 0 && (
-          <span className='flex items-center gap-1 font-medium text-gray-200'>
-            <Star size={14} className='fill-brand-400 text-brand-400' aria-hidden='true' />
+          <span className='flex items-center gap-1 font-medium text-foreground leading-none'>
+            <Star size={14} fill='currentColor' className='text-primary' aria-hidden='true' />
             {movie.vote_average.toFixed(1)}
           </span>
         )}
         {[releaseYear, primaryGenre, runtimeText].filter(Boolean).map((item, i) => (
           <span key={i} className='flex items-center gap-2'>
-            <span className='text-gray-600' aria-hidden='true'>·</span>
-            <span>{item}</span>
+            <span className='text-gray-600 leading-none' aria-hidden='true'>·</span>
+            <span className='leading-none'>{item}</span>
           </span>
         ))}
       </div>
       {movie.overview && (
-        <p className='text-sm text-white leading-relaxed'>
+        <p className='text-sm text-foreground leading-relaxed'>
           {movie.overview}
         </p>
       )}
@@ -251,22 +251,22 @@ export default function MovieOverlay () {
         <div className='flex flex-col gap-1.5 pt-4 text-sm'>
           {director && (
             <p>
-              <span className='text-gray-400'>Director </span>
-              <span className='text-gray-200'>{director.name}</span>
+              <span className='text-muted-foreground'>Director </span>
+              <span>{director.name}</span>
             </p>
           )}
           {cast && (
             <p>
-              <span className='text-gray-400'>Cast </span>
-              <span className='text-gray-200'>{cast}</span>
+              <span className='text-muted-foreground'>Cast </span>
+              <span>{cast}</span>
             </p>
           )}
           {(movie.budget > 0 || movie.revenue > 0) && (
             <p>
               {movie.budget > 0 && (
                 <>
-                  <span className='text-gray-400'>Budget </span>
-                  <span className='text-gray-200'>{formatCurrency(movie.budget)}</span>
+                  <span className='text-muted-foreground'>Budget </span>
+                  <span>{formatCurrency(movie.budget)}</span>
                 </>
               )}
               {movie.budget > 0 && movie.revenue > 0 && (
@@ -274,8 +274,8 @@ export default function MovieOverlay () {
               )}
               {movie.revenue > 0 && (
                 <>
-                  <span className='text-gray-400'>Box office </span>
-                  <span className='text-gray-200'>{formatCurrency(movie.revenue)}</span>
+                  <span className='text-muted-foreground'>Box office </span>
+                  <span>{formatCurrency(movie.revenue)}</span>
                 </>
               )}
             </p>
@@ -286,7 +286,7 @@ export default function MovieOverlay () {
   )
 
   const actionBar = movie && (
-    <div className='w-full py-2 px-4 border-gray-800 border-t'>
+    <div className='w-full p-3 border-gray-800 border-t'>
       <OverlayActions
         saved={saved}
         rating={userRating}
@@ -361,7 +361,7 @@ export default function MovieOverlay () {
                       <button
                         onClick={closeOverlay}
                         aria-label='Close'
-                        className='absolute right-3 top-3 z-10 flex items-center justify-center p-2 rounded-full bg-black/60 text-gray-100 hover:bg-black/80 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                        className='absolute right-3 top-3 z-10 flex items-center justify-center p-2 rounded-full bg-black/60 text-gray-100 hover:bg-black/80 cursor-pointer '
                       >
                         <X size={20} aria-hidden='true' />
                       </button>

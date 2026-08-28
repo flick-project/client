@@ -32,9 +32,9 @@ export default function OverflowMenu ({ movieId, watched = false, onWatchedChang
         <button
           aria-label='More options'
           title='More options'
-          className='flex items-center justify-center size-11 rounded-full cursor-pointer bg-black/40 hover:bg-black/60 data-[state=open]:bg-black/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+          className='flex items-center justify-center size-11 rounded-full cursor-pointer backdrop-blur-sm bg-black/30 hover:bg-black/50 data-[state=open]:bg-black/40 transition-colors '
         >
-          <MoreHorizontal size={24} strokeWidth={2} className='text-white drop-shadow-sm/60' />
+          <MoreHorizontal size={24} strokeWidth={2} className='text-foreground' />
         </button>
       }
       />

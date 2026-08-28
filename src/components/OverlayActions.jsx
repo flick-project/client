@@ -20,16 +20,16 @@ export default function OverlayActions ({ saved, rating, watched, onSave, onRate
   const rateLabel = current ? `Rated ${current.label}` : 'Rate'
 
   return (
-    <div className='flex items-center justify-center gap-4'>
+    <div className='flex items-center justify-center gap-3'>
       <button
         onClick={onSave}
         aria-label={saved ? 'Unsave' : 'Save'}
         title={saved ? 'Unsave' : 'Save'}
-        className='flex flex-col items-center justify-center size-14 rounded-lg cursor-pointer hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400'
+        className='flex flex-col items-center justify-center size-14 rounded-lg cursor-pointer hover:bg-white/10'
       >
         <Bookmark
-          className={`size-6 ${saved ? 'text-amber-400' : 'text-gray-200'}`}
-          strokeWidth={2}
+          size={24} strokeWidth={2}
+          className={` ${saved ? 'text-amber-400' : ''}`}
           fill={saved ? 'currentColor' : 'none'}
         />
         <span className='text-xs text-gray-400 leading-none mt-2'>{saved ? 'Saved' : 'Save'}</span>
@@ -43,11 +43,11 @@ export default function OverlayActions ({ saved, rating, watched, onSave, onRate
           <button
             aria-label={rateLabel}
             title={rateLabel}
-            className='flex flex-col items-center justify-center size-14 rounded-lg cursor-pointer hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400'
+            className='flex flex-col items-center justify-center size-14 rounded-lg cursor-pointer hover:bg-white/10'
           >
             {current
               ? <img src={current.emoji} alt='' className='size-6 max-w-none' />
-              : <Star className='size-6 text-gray-200' strokeWidth={2} />}
+              : <Star size={24} strokeWidth={2} />}
             <span className='text-xs text-gray-400 leading-none mt-2'>Rate</span>
           </button>
         )}
@@ -60,8 +60,8 @@ export default function OverlayActions ({ saved, rating, watched, onSave, onRate
         className='flex flex-col items-center justify-center size-14 rounded-lg cursor-pointer hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400'
       >
         {watched
-          ? <Eye className='size-6 text-emerald-400' strokeWidth={2} />
-          : <EyeOff className='size-6 text-gray-200' strokeWidth={2} />}
+          ? <Eye size={24} strokeWidth={2} className='text-emerald-400' />
+          : <EyeOff size={24} strokeWidth={2} />}
         <span className='text-xs text-gray-400 leading-none mt-2'>{watched ? 'Watched' : 'Seen it'}</span>
       </button>
     </div>
