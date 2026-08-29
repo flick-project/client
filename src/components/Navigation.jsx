@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Film, Compass, Bookmark, User, ChevronsUpDown, Settings, LogOut, Search } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
-import { useToast } from '../hooks/useToast.js'
 import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import AuthFlow from './AuthFlow.jsx'
 
 const navLinks = [
@@ -21,7 +21,6 @@ const navLinks = [
  */
 export default function Navigation () {
   const { user, logout } = useAuth()
-  const { showToast } = useToast()
   const { reset, openSearch } = useDiscoveryQueue()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -42,7 +41,7 @@ export default function Navigation () {
   const handleLogout = async () => {
     await logout()
     await reset()
-    showToast('Logged out successfully!', 'success')
+    toast.success('Logged out successfully!')
     navigate('/')
   }
 

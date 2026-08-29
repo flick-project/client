@@ -2,8 +2,8 @@ import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { apiRequest } from '../services/api.js'
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useToast } from '../hooks/useToast'
 import { useAuth } from '../hooks/useAuth.js'
+import { toast } from 'sonner'
 import { CircleUser, Settings } from 'lucide-react'
 import PageHeader from '../components/PageHeader.jsx'
 import FavoriteSearchModal from '../components/SearchModal.jsx'
@@ -20,7 +20,6 @@ export default function ProfilePage () {
   const [stats, setStats] = useState(null)
   const [favorites, setFavorites] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const { showToast } = useToast()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const excludeIds = useMemo(() => favorites.map(f => f.id), [favorites])
 
@@ -55,9 +54,9 @@ export default function ProfilePage () {
       setIsSearchOpen(false)
     } catch (err) {
       console.error(err)
-      if (err.status === 403) showToast('Maximum 5 favorites reached.', 'error')
-      else if (err.status === 409) showToast('Movie already in favorites.', 'error')
-      else showToast('Something went wrong. Please try again.', 'error')
+      if (err.status === 403) toast.error('Maximum 5 favorites reached.')
+      else if (err.status === 409) toast.error('Movie already in favorites.')
+      else toast.error('Something went wrong. Please try again.')
     }
   }
 
@@ -67,7 +66,7 @@ export default function ProfilePage () {
       setFavorites(prev => prev.filter(f => f.id !== movie.id))
     } catch (err) {
       console.error(err)
-      showToast('Something went wrong. Please try again.', 'error')
+      toast.error('Something went wrong. Please try again.')
     }
   }
 

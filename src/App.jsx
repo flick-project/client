@@ -4,9 +4,7 @@ import AppLayout from './components/AppLayout.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import DiscoveryPage from './pages/DiscoveryPage.jsx'
 import DiscoveryHeader from './components/DiscoveryHeader.jsx'
-import Toast from './components/Toast.jsx'
 import { useAuth } from './hooks/useAuth.js'
-import { useToast } from './hooks/useToast.js'
 import { useDiscoveryQueue } from './hooks/useDiscoveryQueue.js'
 
 const WatchlistPage = lazy(() => import('./pages/WatchlistPage.jsx'))
@@ -22,7 +20,6 @@ const SearchModal = lazy(() => import('./components/SearchModal.jsx'))
  */
 function App () {
   const { user, loading } = useAuth()
-  const { toast, setToast } = useToast()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const prevUser = useRef(user)
@@ -54,18 +51,18 @@ function App () {
     prevPathname.current = pathname
   }, [pathname, eject])
 
-  const header = pathname === '/' ? <DiscoveryHeader onSelect={handleSearchSelect} /> : null
+  const isDiscovery = pathname === '/'
+  const header = isDiscovery ? <DiscoveryHeader onSelect={handleSearchSelect} /> : null
 
   return (
     <>
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <Suspense fallback={null}>
         <MovieOverlay />
       </Suspense>
       <div className='hidden lg:block'>
         {searchOpen && <SearchModal onSelect={handleSearchSelect} onClose={eject} variant='discovery' />}
       </div>
-      <AppLayout header={header}>
+      <AppLayout header={header} centered={isDiscovery}>
         <Routes>
           <Route path='/' element={<DiscoveryPage />} />
           <Route path='/watchlist' element={<ProtectedRoute><Suspense fallback={null}><WatchlistPage /></Suspense></ProtectedRoute>} />

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { useAuth } from '../hooks/useAuth.js'
-import { useToast } from '../hooks/useToast.js'
+import { toast } from 'sonner'
 import { apiRequest } from '../services/api.js'
 import { Link, useNavigate } from 'react-router-dom'
 import { ChevronRight, ExternalLink } from 'lucide-react'
@@ -17,7 +17,6 @@ import ImportPanel from '../components/ImportPanel.jsx'
  */
 export default function SettingsPage () {
   const { logout } = useAuth()
-  const { showToast } = useToast()
   const [tab, setTab] = useState('account')
   const [showConfirm, setShowConfirm] = useState(false)
   const [confirmText, setConfirmText] = useState('')
@@ -34,13 +33,13 @@ export default function SettingsPage () {
     } catch (err) {
       setIsLoading(false)
       console.error(err)
-      showToast('Something went wrong. Please try again.', 'error')
+      toast.error('Something went wrong. Please try again.')
     }
   }
 
   const handleLogout = () => {
     logout()
-    showToast('Logged out successfully!', 'success')
+    toast.success('Logged out successfully!')
     navigate('/')
   }
 

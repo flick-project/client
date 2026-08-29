@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { apiRequest } from '../services/api.js'
 import { usePageMetadata } from '../hooks/usePageMetadata.js'
-import { useToast } from '../hooks/useToast'
+import { toast } from 'sonner'
 import { useMovieOverlay } from '../hooks/useMovieOverlay.js'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import WatchlistCard from '../components/WatchlistCard.jsx'
@@ -22,7 +22,6 @@ const WATCHLIST_PAGE_LIMIT = 20
  * @returns {React.ReactElement} The WatchlistPage component.
  */
 export default function WatchlistPage () {
-  const { showToast } = useToast()
   const { subscribe } = useMovieOverlay()
   const [page, setPage] = useState(1)
   const [movies, setMovies] = useState([])
@@ -81,7 +80,7 @@ export default function WatchlistPage () {
       }
     } catch (err) {
       console.error(err)
-      showToast(err.message || 'Something went wrong. Please try again.', 'fail')
+      toast.error(err.message || 'Something went wrong. Please try again.')
       throw err
     }
   }

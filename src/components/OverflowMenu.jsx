@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useMovieActions } from '../hooks/useMovieActions.js'
 
-const menuItemClass = 'px-3 py-2.5 text-base gap-3 [&_svg]:size-5 cursor-pointer'
+const menuItemClass = 'text-nowrap text-base leading-none p-3 pr-4 gap-3 [&_svg]:!size-5 cursor-pointer'
 
 /**
  * Overflow menu for a discovery card (desktop). Renders its own trigger
@@ -18,12 +18,11 @@ const menuItemClass = 'px-3 py-2.5 text-base gap-3 [&_svg]:size-5 cursor-pointer
  * @param {number} props.movieId - TMDB movie id.
  * @param {boolean} [props.watched] - Whether the movie is currently marked as watched.
  * @param {(watched: boolean) => void} [props.onWatchedChange] - Called after successful watched toggle.
- * @param {() => void} [props.onAdvance] - Called to advance the queue.
  * @returns {React.ReactElement} The OverflowMenu component.
  */
-export default function OverflowMenu ({ movieId, watched = false, onWatchedChange, onAdvance }) {
+export default function OverflowMenu ({ movieId, watched = false, onWatchedChange }) {
   const { viewOnTmdb, dismiss, toggleWatched } = useMovieActions({
-    movieId, watched, onWatchedChange, onAdvance
+    movieId, watched, onWatchedChange
   })
 
   return (
@@ -38,7 +37,7 @@ export default function OverflowMenu ({ movieId, watched = false, onWatchedChang
         </button>
       }
       />
-      <DropdownMenuContent align='end' className='min-w-56'>
+      <DropdownMenuContent align='end' className='w-max'>
         <DropdownMenuItem onClick={viewOnTmdb} className={menuItemClass}>
           <ExternalLink aria-hidden='true' />
           View on TMDB

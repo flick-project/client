@@ -30,7 +30,9 @@ export default function DiscoveryHeader ({ onSelect }) {
         onClick={openSearch}
         aria-label='Search movies'
         className='flex items-center justify-center size-11 -mr-2 cursor-pointer'
-      />
+      >
+        <Search size={24} strokeWidth={2} className='text-muted-foreground' />
+      </button>
     </div>
   )
 }

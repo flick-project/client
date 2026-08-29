@@ -6,7 +6,7 @@ import { apiRequest } from '../services/api'
 import { backdropUrl } from '../utils/imageUtils'
 import { X, Play, Star } from 'lucide-react'
 import { Sheet } from 'react-modal-sheet'
-import { useToast } from '../hooks/useToast'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import OverlayActions from './OverlayActions'
 import TrailerModal from './TrailerModal'
@@ -28,7 +28,6 @@ const currencyFormat = new Intl.NumberFormat('en-US', {
  */
 export default function MovieOverlay () {
   const { movieId, closeOverlay, notifyChange, showTrailer, openTrailer, closeTrailer } = useMovieOverlay()
-  const { showToast } = useToast()
   const location = useLocation()
   const navigate = useNavigate()
   const [movie, setMovie] = useState(null)
@@ -104,7 +103,7 @@ export default function MovieOverlay () {
     } catch (err) {
       console.error(err)
       setSaved(wasSaved)
-      showToast('Could not save. Try again.', 'fail')
+      toast.error('Could not save. Try again.')
     }
   }
 
@@ -126,7 +125,7 @@ export default function MovieOverlay () {
       console.error(err)
       setUserRating(previous)
       if (value !== null) setWatched(false)
-      showToast('Could not rate. Try again.', 'fail')
+      toast.error('Could not rate. Try again.')
     }
   }
 
@@ -150,7 +149,7 @@ export default function MovieOverlay () {
       console.error(err)
       setWatched(wasWatched)
       setUserRating(previousRating)
-      showToast('Could not update. Try again.', 'fail')
+      toast.error('Could not update. Try again.')
     }
   }
 
