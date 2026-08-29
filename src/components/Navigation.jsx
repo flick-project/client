@@ -3,15 +3,16 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Film, Compass, Bookmark, User, ChevronsUpDown, Settings, LogOut, Search } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
+import { useAuthFlow } from '../hooks/useAuthFlow.js'
 import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
+import { useSearch } from '../hooks/useSearch.js'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import AuthFlow from './AuthFlow.jsx'
 
 const navLinks = [
   { to: '/', icon: Compass, label: 'Discover', protected: false },
   { to: '/watchlist', icon: Bookmark, label: 'Watchlist', protected: true },
-  { to: '/profile', icon: User, label: 'Profile', protected: true },
+  { to: '/profile', icon: User, label: 'Profile', protected: true }
 ]
 
 /**
@@ -21,20 +22,21 @@ const navLinks = [
  */
 export default function Navigation () {
   const { user, logout } = useAuth()
-  const { reset, openSearch } = useDiscoveryQueue()
-  const [isAuthOpen, setIsAuthOpen] = useState(false)
+  const { openAuthFlow } = useAuthFlow()
+  const { reset } = useDiscoveryQueue()
+  const { openSearch } = useSearch()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { pathname } = useLocation()
   const menuRef = useRef(null)
   const navigate = useNavigate()
 
   const navLink = (to) =>
-  `flex items-center gap-4 px-3 h-11 rounded-lg text-sm font-medium leading-none hover:bg-white/10 ${pathname === to ? 'text-brand bg-brand/10' : ''}`
+    `flex items-center gap-4 px-3 h-11 rounded-lg text-sm font-medium leading-none hover:bg-white/10 ${pathname === to ? 'text-brand bg-brand/10' : ''}`
 
-  const requireAuth = (e) => {
+  const guardProtected = (e) => {
     if (!user) {
       e.preventDefault()
-      setIsAuthOpen(true)
+      openAuthFlow()
     }
   }
 
@@ -48,7 +50,7 @@ export default function Navigation () {
   const avatarColor = (name) => {
     const colors = [
       'bg-red-500/30', 'bg-orange-500/30', 'bg-yellow-500/30',
-      'bg-green-500/30', 'bg-blue-500/30', 'bg-purple-500/30',
+      'bg-green-500/30', 'bg-blue-500/30', 'bg-purple-500/30'
     ]
     return colors[name.charCodeAt(0) % colors.length]
   }
@@ -79,7 +81,7 @@ export default function Navigation () {
         <ul className='flex flex-col'>
           {navLinks.map(({ to, icon: Icon, label, protected: isProtected }) => (
             <li key={to}>
-              <Link to={to} onClick={isProtected ? requireAuth : undefined} className={navLink(to)}>
+              <Link to={to} onClick={isProtected ? guardProtected : undefined} className={navLink(to)}>
                 <Icon size={24} />
                 {label}
               </Link>
@@ -88,10 +90,8 @@ export default function Navigation () {
         </ul>
 
         {!user && (
-          <Button size='lg' className='w-full h-11' onClick={() => setIsAuthOpen(true)}>Log in</Button>
+          <Button size='lg' className='w-full h-11' onClick={openAuthFlow}>Log in</Button>
         )}
-
-        <AuthFlow isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       </div>
 
       {user && <div className='flex-1' />}

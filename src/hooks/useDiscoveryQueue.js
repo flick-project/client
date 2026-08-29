@@ -7,7 +7,7 @@ import { AuthRequiredError } from '../utils/errors.js'
  * Discovery queue with auth-gated mutations. Actions that require a
  * logged-in user throw AuthRequiredError (and open the auth modal)
  * instead of running when the user isn't authenticated. Read-only
- * fields and UI state (search open, inject/eject) are ungated.
+ * fields stay ungated.
  * @returns {object} Queue state and actions.
  */
 export function useDiscoveryQueue () {

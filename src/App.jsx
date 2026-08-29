@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, lazy, Suspense } from 'react'
+import { useEffect, useRef, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import AppLayout from './components/AppLayout.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import DiscoveryPage from './pages/DiscoveryPage.jsx'
 import DiscoveryHeader from './components/DiscoveryHeader.jsx'
 import { useAuth } from './hooks/useAuth.js'
-import { useDiscoveryQueue } from './hooks/useDiscoveryQueue.js'
+import { useSearch } from './hooks/useSearch.js'
 
 const WatchlistPage = lazy(() => import('./pages/WatchlistPage.jsx'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'))
@@ -23,8 +23,7 @@ function App () {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const prevUser = useRef(user)
-  const prevPathname = useRef(pathname)
-  const { inject, eject, searchOpen, closeSearch } = useDiscoveryQueue()
+  const { searchOpen, closeSearch } = useSearch()
 
   useEffect(() => {
     if (loading) return
@@ -34,25 +33,12 @@ function App () {
     prevUser.current = user
   }, [user, loading, navigate])
 
-  const handleSearchSelect = useCallback((movie) => {
-    if (movie) {
-      inject(movie)
-      closeSearch()
-      if (pathname !== '/') navigate('/')
-    } else {
-      eject()
-    }
-  }, [inject, eject, closeSearch, pathname, navigate])
-
-  useEffect(() => {
-    if (prevPathname.current === '/' && pathname !== '/') {
-      eject()
-    }
-    prevPathname.current = pathname
-  }, [pathname, eject])
+  const handleSearchSelect = (movie) => {
+    navigate(`${pathname}?movie=${movie.id}`, { replace: true })
+  }
 
   const isDiscovery = pathname === '/'
-  const header = isDiscovery ? <DiscoveryHeader onSelect={handleSearchSelect} /> : null
+  const header = isDiscovery ? <DiscoveryHeader /> : null
 
   return (
     <>
@@ -60,7 +46,11 @@ function App () {
         <MovieOverlay />
       </Suspense>
       <div className='hidden lg:block'>
-        {searchOpen && <SearchModal onSelect={handleSearchSelect} onClose={eject} variant='discovery' />}
+        {searchOpen && (
+          <Suspense fallback={null}>
+            <SearchModal onSelect={handleSearchSelect} onClose={closeSearch} variant='discovery' />
+          </Suspense>
+        )}
       </div>
       <AppLayout header={header} centered={isDiscovery}>
         <Routes>

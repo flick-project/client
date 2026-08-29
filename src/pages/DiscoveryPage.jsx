@@ -43,6 +43,9 @@ export default function DiscoveryPage () {
     if (error) toast.error(error)
   }, [error])
 
+  // Handlers wrap gated queue actions in withAuthGate so unauthed
+  // callers silently return after the login modal opens. API failures
+  // still surface as toasts.
   const handleSave = () => withAuthGate(async () => {
     try {
       await toggleSave()

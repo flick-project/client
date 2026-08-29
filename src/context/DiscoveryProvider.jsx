@@ -1,4 +1,4 @@
-import { useEffect, useRef, useReducer, useState, useCallback } from 'react'
+import { useEffect, useRef, useReducer, useState } from 'react'
 import { DiscoveryContext } from './DiscoveryContext.jsx'
 import { apiRequest } from '../services/api.js'
 import { getQueue, saveQueue } from '../services/storage.js'
@@ -34,32 +34,13 @@ const queueReducer = (state, action) => {
       return { ...state, currentIndex: state.currentIndex - 1, canGoBack: false }
     }
     case 'RESET':
-      return { movies: [], currentIndex: 0, canGoBack: false, injectedMovie: false, searchOpen: false }
-    case 'INJECT_MOVIE': {
-      const movies = [...state.movies]
-      if (state.injectedMovie) movies.splice(state.currentIndex, 1)
-      const existingIndex = movies.findIndex(m => m.id === action.movie.id)
-      if (existingIndex !== -1) movies.splice(existingIndex, 1)
-      const insertIndex = Math.min(state.currentIndex, movies.length)
-      movies.splice(insertIndex, 0, action.movie)
-      return { ...state, movies, currentIndex: insertIndex, canGoBack: false, injectedMovie: true, searchOpen: true }
-    }
-    case 'EJECT_MOVIE': {
-      if (!state.injectedMovie) return { ...state, searchOpen: false }
-      const movies = [...state.movies]
-      movies.splice(state.currentIndex, 1)
-      return { ...state, movies, injectedMovie: false, searchOpen: false }
-    }
+      return { movies: [], currentIndex: 0, canGoBack: false }
     // Mutates the current movie in place, used for optimistic save/rating updates.
     case 'UPDATE_CURRENT': {
       const movies = [...state.movies]
       movies[state.currentIndex] = { ...movies[state.currentIndex], ...action.updates }
       return { ...state, movies }
     }
-    case 'OPEN_SEARCH':
-      return { ...state, searchOpen: true }
-    case 'CLOSE_SEARCH':
-      return { ...state, searchOpen: false }
     default:
       return state
   }
@@ -84,9 +65,7 @@ export function DiscoveryProvider ({ children }) {
   const [queue, dispatch] = useReducer(queueReducer, null, () => ({
     movies: getQueue() ?? [],
     currentIndex: 0,
-    canGoBack: false,
-    injectedMovie: false,
-    searchOpen: false
+    canGoBack: false
   }))
 
   // Ref mirror of queue so async callbacks see the latest state without
@@ -96,7 +75,7 @@ export function DiscoveryProvider ({ children }) {
 
   const retryAtRef = useRef(0)
 
-  const loadMovies = useCallback(async () => {
+  const loadMovies = async () => {
     if (isLoadingRef.current || Date.now() < retryAtRef.current) return
     isLoadingRef.current = true
     try {
@@ -111,36 +90,22 @@ export function DiscoveryProvider ({ children }) {
     } finally {
       isLoadingRef.current = false
     }
-  }, [])
+  }
 
-  const advance = useCallback(() => {
-    const current = queueRef.current
-    if (current.injectedMovie) {
-      dispatch({ type: 'EJECT_MOVIE' })
-      return
-    }
-    dispatch({ type: 'ADVANCE' })
-  }, [])
-
-  const back = useCallback(() => {
-    if (!queueRef.current.injectedMovie) dispatch({ type: 'GO_BACK' })
-  }, [])
+  const advance = () => dispatch({ type: 'ADVANCE' })
+  const back = () => dispatch({ type: 'GO_BACK' })
 
   // Clear the queue and fetch fresh movies.
-  const reset = useCallback(async () => {
+  const reset = async () => {
     dispatch({ type: 'RESET' })
     saveQueue([])
     await loadMovies()
-  }, [loadMovies])
+  }
 
-  const inject = useCallback((movie) => dispatch({ type: 'INJECT_MOVIE', movie }), [])
-  const eject = useCallback(() => dispatch({ type: 'EJECT_MOVIE' }), [])
-  const openSearch = useCallback(() => dispatch({ type: 'OPEN_SEARCH' }), [])
-  const closeSearch = useCallback(() => dispatch({ type: 'CLOSE_SEARCH' }), [])
-  const updateCurrent = useCallback((updates) => dispatch({ type: 'UPDATE_CURRENT', updates }), [])
+  const updateCurrent = (updates) => dispatch({ type: 'UPDATE_CURRENT', updates })
 
   // Toggle the current movie's saved state. Does NOT advance the queue.
-  const toggleSave = useCallback(async () => {
+  const toggleSave = async () => {
     if (isInteractingRef.current) return
     isInteractingRef.current = true
     const movie = queueRef.current.movies[queueRef.current.currentIndex]
@@ -164,11 +129,11 @@ export function DiscoveryProvider ({ children }) {
     } finally {
       isInteractingRef.current = false
     }
-  }, [])
+  }
 
   // Set, change, or clear the current movie's rating. Tapping the same
   // rating twice clears it. Does NOT advance the queue.
-  const setRating = useCallback(async (rating) => {
+  const setRating = async (rating) => {
     if (isInteractingRef.current) return
     isInteractingRef.current = true
     const movie = queueRef.current.movies[queueRef.current.currentIndex]
@@ -192,11 +157,11 @@ export function DiscoveryProvider ({ children }) {
     } finally {
       isInteractingRef.current = false
     }
-  }, [])
+  }
 
   // Advance to the next movie. Records a skip only when the user hasn't
   // otherwise interacted with the current movie.
-  const next = useCallback((force = false) => {
+  const next = (force = false) => {
     const current = queueRef.current
     const movie = current.movies[current.currentIndex]
     if (!movie) return
@@ -204,7 +169,7 @@ export function DiscoveryProvider ({ children }) {
       const nextExists = current.movies[current.currentIndex + 1] != null
       if (!nextExists) return
       const untouched = !movie.saved && !movie.user_rating
-      if (untouched && !current.injectedMovie) {
+      if (untouched) {
         apiRequest('/interactions', {
           method: 'POST',
           body: JSON.stringify({ movieId: movie.id, interaction: 'skipped' })
@@ -212,10 +177,10 @@ export function DiscoveryProvider ({ children }) {
       }
     }
     advance()
-  }, [advance])
+  }
 
   // Marks the current movie as dismissed (negative signal) and advances.
-  const dismiss = useCallback(async () => {
+  const dismiss = async () => {
     if (isInteractingRef.current) return
     isInteractingRef.current = true
     const movie = queueRef.current.movies[queueRef.current.currentIndex]
@@ -232,7 +197,7 @@ export function DiscoveryProvider ({ children }) {
     } finally {
       isInteractingRef.current = false
     }
-  }, [advance])
+  }
 
   // Clear queue on logout.
   useEffect(() => {
@@ -256,21 +221,23 @@ export function DiscoveryProvider ({ children }) {
       }
     }
     seedQueue()
-  }, [loading, queue.movies.length, queue.currentIndex, loadMovies])
+  }, [loading, queue.movies.length, queue.currentIndex])
 
   // Persist remaining movies to localStorage for session continuity.
   useEffect(() => {
-    if (!queue.injectedMovie) {
-      saveQueue(queue.movies.slice(queue.currentIndex))
-    }
-  }, [queue.movies, queue.currentIndex, queue.injectedMovie])
+    saveQueue(queue.movies.slice(queue.currentIndex))
+  }, [queue.movies, queue.currentIndex])
 
   // Reset queue when an import completes so fresh recommendations load.
   useEffect(() => {
-    const handleImport = () => reset()
+    const handleImport = () => {
+      dispatch({ type: 'RESET' })
+      saveQueue([])
+      loadMovies()
+    }
     window.addEventListener('import-complete', handleImport)
     return () => window.removeEventListener('import-complete', handleImport)
-  }, [reset])
+  }, [])
 
   return (
     <DiscoveryContext value={{
@@ -278,18 +245,12 @@ export function DiscoveryProvider ({ children }) {
       prevMovie: queue.canGoBack ? queue.movies[queue.currentIndex - 1] : null,
       nextMovie: queue.movies[queue.currentIndex + 1] ?? null,
       canGoBack: queue.canGoBack,
-      injectedMovie: queue.injectedMovie,
-      searchOpen: queue.searchOpen,
       back,
       toggleSave,
       setRating,
       next,
       dismiss,
       reset,
-      inject,
-      eject,
-      openSearch,
-      closeSearch,
       updateCurrent,
       error
     }}

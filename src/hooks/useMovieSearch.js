@@ -12,6 +12,7 @@ export function useMovieSearch (onSelect, excludeIds) {
   const [results, setResults] = useState([])
 
   useEffect(() => {
+    let ignore = false
     const timer = setTimeout(async () => {
       if (!query.trim()) {
         setResults([])
@@ -19,16 +20,20 @@ export function useMovieSearch (onSelect, excludeIds) {
       }
       try {
         const data = await apiRequest(`/movies/search?query=${query}`)
+        if (ignore) return
         const filtered = excludeIds
           ? data.results.filter(movie => !excludeIds.includes(movie.id))
           : data.results
         setResults(filtered)
       } catch (err) {
-        console.error(err)
+        if (!ignore) console.error(err)
       }
     }, 300)
 
-    return () => clearTimeout(timer)
+    return () => {
+      ignore = true
+      clearTimeout(timer)
+    }
   }, [query, excludeIds])
 
   const handleSelect = (movie) => {
