@@ -26,9 +26,11 @@ export default function DiscoveryHeader ({ onSelect }) {
         <Film size={28} className='text-primary rotate-90' />
         <h1 className='text-xl font-semibold text-foreground'>Flick</h1>
       </div>
-      <button onClick={openSearch} className='flex items-center justify-center size-11 -mr-2 cursor-pointer'>
-        <Search size={24} className='text-gray-400' />
-      </button>
+      <button
+        onClick={openSearch}
+        aria-label='Search movies'
+        className='flex items-center justify-center size-11 -mr-2 cursor-pointer'
+      />
     </div>
   )
 }
