@@ -23,16 +23,16 @@ export default function BottomNav () {
   }
 
   return (
-    <nav className='flex lg:hidden items-center justify-around border-t border-white/10 bg-surface h-14'>
-      <Link to='/' className={`flex flex-col items-center gap-1 ${pathname === '/' ? 'text-brand' : 'text-text-muted'}`}>
+    <nav className='flex lg:hidden items-center justify-around h-14 border-t border-white/10 bg-surface'>
+      <Link to='/' className={`flex flex-col items-center justify-center gap-1 size-12 ${pathname === '/' ? 'text-red-500' : 'text-muted-foreground'}`}>
         <Compass size={24} />
         <p className='text-xs leading-none'>Discover</p>
       </Link>
-      <Link to='/watchlist' onClick={requireAuth} className={`flex flex-col items-center gap-1 ${pathname === '/watchlist' ? 'text-brand' : 'text-text-muted'}`}>
+      <Link to='/watchlist' onClick={requireAuth} className={`flex flex-col items-center justify-center gap-1 size-12 ${pathname === '/watchlist' ? 'text-primary' : 'text-muted-foreground'}`}>
         <Bookmark size={24} />
         <p className='text-xs leading-none'>Watchlist</p>
       </Link>
-      <Link to='/profile' onClick={requireAuth} className={`flex flex-col items-center gap-1 ${pathname === '/profile' ? 'text-brand' : 'text-text-muted'}`}>
+      <Link to='/profile' onClick={requireAuth} className={`flex flex-col items-center justify-center gap-1 size-12 ${pathname === '/profile' ? 'text-primary' : 'text-muted-foreground'}`}>
         <User size={24} />
         <p className='text-xs leading-none'>Profile</p>
       </Link>

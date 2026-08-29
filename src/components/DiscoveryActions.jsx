@@ -22,7 +22,7 @@ export default function DiscoveryActions ({ saved, rating, onSave, onRate }) {
         onClick={onSave}
         icon={Bookmark}
         filled={saved}
-        textColor={saved ? 'text-amber-400' : 'text-white'}
+        textColor={saved ? 'text-amber-400' : 'text-foreground'}
         strokeWidth={2}
         aria-label={saved ? 'Unsave' : 'Save'}
         title={saved ? 'Unsave' : 'Save'}
@@ -38,7 +38,7 @@ export default function DiscoveryActions ({ saved, rating, onSave, onRate }) {
               <button
                 aria-label={`Rated ${current.label}`}
                 title={`Rated ${current.label}`}
-                className='flex items-center justify-center size-12 rounded-full bg-white/10 cursor-pointer hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                className='flex items-center justify-center size-12 rounded-full bg-white/10 cursor-pointer hover:bg-white/20'
               >
                 <img src={current.emoji} alt='' className='size-6 max-w-none' />
               </button>

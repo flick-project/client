@@ -62,7 +62,7 @@ export default function SettingsPage () {
                     role='tab'
                     aria-selected={tab === 'account'}
                     aria-controls='panel-account'
-                    className={`pb-2 text-md font-medium min-h-11 ${tab === 'account' ? 'border-b-2 border-white text-white' : 'text-gray-300 hover:text-gray-200'} cursor-pointer`}
+                    className={`pb-2 text-md font-medium min-h-11 ${tab === 'account' ? 'border-b-2 border-white text-foreground' : 'text-gray-300 hover:text-gray-200'} cursor-pointer`}
                   >
                     Account
                   </button>
@@ -73,7 +73,7 @@ export default function SettingsPage () {
                     role='tab'
                     aria-selected={tab === 'about'}
                     aria-controls='panel-about'
-                    className={`pb-2 text-md font-medium min-h-11 ${tab === 'about' ? 'border-b-2 border-white text-white' : 'text-gray-300 hover:text-gray-200'} cursor-pointer`}
+                    className={`pb-2 text-md font-medium min-h-11 ${tab === 'about' ? 'border-b-2 border-white text-foreground' : 'text-gray-300 hover:text-gray-200'} cursor-pointer`}
                   >
                     About
                   </button>
@@ -123,7 +123,7 @@ export default function SettingsPage () {
                   </div>
                   <div className='flex flex-col gap-4'>
                     <div className='flex flex-col gap-2'>
-                      <label htmlFor='confirm-delete' className='text-sm text-gray-300'>Type <span className='text-white font-medium'>delete my account</span> to confirm</label>
+                      <label htmlFor='confirm-delete' className='text-sm text-gray-300'>Type <span className='text-foreground font-medium'>delete my account</span> to confirm</label>
                       <Input
                         id='confirm-delete'
                         type='text' required disabled={isLoading} value={confirmText}
@@ -150,18 +150,18 @@ export default function SettingsPage () {
                 className='flex items-center justify-between px-4 min-h-11 hover:bg-white/5 transition-colors'
               >
                 <span className='text-sm'>Data provided by TMDB</span>
-                <ExternalLink size={16} className='text-text-muted' aria-hidden='true' />
+                <ExternalLink size={16} className='text-muted-foreground' aria-hidden='true' />
               </a>
               <Link
                 to='/privacy'
                 className='flex items-center justify-between px-4 min-h-11 hover:bg-white/5 transition-colors'
               >
                 <span className='text-sm'>Privacy Policy</span>
-                <ChevronRight size={16} className='text-text-muted' aria-hidden='true' />
+                <ChevronRight size={16} className='text-muted-foreground' aria-hidden='true' />
               </Link>
             </div>
 
-            <p className='text-xs text-text-muted px-1'>Flick v{import.meta.env.VITE_APP_VERSION}</p>
+            <p className='text-xs text-muted-foreground px-1'>Flick v{import.meta.env.VITE_APP_VERSION}</p>
           </div>
         )}
       </div>

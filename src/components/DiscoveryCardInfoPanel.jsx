@@ -81,7 +81,7 @@ export default function DiscoveryCardInfoPanel ({ movie, compact, expanded, mini
         />
       )}
 
-      <div className='relative pointer-events-none flex flex-col gap-3 pl-4 pb-4 lg:p-6 text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.8)]'>
+      <div className='relative pointer-events-none flex flex-col gap-3 pl-4 pb-4 lg:p-6 text-foreground [text-shadow:0_1px_3px_rgba(0,0,0,0.8)]'>
         <h1 className={`text-xl lg:text-2xl font-semibold leading-tight ${!minimal ? 'pr-14' : ''}`}>
           {movie.title}
         </h1>
@@ -93,27 +93,28 @@ export default function DiscoveryCardInfoPanel ({ movie, compact, expanded, mini
             aria-label={expanded ? 'Collapse details' : 'Expand details'}
             aria-expanded={expanded}
             title={expanded ? 'Collapse' : 'Expand'}
-            className='pointer-events-auto absolute top-5 right-5 z-10 flex items-center justify-center size-11 rounded-full text-white hover:bg-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            className='pointer-events-auto absolute top-5 right-4 z-10 flex items-center justify-center size-11 rounded-full text-foreground hover:bg-white/10 cursor-pointer '
           >
             {expanded
-              ? <ChevronDown className='size-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]' strokeWidth={2.5} aria-hidden='true' />
-              : <ChevronUp className='size-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]' strokeWidth={2.5} aria-hidden='true' />}
+              ? <ChevronDown className='size-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]' strokeWidth={2} aria-hidden='true' />
+              : <ChevronUp className='size-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]' strokeWidth={2} aria-hidden='true' />}
           </button>
         )}
 
         <div className='flex items-center gap-3 flex-wrap text-sm'>
           {voteAverage > 0 && (
-            <span className='flex items-center gap-1.5' aria-label={`Rating ${voteAverage.toFixed(1)} out of 10`}>
-              <Star className='size-4 fill-brand text-brand' aria-hidden='true' />
+            <span className='flex items-center gap-1.5'>
+              <span className='sr-only'>Rating {voteAverage.toFixed(1)} out of 10</span>
+              <Star fill='currentColor' className='size-4 text-brand' aria-hidden='true' />
               <span className='font-medium leading-none text-white' aria-hidden='true'>{voteAverage.toFixed(1)}</span>
             </span>
           )}
           {releaseYear && (
-            <span className='text-white leading-none'>{releaseYear}</span>
+            <span className='text-foreground leading-none'>{releaseYear}</span>
           )}
           <span className='flex gap-1.5 flex-wrap' aria-label='Genres'>
             {genreIds.slice(0, 2).map(id => (
-              <span key={id} className='px-2 py-1 text-xs rounded-full bg-white/25 ring-1 ring-white/20 backdrop-blur-sm leading-none whitespace-nowrap'>
+              <span key={id} className='px-2 py-1 text-xs rounded-full bg-white/20 backdrop-blur-sm leading-none whitespace-nowrap'>
                 {GENRES[id]}
               </span>
             ))}
@@ -123,14 +124,14 @@ export default function DiscoveryCardInfoPanel ({ movie, compact, expanded, mini
         {!minimal && overview && (
           <p
             ref={overviewRef}
-            className={`text-sm lg:text-base text-white leading-relaxed ${!expanded ? 'line-clamp-2' : ''}`}
+            className={`text-sm lg:text-base text-foreground leading-relaxed ${!expanded ? 'line-clamp-2' : ''}`}
           >
             {overview}
           </p>
         )}
 
         {!minimal && !compact && expanded && hasCredits && (
-          <div className='flex flex-col gap-1.5 text-sm lg:text-base text-white'>
+          <div className='flex flex-col gap-1.5 text-sm lg:text-base text-foreground'>
             {director && (
               <p>
                 <span className='text-gray-400'>Directed by </span>

@@ -35,7 +35,7 @@ export default function Button ({
   const isDisabled = disabled || loading
 
   const variants = {
-    primary: 'bg-brand font-semibold text-white hover:bg-red-700',
+    primary: 'bg-brand font-semibold text-foreground hover:bg-red-700',
     secondary: 'font-medium text-gray-300 border border-gray-600 hover:bg-white/5 hover:border-gray-500',
     danger: 'font-medium text-red-400 border border-red-500/40 hover:bg-red-500/5 hover:border-red-400/60',
     ghost: 'font-medium text-gray-400 hover:bg-white/10 hover:text-gray-200'
@@ -52,7 +52,7 @@ export default function Button ({
       type={type}
       onClick={onClick}
       disabled={isDisabled}
-      className={`inline-flex items-center justify-center cursor-pointer disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-light ${variants[variant]} ${sizes[size]} ${full ? 'w-full' : ''} ${className}`}
+      className={`inline-flex items-center justify-center cursor-pointer disabled:opacity-40 disabled:pointer-events-none ${variants[variant]} ${sizes[size]} ${full ? 'w-full' : ''} ${className}`}
       {...rest}
     >
       {loading

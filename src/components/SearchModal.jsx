@@ -43,14 +43,14 @@ export default function SearchModal ({ onSelect, onClose, excludeIds, variant = 
 
   return (
     <div
-      className='fixed inset-0 flex items-start justify-center pt-[10%] bg-black/50 z-50'
+      className='fixed inset-0 flex items-start justify-center pt-[10%] bg-black/80 z-50'
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div className='w-full max-w-lg bg-surface-light rounded-xl border border-white/10 overflow-hidden'>
-        <div className={`flex items-center gap-3 p-3 ${results.length > 0 ? 'border-b border-white/10' : ''}`}>
-          <Search size={24} className='text-gray-500' />
+      <div className='w-full max-w-lg bg-surface-light rounded-xl border border-border overflow-hidden'>
+        <div className={`flex items-center gap-3 py-2.5 px-3 ${results.length > 0 ? 'border-b border-white/10' : ''}`}>
+          <Search size={24} className='text-gray-400' />
           <input
             type='text'
             placeholder='Search for a movie...'
@@ -58,7 +58,7 @@ export default function SearchModal ({ onSelect, onClose, excludeIds, variant = 
             onChange={(e) => { setQuery(e.target.value); setActiveIndex(-1) }}
             onKeyDown={handleKeyDown}
             autoFocus
-            className='w-full bg-transparent text-white placeholder-gray-500 outline-none'
+            className='w-full bg-transparent text-foreground placeholder-gray-400 outline-none'
           />
         </div>
         {results.length > 0 && (
@@ -68,7 +68,7 @@ export default function SearchModal ({ onSelect, onClose, excludeIds, variant = 
                 key={movie.id}
                 onMouseDown={() => handleSelect(movie)}
                 onMouseEnter={() => setActiveIndex(index)}
-                className={`px-4 py-2.5 cursor-pointer text-sm ${index === activeIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                className={`px-4 py-2.5 cursor-pointer text-sm ${index === activeIndex ? 'bg-white/10' : 'hover:bg-white/10'}`}
               >
                 {movie.title} ({new Date(movie.release_date).getFullYear()})
               </li>
@@ -76,23 +76,19 @@ export default function SearchModal ({ onSelect, onClose, excludeIds, variant = 
           </ul>
         )}
         {variant === 'discovery' && (
-          <div className='flex items-center gap-4 px-4 py-2.5 border-t border-white/5 text-sm text-text-muted'>
+          <div className='flex items-center gap-4 px-4 py-2.5 border-t border-white/5 text-sm text-muted-foreground'>
             <span className='flex items-center gap-1'>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>↑</kbd>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>↓</kbd>
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-muted-foreground'>↑</kbd>
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-muted-foreground'>↓</kbd>
               to navigate
             </span>
             <span className='flex items-center gap-1'>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>↵</kbd>
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-muted-foreground'>↵</kbd>
               to select
             </span>
-            <span className='flex items-center gap-1'>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>Esc</kbd>
-              to close
-            </span>
             <span className='flex items-center gap-1 ml-auto'>
-              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-text-muted'>Ctrl+K</kbd>
-              to open
+              <kbd className='px-1.5 py-0.5 rounded bg-white/10 text-muted-foreground'>Esc</kbd>
+              to close
             </span>
           </div>
         )}

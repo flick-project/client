@@ -11,7 +11,7 @@ import { Navigate } from 'react-router-dom'
 export default function ProtectedRoute ({ children }) {
   const { user, loading } = useAuth()
 
-  if (loading) return <p className='size-full flex justify-center mt-[25%] text-base font-normal text-text-muted'>Loading...</p>
+  if (loading) return <p className='size-full flex justify-center mt-[25%] text-base font-normal text-muted-foreground'>Loading...</p>
   if (!user) return <Navigate to='/' />
 
   return children

@@ -26,7 +26,7 @@ export default function FavoriteMovies ({ favorites, onAdd, onRemove }) {
               loading='eager'
             />
             <div className='absolute inset-x-0 bottom-0 h-14 bg-linear-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100' />
-            <p className='absolute bottom-2 left-2.5 right-2.5 text-xs font-medium text-white truncate opacity-0 group-hover:opacity-100'>
+            <p className='absolute bottom-2 left-2.5 right-2.5 text-xs font-medium text-foreground truncate opacity-0 group-hover:opacity-100'>
               {movie.title}
             </p>
             <button
@@ -43,7 +43,7 @@ export default function FavoriteMovies ({ favorites, onAdd, onRemove }) {
             <button
               type='button'
               onClick={onAdd}
-              className='flex size-full items-center justify-center rounded-lg border border-dashed border-white/10 text-text-muted transition hover:border-white/20 hover:text-gray-300 cursor-pointer'
+              className='flex size-full items-center justify-center rounded-lg border border-dashed border-white/10 text-muted-foreground transition hover:border-white/20 hover:text-gray-300 cursor-pointer'
             >
               <Plus className='size-5' />
             </button>

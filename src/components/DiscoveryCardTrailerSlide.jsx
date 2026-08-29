@@ -43,7 +43,7 @@ export default function DiscoveryCardTrailerSlide ({ movie, trailerKey }) {
             decoding='async'
           />
           <div className='absolute inset-0 flex items-center justify-center'>
-            <Loader2 className='size-8 text-white/70 animate-spin' aria-hidden='true' />
+            <Loader2 className='size-8 text-foreground/70 animate-spin' aria-hidden='true' />
           </div>
         </>
       )}

@@ -11,7 +11,7 @@
   --color-surface: var(--color-gray-950);
   --color-surface-light: var(--color-gray-900);
   --color-text: var(--color-white);
-  --color-text-muted: var(--color-gray-400)
+  --color-muted: var(--color-gray-400)
 }
 
 @layer base {
@@ -19,9 +19,14 @@
     @apply bg-background text-foreground;
   }
   * {
-    @apply border-border outline-ring/50;}
+    @apply border-border;
+  }
+  :focus-visible {
+    @apply outline-3 outline-ring/80;
+  }
   html {
-    @apply font-sans;}
+    @apply font-sans;
+  }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
@@ -129,36 +134,41 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);}
 
+/* Sheets have z-9999 for some reason, while shadcn popovers only have z-50 */
+[data-base-ui-portal] [data-open][data-side] {
+  z-index: 10000;
+}
+
 .dark {
-  --background: var(--color-surface);
-  --foreground: var(--color-text);
-  --card: var(--color-surface-light);
-  --card-foreground: var(--color-text);
-  --popover: var(--color-surface-light);
-  --popover-foreground: var(--color-text);
-  --primary: var(--color-brand);
+  --background: var(--color-gray-950);
+  --foreground: var(--color-gray-50);
+  --card: var(--color-gray-900);
+  --card-foreground: var(--color-white);
+  --popover: var(--color-gray-900);
+  --popover-foreground: var(--color-white);
+  --primary: var(--color-red-600);
   --primary-foreground: var(--color-white);
-  --secondary: var(--color-surface-light);
-  --secondary-foreground: var(--color-text);
-  --muted: var(--color-surface-light);
-  --muted-foreground: var(--color-text-muted);
+  --secondary: var(--color-gray-900);
+  --secondary-foreground: var(--color-white);
+  --muted: var(--color-gray-900);
+  --muted-foreground: var(--color-gray-400);
   --accent: var(--color-gray-800);
-  --accent-foreground: var(--color-text);
-  --destructive: oklch(0.704 0.191 22.216);
+  --accent-foreground: var(--color-white);
+  --destructive: var(--color-red-400);
   --border: var(--color-gray-800);
   --input: var(--color-gray-800);
-  --ring: var(--color-brand);
+  --ring: var(--color-white);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --sidebar: var(--color-surface);
-  --sidebar-foreground: var(--color-text);
+  --sidebar-foreground: var(--color-white);
   --sidebar-primary: var(--color-brand);
   --sidebar-primary-foreground: var(--color-white);
-  --sidebar-accent: var(--color-surface-light);
-  --sidebar-accent-foreground: var(--color-text);
+  --sidebar-accent: var(--color-gray-900);
+  --sidebar-accent-foreground: var(--color-white);
   --sidebar-border: var(--color-gray-800);
-  --sidebar-ring: var(--color-brand);
+  --sidebar-ring: var(--color-red-400);
 }

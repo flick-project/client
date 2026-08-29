@@ -8,7 +8,6 @@ import Toast from './components/Toast.jsx'
 import { useAuth } from './hooks/useAuth.js'
 import { useToast } from './hooks/useToast.js'
 import { useDiscoveryQueue } from './hooks/useDiscoveryQueue.js'
-import { useMovieOverlay } from './hooks/useMovieOverlay.js'
 
 const WatchlistPage = lazy(() => import('./pages/WatchlistPage.jsx'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'))
@@ -28,8 +27,7 @@ function App () {
   const { pathname } = useLocation()
   const prevUser = useRef(user)
   const prevPathname = useRef(pathname)
-  const { inject, eject, searchOpen, openSearch, closeSearch } = useDiscoveryQueue()
-  const { closeOverlay } = useMovieOverlay()
+  const { inject, eject, searchOpen, closeSearch } = useDiscoveryQueue()
 
   useEffect(() => {
     if (loading) return
@@ -55,18 +53,6 @@ function App () {
     }
     prevPathname.current = pathname
   }, [pathname, eject])
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault()
-        closeOverlay()
-        openSearch()
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [openSearch, closeOverlay])
 
   const header = pathname === '/' ? <DiscoveryHeader onSelect={handleSearchSelect} /> : null
 
