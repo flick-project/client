@@ -1,23 +1,16 @@
-import { useCallback } from 'react'
 import { Film, Search } from 'lucide-react'
-import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
+import { useSearch } from '../hooks/useSearch.js'
 import SearchHeader from './SearchHeader.jsx'
 
 /**
  * Discovery header area that toggles between logo and search.
- * @param {object} props - Component props.
- * @param {(movie: object|null) => void} props.onSelect - Callback when a movie is selected or search is closed.
  * @returns {React.ReactElement} The DiscoveryHeader component.
  */
-export default function DiscoveryHeader ({ onSelect }) {
-  const { searchOpen, openSearch } = useDiscoveryQueue()
-
-  const closeSearch = useCallback(() => {
-    onSelect(null)
-  }, [onSelect])
+export default function DiscoveryHeader () {
+  const { searchOpen, openSearch, closeSearch } = useSearch()
 
   if (searchOpen) {
-    return <SearchHeader onSelect={onSelect} onClose={closeSearch} />
+    return <SearchHeader onClose={closeSearch} />
   }
 
   return (
@@ -30,7 +23,9 @@ export default function DiscoveryHeader ({ onSelect }) {
         onClick={openSearch}
         aria-label='Search movies'
         className='flex items-center justify-center size-11 -mr-2 cursor-pointer'
-      />
+      >
+        <Search size={24} strokeWidth={2} className='text-muted-foreground' />
+      </button>
     </div>
   )
 }

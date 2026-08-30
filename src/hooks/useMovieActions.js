@@ -1,6 +1,8 @@
+import { withAuthGate } from '../utils/errors'
+import { useAuthFlow } from './useAuthFlow.js'
 import { apiRequest } from '../services/api'
-import { useToast } from './useToast'
 import { useDiscoveryQueue } from './useDiscoveryQueue'
+import { toast } from 'sonner'
 
 /**
  * Shared handlers for movie-level overflow actions. Used by both the
@@ -13,24 +15,31 @@ import { useDiscoveryQueue } from './useDiscoveryQueue'
  * @returns {void}
  */
 export function useMovieActions ({ movieId, watched, onWatchedChange, onAdvance }) {
-  const { showToast } = useToast()
+  const { requireAuth } = useAuthFlow()
   const { dismiss: providerDismiss } = useDiscoveryQueue()
 
   const viewOnTmdb = () => {
     window.open(`https://www.themoviedb.org/movie/${movieId}`, '_blank', 'noopener,noreferrer')
   }
 
-  const dismiss = async () => {
+  const dismiss = () => withAuthGate(async () => {
     try {
       await providerDismiss()
-    } catch {
-      showToast('Something went wrong. Please try again.')
+    } catch (err) {
+      toast.error(err.message || 'Something went wrong. Please try again.')
       return
     }
-    showToast('You will see less of this in the future.')
-  }
+    toast.success('You will see less of this in the future.')
+  })
 
   const toggleWatched = async () => {
+    // Check auth – throws if not authenticated
+    try {
+      requireAuth()
+    } catch {
+      return
+    }
+
     try {
       if (watched) {
         await apiRequest(`/watched/${movieId}`, { method: 'DELETE' })
@@ -40,16 +49,13 @@ export function useMovieActions ({ movieId, watched, onWatchedChange, onAdvance 
           body: JSON.stringify({ movieId })
         })
       }
-    } catch {
-      showToast('Something went wrong. Please try again.')
-      return
-    }
-    onWatchedChange?.(!watched)
-    if (watched) {
-      showToast('Removed from watched.')
-    } else {
-      showToast('Marked as watched.')
-      onAdvance?.()
+
+      onWatchedChange?.(!watched)
+      toast.success(watched ? 'Removed from watched.' : 'Marked as watched.')
+
+      if (!watched) onAdvance?.()
+    } catch (err) {
+      toast.error(err.message || 'Something went wrong. Please try again.')
     }
   }
 

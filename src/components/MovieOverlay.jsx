@@ -6,8 +6,10 @@ import { apiRequest } from '../services/api'
 import { backdropUrl } from '../utils/imageUtils'
 import { X, Play, Star } from 'lucide-react'
 import { Sheet } from 'react-modal-sheet'
-import { useToast } from '../hooks/useToast'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '../hooks/useAuth.js'
+import { useAuthFlow } from '../hooks/useAuthFlow.js'
 import OverlayActions from './OverlayActions'
 import TrailerModal from './TrailerModal'
 
@@ -27,8 +29,7 @@ const currencyFormat = new Intl.NumberFormat('en-US', {
  * @returns {React.ReactElement} The MovieOverlay component.
  */
 export default function MovieOverlay () {
-  const { movieId, closeOverlay, notifyChange, showTrailer, openTrailer, closeTrailer } = useMovieOverlay()
-  const { showToast } = useToast()
+  const { movieId, openOverlay, closeOverlay, notifyChange, showTrailer, openTrailer, closeTrailer } = useMovieOverlay()
   const location = useLocation()
   const navigate = useNavigate()
   const [movie, setMovie] = useState(null)
@@ -39,6 +40,14 @@ export default function MovieOverlay () {
   const [watched, setWatched] = useState(false)
   const [error, setError] = useState(false)
   const [retryKey, setRetryKey] = useState(0)
+  const { user } = useAuth()
+  const { openAuthFlow } = useAuthFlow()
+
+  const promptLogin = () => {
+    const movieId = movie.id
+    closeOverlay()
+    openAuthFlow({ reopenAfterAuth: () => openOverlay(movieId) })
+  }
 
   // Reset trailer when overlay closes or movie changes so a stale
   // showTrailer state doesn't linger between different movies.
@@ -91,6 +100,7 @@ export default function MovieOverlay () {
 
   const handleSave = async () => {
     if (!movie) return
+    if (!user) { promptLogin(); return }
     const wasSaved = saved
     setSaved(!wasSaved)
     try {
@@ -104,13 +114,15 @@ export default function MovieOverlay () {
     } catch (err) {
       console.error(err)
       setSaved(wasSaved)
-      showToast('Could not save. Try again.', 'fail')
+      toast.error('Could not save. Try again.')
     }
   }
 
   const handleRate = async (value) => {
     if (!movie) return
+    if (!user) { promptLogin(); return }
     const previous = userRating
+    const wasWatched = watched
     setUserRating(value)
     if (value !== null) setWatched(true)
     try {
@@ -122,16 +134,21 @@ export default function MovieOverlay () {
           body: JSON.stringify({ movieId: movie.id, rating: value })
         })
       }
+      notifyChange({ type: 'rating', movieId: movie.id, rating: value })
+      if (value !== null && !wasWatched) {
+        notifyChange({ type: 'watched', movieId: movie.id, watched: true })
+      }
     } catch (err) {
       console.error(err)
       setUserRating(previous)
       if (value !== null) setWatched(false)
-      showToast('Could not rate. Try again.', 'fail')
+      toast.error('Could not rate. Try again.')
     }
   }
 
   const handleToggleWatched = async () => {
     if (!movie) return
+    if (!user) { promptLogin(); return }
     const wasWatched = watched
     const previousRating = userRating
     setWatched(!wasWatched)
@@ -146,11 +163,15 @@ export default function MovieOverlay () {
           body: JSON.stringify({ movieId: movie.id })
         })
       }
+      notifyChange({ type: 'watched', movieId: movie.id, watched: !wasWatched })
+      if (wasWatched && previousRating) {
+        notifyChange({ type: 'rating', movieId: movie.id, rating: null })
+      }
     } catch (err) {
       console.error(err)
       setWatched(wasWatched)
       setUserRating(previousRating)
-      showToast('Could not update. Try again.', 'fail')
+      toast.error('Could not update. Try again.')
     }
   }
 

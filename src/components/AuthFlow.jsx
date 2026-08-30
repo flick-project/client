@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useToast } from '../hooks/useToast'
 import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
 import { useDiscoveryTour } from '../hooks/useDiscoveryTour.js'
+import { toast } from 'sonner'
 import Modal from './Modal.jsx'
 import AuthModal from './AuthModal.jsx'
 import OnboardingModal from './OnboardingModal.jsx'
@@ -14,7 +14,6 @@ import OnboardingModal from './OnboardingModal.jsx'
  * @returns {React.ReactElement|null} Auth or onboarding content.
  */
 export default function AuthFlow ({ isOpen, onClose }) {
-  const { showToast } = useToast()
   const { reset } = useDiscoveryQueue()
   const { startTour } = useDiscoveryTour()
   const [step, setStep] = useState('auth')
@@ -27,12 +26,10 @@ export default function AuthFlow ({ isOpen, onClose }) {
   const handleComplete = (message) => {
     setStep('auth')
     reset()
-    if (message) showToast(message, 'success')
+    if (message) toast.success(message)
     onClose()
 
-    Promise.resolve().then(() => {
-      startTour()
-    })
+    startTour()
   }
 
   let content

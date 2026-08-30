@@ -51,7 +51,7 @@ export default function DiscoveryCardTrailerSlide ({ movie, trailerKey }) {
         <div className='w-full aspect-video'>
           {visible && (
             <iframe
-              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&playsinline=1&rel=0`}
+              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=0&mute=0&playsinline=1&rel=0`}
               allow='autoplay; encrypted-media; fullscreen; compute-pressure'
               className='size-full'
               title={`${movie.title} trailer`}

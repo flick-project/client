@@ -32,6 +32,9 @@ export default function DiscoveryActions ({ saved, rating, onSave, onRate }) {
         rating={rating}
         onSelect={onRate}
         arrowFrom='right'
+        onOpenChange={(open) => {
+          if (open) return false
+        }}
         trigger={() => (
           current
             ? (
