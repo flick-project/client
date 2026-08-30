@@ -8,6 +8,8 @@ import { X, Play, Star } from 'lucide-react'
 import { Sheet } from 'react-modal-sheet'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '../hooks/useAuth.js'
+import { useAuthFlow } from '../hooks/useAuthFlow.js'
 import OverlayActions from './OverlayActions'
 import TrailerModal from './TrailerModal'
 
@@ -27,7 +29,7 @@ const currencyFormat = new Intl.NumberFormat('en-US', {
  * @returns {React.ReactElement} The MovieOverlay component.
  */
 export default function MovieOverlay () {
-  const { movieId, closeOverlay, notifyChange, showTrailer, openTrailer, closeTrailer } = useMovieOverlay()
+  const { movieId, openOverlay, closeOverlay, notifyChange, showTrailer, openTrailer, closeTrailer } = useMovieOverlay()
   const location = useLocation()
   const navigate = useNavigate()
   const [movie, setMovie] = useState(null)
@@ -38,6 +40,14 @@ export default function MovieOverlay () {
   const [watched, setWatched] = useState(false)
   const [error, setError] = useState(false)
   const [retryKey, setRetryKey] = useState(0)
+  const { user } = useAuth()
+  const { openAuthFlow } = useAuthFlow()
+
+  const promptLogin = () => {
+    const movieId = movie.id
+    closeOverlay()
+    openAuthFlow({ reopenAfterAuth: () => openOverlay(movieId) })
+  }
 
   // Reset trailer when overlay closes or movie changes so a stale
   // showTrailer state doesn't linger between different movies.
@@ -90,6 +100,7 @@ export default function MovieOverlay () {
 
   const handleSave = async () => {
     if (!movie) return
+    if (!user) { promptLogin(); return }
     const wasSaved = saved
     setSaved(!wasSaved)
     try {
@@ -109,6 +120,7 @@ export default function MovieOverlay () {
 
   const handleRate = async (value) => {
     if (!movie) return
+    if (!user) { promptLogin(); return }
     const previous = userRating
     setUserRating(value)
     if (value !== null) setWatched(true)
@@ -131,6 +143,7 @@ export default function MovieOverlay () {
 
   const handleToggleWatched = async () => {
     if (!movie) return
+    if (!user) { promptLogin(); return }
     const wasWatched = watched
     const previousRating = userRating
     setWatched(!wasWatched)
