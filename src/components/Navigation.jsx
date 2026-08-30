@@ -69,7 +69,7 @@ export default function Navigation () {
       {/* Top section */}
       <div className='flex flex-col gap-4 px-4'>
         <div className='flex items-center gap-3.5 px-2.5 py-2'>
-          <Film size={28} className='text-brand rotate-90' />
+          <Film size={28} className='text-brand' />
           <h1 className='text-xl font-bold leading-none tracking-wide'>Flick</h1>
         </div>
 
