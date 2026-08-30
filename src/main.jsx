@@ -24,14 +24,14 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <AuthProvider>
         <ImportProvider>
-          <DiscoveryProvider>
-            <MovieOverlayProvider>
+          <MovieOverlayProvider>
+            <DiscoveryProvider>
               <AuthFlowProvider>
                 <App />
                 <Toaster richColors />
               </AuthFlowProvider>
-            </MovieOverlayProvider>
-          </DiscoveryProvider>
+            </DiscoveryProvider>
+          </MovieOverlayProvider>
         </ImportProvider>
       </AuthProvider>
     </BrowserRouter>

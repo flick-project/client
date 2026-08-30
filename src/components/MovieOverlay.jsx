@@ -122,6 +122,7 @@ export default function MovieOverlay () {
     if (!movie) return
     if (!user) { promptLogin(); return }
     const previous = userRating
+    const wasWatched = watched
     setUserRating(value)
     if (value !== null) setWatched(true)
     try {
@@ -132,6 +133,10 @@ export default function MovieOverlay () {
           method: 'POST',
           body: JSON.stringify({ movieId: movie.id, rating: value })
         })
+      }
+      notifyChange({ type: 'rating', movieId: movie.id, rating: value })
+      if (value !== null && !wasWatched) {
+        notifyChange({ type: 'watched', movieId: movie.id, watched: true })
       }
     } catch (err) {
       console.error(err)
@@ -157,6 +162,10 @@ export default function MovieOverlay () {
           method: 'POST',
           body: JSON.stringify({ movieId: movie.id })
         })
+      }
+      notifyChange({ type: 'watched', movieId: movie.id, watched: !wasWatched })
+      if (wasWatched && previousRating) {
+        notifyChange({ type: 'rating', movieId: movie.id, rating: null })
       }
     } catch (err) {
       console.error(err)

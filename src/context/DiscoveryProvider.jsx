@@ -3,6 +3,7 @@ import { DiscoveryContext } from './DiscoveryContext.jsx'
 import { apiRequest } from '../services/api.js'
 import { getQueue, saveQueue } from '../services/storage.js'
 import { useAuth } from '../hooks/useAuth.js'
+import { useMovieOverlay } from '../hooks/useMovieOverlay.js'
 
 // Hard cap on how many movies live in the queue at once. Prevents runaway
 // growth if refill fires more than once for the same batch.
@@ -39,6 +40,13 @@ const queueReducer = (state, action) => {
     case 'UPDATE_CURRENT': {
       const movies = [...state.movies]
       movies[state.currentIndex] = { ...movies[state.currentIndex], ...action.updates }
+      return { ...state, movies }
+    }
+    case 'UPDATE_MOVIE_BY_ID': {
+      const idx = state.movies.findIndex(m => m.id === action.movieId)
+      if (idx === -1) return state
+      const movies = [...state.movies]
+      movies[idx] = { ...movies[idx], ...action.updates }
       return { ...state, movies }
     }
     default:
@@ -239,6 +247,19 @@ export function DiscoveryProvider ({ children }) {
     window.addEventListener('import-complete', handleImport)
     return () => window.removeEventListener('import-complete', handleImport)
   }, [])
+
+  const { subscribe } = useMovieOverlay()
+
+  useEffect(() => {
+    return subscribe((event) => {
+      const updates = {}
+      if (event.type === 'save') updates.saved = event.saved
+      else if (event.type === 'rating') updates.user_rating = event.rating
+      else if (event.type === 'watched') updates.watched = event.watched
+      else return
+      dispatch({ type: 'UPDATE_MOVIE_BY_ID', movieId: event.movieId, updates })
+    })
+  }, [subscribe])
 
   return (
     <DiscoveryContext value={{
