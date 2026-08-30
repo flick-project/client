@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef, lazy, Suspense } from 'react'
 import { AuthFlowContext } from './AuthFlowContext.jsx'
-import AuthFlow from '../components/AuthFlow.jsx'
 import { useAuth } from '../hooks/useAuth.js'
+
+const AuthFlow = lazy(() => import('../components/AuthFlow.jsx'))
 
 /**
  * Provides the auth flow modal and the requireAuth gate to the app.
@@ -60,7 +61,11 @@ export function AuthFlowProvider ({ children }) {
   return (
     <AuthFlowContext value={value}>
       {children}
-      <AuthFlow isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      {isOpen && (
+        <Suspense fallback={null}>
+          <AuthFlow isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        </Suspense>
+      )}
     </AuthFlowContext>
   )
 }
