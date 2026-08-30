@@ -231,6 +231,7 @@ export default function DiscoveryPage () {
             className='absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 h-full object-cover opacity-20 xl:scale-100 2xl:scale-115 mix-blend-screen pointer-events-none'
             style={{ filter: 'blur(80px) saturate(1.5)' }}
             aria-hidden='true'
+            fetchPriority='high'
             loading='eager'
             decoding='async'
           />
