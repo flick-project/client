@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { Turnstile } from '@marsidev/react-turnstile'
 import { useAuth } from '../hooks/useAuth.js'
 import { apiRequest } from '../services/api.js'
 import Input from '../components/Input.jsx'
@@ -8,8 +9,8 @@ import { EyeOff, Eye } from 'lucide-react'
 /**
  * Authentication modal for user login and registration.
  * @param {object} props - Component props.
- * @param {() => void} props.onLoginSuccess - Callback to handle.
- * @param {() => void} props.onRegisterSuccess - Callback to handle.
+ * @param {(message: string) => void} props.onLoginSuccess - Callback with a welcome message after login.
+ * @param {() => void} props.onRegisterSuccess - Callback after successful registration.
  * @returns {React.ReactElement} The AuthModal component.
  */
 export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
@@ -21,6 +22,8 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState(null)
+  const turnstileRef = useRef(null)
   const { login } = useAuth()
 
   /**
@@ -35,9 +38,6 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
     }
     if (password.length < 10) {
       newErrors.password = 'Password must be at least 10 characters'
-    }
-    if (password.length < 10) {
-      newErrors.password = 'Password must be at least 10 characters'
     } else if (password !== confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match'
     }
@@ -46,7 +46,7 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
   }
 
   /**
-   * Reset form fields and errors when switching between login and register.
+   * Reset form fields, errors, and Turnstile widget when switching modes.
    * @param {boolean} toLogin - Whether to switch to login mode.
    */
   const switchMode = (toLogin) => {
@@ -54,8 +54,11 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
     setEmail('')
     setDisplayName('')
     setPassword('')
+    setConfirmPassword('')
     setShowPassword(false)
     setErrors({})
+    setTurnstileToken(null)
+    turnstileRef.current?.reset()
   }
 
   /**
@@ -66,7 +69,6 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
     e.preventDefault()
     setErrors({})
 
-    // Collect and display all client-side errors at once.
     if (!isLogin) {
       const validationErrors = validateRegistration()
       if (Object.keys(validationErrors).length > 0) {
@@ -75,14 +77,19 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
       }
     }
 
+    if (!turnstileToken) {
+      setErrors({ general: 'Please complete the verification.' })
+      return
+    }
+
     setIsLoading(true)
 
     const endpoint = isLogin ? '/login' : '/register'
 
     try {
       const body = isLogin
-        ? { email, password }
-        : { email, password, displayName }
+        ? { email, password, turnstileToken }
+        : { email, password, displayName, turnstileToken }
 
       const data = await apiRequest(`/auth${endpoint}`, {
         method: 'POST',
@@ -97,6 +104,8 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
       }
     } catch (err) {
       console.error(err)
+      turnstileRef.current?.reset()
+      setTurnstileToken(null)
       setErrors({ general: err.message || 'Something went wrong. Please try again.' })
     } finally {
       setIsLoading(false)
@@ -125,6 +134,8 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
           {errors.displayName && <p className='text-red-500 text-sm text-center'>{errors.displayName}</p>}
           <Input
             type={showPassword ? 'text' : 'password'}
+            required
+            disabled={isLoading}
             placeholder='Password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -147,8 +158,19 @@ export default function AuthModal ({ onLoginSuccess, onRegisterSuccess }) {
             />
           )}
           {errors.confirmPassword && <p className='text-red-500 text-sm text-center'>{errors.confirmPassword}</p>}
+
+          <div className='flex justify-center'>
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+              onSuccess={setTurnstileToken}
+              onExpire={() => setTurnstileToken(null)}
+              onError={() => setTurnstileToken(null)}
+              options={{ theme: 'dark' }}
+            />
+          </div>
         </form>
-        <Button type='submit' form='auth-form' disabled={isLoading}>
+        <Button type='submit' form='auth-form' disabled={isLoading || !turnstileToken}>
           {isLogin ? 'Log in' : 'Sign up'}
         </Button>
       </div>
