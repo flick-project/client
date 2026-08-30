@@ -28,13 +28,13 @@ const queueReducer = (state, action) => {
       }
     }
     case 'ADVANCE':
-      return { ...state, currentIndex: state.currentIndex + 1, canGoBack: true }
+      return { ...state, currentIndex: state.currentIndex + 1, canGoBack: true, lastDirection: 1 }
     case 'GO_BACK': {
       if (!state.canGoBack || state.currentIndex <= 0) return state
-      return { ...state, currentIndex: state.currentIndex - 1, canGoBack: false }
+      return { ...state, currentIndex: state.currentIndex - 1, canGoBack: false, lastDirection: -1 }
     }
     case 'RESET':
-      return { movies: [], currentIndex: 0, canGoBack: false }
+      return { movies: [], currentIndex: 0, canGoBack: false, lastDirection: 1 }
     // Mutates the current movie in place, used for optimistic save/rating updates.
     case 'UPDATE_CURRENT': {
       const movies = [...state.movies]
@@ -65,7 +65,8 @@ export function DiscoveryProvider ({ children }) {
   const [queue, dispatch] = useReducer(queueReducer, null, () => ({
     movies: getQueue() ?? [],
     currentIndex: 0,
-    canGoBack: false
+    canGoBack: false,
+    lastDirection: 1
   }))
 
   // Ref mirror of queue so async callbacks see the latest state without
@@ -245,6 +246,7 @@ export function DiscoveryProvider ({ children }) {
       prevMovie: queue.canGoBack ? queue.movies[queue.currentIndex - 1] : null,
       nextMovie: queue.movies[queue.currentIndex + 1] ?? null,
       canGoBack: queue.canGoBack,
+      lastDirection: queue.lastDirection,
       back,
       toggleSave,
       setRating,

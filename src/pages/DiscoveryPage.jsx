@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useLayoutEffect } from 'react'
+import { useRef, useEffect, useLayoutEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { withAuthGate } from '@/utils/errors.js'
+import { AuthRequiredError } from '@/utils/errors.js'
 import { usePageMetadata } from '../hooks/usePageMetadata.js'
 import { useDiscoveryQueue } from '../hooks/useDiscoveryQueue.js'
 import { toast } from 'sonner'
@@ -24,10 +24,12 @@ const cardVariants = {
  * @returns {React.ReactElement} The DiscoveryPage component.
  */
 export default function DiscoveryPage () {
-  const [direction, setDirection] = useState(1)
   const [preferredSlide, setPreferredSlide] = useState(0)
   const prefersReducedMotion = useReducedMotion()
-  const { currentMovie, prevMovie, nextMovie, canGoBack, back, toggleSave, setRating, next, error, updateCurrent } = useDiscoveryQueue()
+  const {
+    currentMovie, prevMovie, nextMovie, canGoBack, lastDirection,
+    back, toggleSave, setRating, next, error, updateCurrent
+  } = useDiscoveryQueue()
 
   const scrollRef = useRef(null)
   const currentRef = useRef(null)
@@ -43,46 +45,66 @@ export default function DiscoveryPage () {
     if (error) toast.error(error)
   }, [error])
 
-  // Handlers wrap gated queue actions in withAuthGate so unauthed
-  // callers silently return after the login modal opens. API failures
-  // still surface as toasts.
-  const handleSave = () => withAuthGate(async () => {
+  // Handlers catch AuthRequiredError silently (auth modal already open)
+  // and surface API errors as toasts. Animation direction is driven by
+  // the reducer via lastDirection — handlers don't touch it.
+
+  const handleSave = async () => {
     try {
       await toggleSave()
     } catch (err) {
+      if (err instanceof AuthRequiredError) return
       console.error(err)
       toast.error(err.message || 'Something went wrong. Please try again.')
     }
-  })
+  }
 
-  const handleRate = (rating) => withAuthGate(async () => {
+  const handleRate = async (rating) => {
     try {
       await setRating(rating)
     } catch (err) {
+      if (err instanceof AuthRequiredError) return
       console.error(err)
       toast.error(err.message || 'Something went wrong. Please try again.')
     }
-  })
+  }
 
-  const handleWatchedChange = (newWatched) => withAuthGate(async () => {
-    updateCurrent({ watched: newWatched })
-  })
+  const handleWatchedChange = (newWatched) => {
+    try {
+      updateCurrent({ watched: newWatched })
+    } catch (err) {
+      if (err instanceof AuthRequiredError) return
+      throw err
+    }
+  }
 
-  const handleAdvance = () => withAuthGate(async () => {
-    setDirection(1)
-    next(true)
-  })
+  const handleAdvance = () => {
+    try {
+      next(true)
+    } catch (err) {
+      if (err instanceof AuthRequiredError) return
+      throw err
+    }
+  }
 
-  const handleNext = () => withAuthGate(async () => {
-    setDirection(1)
-    next()
-  })
+  const handleNext = () => {
+    try {
+      next()
+    } catch (err) {
+      if (err instanceof AuthRequiredError) return
+      throw err
+    }
+  }
 
-  const handleBack = () => withAuthGate(async () => {
+  const handleBack = () => {
     if (!canGoBack) return
-    setDirection(-1)
-    back()
-  })
+    try {
+      back()
+    } catch (err) {
+      if (err instanceof AuthRequiredError) return
+      throw err
+    }
+  }
 
   const cards = [prevMovie, currentMovie, nextMovie].filter(Boolean)
   const currentIndexInWindow = prevMovie ? 1 : 0
@@ -220,10 +242,10 @@ export default function DiscoveryPage () {
 
           <div className='h-full flex items-center justify-center shrink-0'>
             <div ref={cardContainerRef} className='relative'>
-              <AnimatePresence initial={false} custom={direction}>
+              <AnimatePresence initial={false} custom={lastDirection}>
                 <motion.div
                   key={currentMovie?.id ?? 'empty'}
-                  custom={direction}
+                  custom={lastDirection}
                   variants={cardVariants}
                   initial='enter'
                   animate='center'
