@@ -38,5 +38,6 @@ jobs:
           unset DOCKER_HOST
           docker context create production --docker "host=ssh://hasse@${{ vars.PRODUCTION_HOST }}"
           docker context use production
+          echo "VITE_TURNSTILE_SITE_KEY=${{ vars.VITE_TURNSTILE_SITE_KEY }}" > .env
           docker compose -f docker-compose.production.yml up -d --build
           docker system prune -f

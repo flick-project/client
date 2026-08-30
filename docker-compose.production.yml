@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: https://flick-api.lingon.cloud/api/v1
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY}
     container_name: flick-client
     restart: unless-stopped
     networks:
